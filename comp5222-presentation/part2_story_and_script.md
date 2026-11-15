@@ -134,7 +134,7 @@ Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最�
 ## 4. 你嘅 6 分鐘：逐頁講稿
 
 每頁有：目的、要指住咩、要記嘅數字、英文講稿（按每分鐘大約 140 字寫）、過場句。
-⚠️ 第 11–14 頁嘅講稿係配合**第 5 節建議修改後**嘅 slides。如果唔改 slides，就用 .pptx 入面原本嘅 speaker notes，但要留意原本第 11、14 頁有啲講法而家已經企唔住。
+✅ 第 5 節嘅修改已經做咗：.pptx 同網頁版 deck 嘅第 8–14 頁 slides 同 speaker notes 已經同下面嘅講稿一致。
 
 ### 第 8 頁：The graph is sparse, and every edge carries features（0:50）
 
@@ -168,7 +168,7 @@ Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最�
 
 - **過場：** “So, how well does it do?”
 
-### 第 11 頁：On simulated data, composition and length already explain most of Rg（1:20）
+### 第 11 頁：On simulations, composition and length explain most of Rg（1:20）
 
 - **目的：** 好消息 + 轉折。呢頁係你成段最重要嘅一頁。
 - **指住：** 先指 parity plot，再指 table 三欄，最後指「打和」嗰個 callout。
@@ -193,7 +193,7 @@ Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最�
 ### 第 13 頁：Why the graph adds little: distance decides the edges（0:55）
 
 - **目的：** 偵探時間，解釋原因。要講得自信，因為呢個係我哋自己搵到嘅結果。
-- **指住：** 兩個幅度對比（2× vs 1,300×），然後 96.6%，最後排列測試嘅兩行。
+- **指住：** 左邊張 log-scale 圖：藍色（距離 band）橫跨成條軸，橙色（胺基酸對）得一小段；然後右上 96.6%，最後右下排列測試嘅兩行（實驗差好遠，預測幾乎一樣）。
 - **數字：** f 2.1×；p(band) 1,300×；96.6%；Rg 2.21–2.94 vs 預測 3.00–3.08。
 
 > **Script:**
@@ -208,22 +208,22 @@ Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最�
 
 ---
 
-## 5. 建議點改 slides（我未改）
+## 5. Slides 改咗咩（已完成）
 
-而家份 .pptx（GitHub `comp5222-presentation` branch）係檢查 A–C **之前**整嘅，有兩句已經企唔住：
+舊版 .pptx 係檢查 A–C **之前**整嘅，有兩句企唔住，而家已經改好（.pptx、網頁版 deck、GitHub 都係新版）：
 
 - 第 11 頁標題「On unseen proteins, the graph beats length alone」：字面上啱，但會令人以為係 graph 嘅功勞。
 - 第 14 頁標題「Putting residue pairs into the graph works」：**而家冇證據支持**，一定要改。
 
-| 頁 | 而家 | 建議改成 |
+| 頁 | 舊版 | 新版 |
 |---|---|---|
 | 8 | Speaker notes 開頭冇過場 | 加「Thanks. So that was one residue…」；結尾嘅伏筆保留 |
-| 11 | 2 欄 table；callout「−19%」「36%」 | 標題：*On simulated data, composition and length already explain most of Rg*；table 加「Composition + length (21 params)」一欄；callout 改為「Tie: 0.100 vs 0.098 nm」同「36% vs 31%」 |
+| 11 | 2 欄 table；callout「−19%」「36%」 | 標題：*On simulations, composition and length explain most of Rg*；table 加「Composition + length (21 params)」一欄；callout 改為「Tie: 0.100 vs 0.098 nm」同「36% vs 31%」 |
 | 12 | 冇組成 baseline | 標題：*On real experiments, the graph model does beat composition*；table 加組成一行（0.331 / 0.822 / 0.908）；callout：「−0.036 nm, 95% CI [−0.054, −0.018]」 |
-| 13 | 4 格 limitations | 標題：*Why the graph adds little: distance decides the edges*；左邊兩個幅度對比 + 96.6%；右邊排列測試 table；底部一行細字列埋餘下限制（接觸表用咗全部鏈、只有一個 seed） |
+| 13 | 4 格 limitations | 標題：*Why the graph adds little: distance decides the edges*；左邊一張新圖（`edge_scales.png`，log scale 比較兩個幅度）；右上 96.6%；右邊排列測試 table；底部一行細字列埋餘下限制（接觸表用咗全部鏈、只有一個 seed） |
 | 14 | 「Putting residue pairs into the graph works」 | 標題：*What we can say, and what comes next*；三點跟第 4 節第 14 頁講稿 |
 
-想我幫你改 .pptx 同推上 GitHub，講一聲就得。
+第 8–10 頁嘅 slides 內容冇改，只係 speaker notes 換成第 4 節嘅講稿（加咗過場句，第 10 頁縮到 30 秒）。
 
 ---
 
@@ -292,4 +292,4 @@ Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最�
 | 排列組 | 6 條（107 aa）：實驗 2.21–2.94，預測 3.00–3.08；7 條（334 aa）：實驗 4.06–5.44，預測 5.27–5.33 | `perm_check.py` |
 | 實驗序列同 training 重疊 | 22 / 151；剔走後 MAE 0.296 | `make_figs.py` |
 
-Script 全部喺 `/tmp/claude-1004/-home-andy-claude-workspace-ppt/a3f1cda3-769c-467b-b7f3-a760f0dc9112/scratchpad/scripts/`，用法：`python <script> <COMP-5222 folder>`（要 numpy；`make_figs.py` 同 `graph_fig.py` 仲要 matplotlib）。組成 baseline 同 bootstrap 係我加嘅分析，唔係原本 project code 嘅一部分。
+Script 全部喺 GitHub `comp5222-presentation/analysis/` 同 `comp5222-presentation/scripts/`，用法：`python <script> <COMP-5222 folder>`（要 numpy；畫圖嘅 script 仲要 matplotlib）。`scale_fig.py` 畫第 13 頁嗰張圖。組成 baseline 同 bootstrap 係我加嘅分析，唔係原本 project code 嘅一部分。

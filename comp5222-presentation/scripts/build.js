@@ -70,9 +70,9 @@ function cardText(slide, x, y, w, h, head, body, o = {}) {
   parts.forEach((p, i) => runs.push({ text: p.text, options: { fontSize: o.bodySize || 15, color: bc, ...p.options, breakLine: i < parts.length - 1 && !(p.options && p.options.breakLine === false) } }));
   txt(slide, runs, { x: x + 0.25, y: y + 0.2, w: w - 0.5, h: h - 0.4 });
 }
-function head(slide, eyebrow, title) {
+function head(slide, eyebrow, title, fontSize) {
   slide.addText(eyebrow, { placeholder: "eyebrow" });
-  slide.addText(title, { placeholder: "title" });
+  slide.addText(title, fontSize ? { placeholder: "title", fontSize } : { placeholder: "title" });
 }
 function img(slide, file, x, y, w, h, alt) {
   slide.addImage({ path: fig(file), x, y, w, h, altText: alt, objectName: name("figure") });
@@ -284,67 +284,66 @@ s.addNotes(notes("train"));
 // ---------- 11 results: test ----------
 pres.addSection({ title: "Results" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Results" });
-head(s, "RESULTS · SIMULATED TEST SET", "On unseen proteins, the graph beats length alone");
+head(s, "RESULTS · SIMULATED TEST SET", "On simulations, composition and length explain most of Rg", 28);
 img(s, "test_parity.png", 0.6, 1.65, 5.22, 4.9, "Parity plot of predicted versus simulated Rg for 4,103 test chains; points lie tightly along the diagonal");
 const tdb = (t) => ({ text: t, options: { color: C.text1, bold: true, fill: { color: "E3ECF6" }, align: "right" } });
 s.addTable([
-  [th("4,103 test chains"), th("Length only", "right"), th("ContactGAT", "right")],
-  [td("MAE (nm)"), td("0.124", "right"), tdb("0.100")],
-  [td("RMSE (nm)"), td("0.210", "right"), tdb("0.173")],
-  [td("R²"), td("0.972", "right"), tdb("0.981")],
-  [td("Pearson r"), td("0.986", "right"), tdb("0.992")],
-], { x: 6.15, y: 1.65, w: 6.58, colW: [2.6, 1.99, 1.99], rowH: 0.42, fontSize: 15, border: { type: "solid", pt: 0.75, color: "D3D9E0" }, margin: [3, 8, 3, 8], objectName: name("test-table") });
-[["−19%", "MAE versus the length-only power law (Rg = R0·N^ν, fitted on train)"],
- ["36%", "of the variance that length cannot explain is captured by the graph model"],
+  [th("4,103 test chains"), th("Length only", "right"), th("Composition + length", "right"), th("ContactGAT", "right")],
+  [td("Parameters"), td("2", "right"), td("21", "right"), td("18,721", "right")],
+  [td("MAE (nm)"), td("0.124", "right"), tdb("0.098"), tdb("0.100")],
+  [td("RMSE (nm)"), td("0.210", "right"), td("0.177", "right"), td("0.173", "right")],
+  [td("R²"), td("0.972", "right"), td("0.980", "right"), td("0.981", "right")],
+], { x: 6.15, y: 1.65, w: 6.58, colW: [1.9, 1.38, 1.85, 1.45], rowH: 0.42, fontSize: 14, border: { type: "solid", pt: 0.75, color: "D3D9E0" }, margin: [3, 6, 3, 6], objectName: name("test-table") });
+[["Tie", "GAT − composition MAE: +0.002 nm, 95% CI [−0.001, +0.005]"],
+ ["36% vs 31%", "of the variance length cannot explain: GAT vs composition model"],
 ].forEach(([v, b], i) => {
   const x = 6.15 + i * 3.39;
-  card(s, x, 4.1, 3.19, 2.5);
-  bigStat(s, v, x + 0.25, 4.3, 2.7);
-  txt(s, b, { x: x + 0.25, y: 5.1, w: 2.69, h: 1.35, fontSize: 14 });
+  card(s, x, 4.3, 3.19, 2.3);
+  bigStat(s, v, x + 0.25, 4.45, 2.8);
+  txt(s, b, { x: x + 0.25, y: 5.3, w: 2.69, h: 1.15, fontSize: 14 });
 });
 s.addNotes(notes("restest"));
 
 // ---------- 12 results: experiment ----------
 s = pres.addSlide({ masterName: "Content Tint", sectionTitle: "Results" });
-head(s, "RESULTS · EXPERIMENTAL RG", "Trained only on simulations, it still tracks experiments");
+head(s, "RESULTS · EXPERIMENTAL RG", "On real experiments, the graph model does beat composition", 28);
 img(s, "exp_parity.png", 0.6, 1.65, 5.22, 4.9, "Parity plot of predicted versus experimental Rg for 151 sequences; orange diamonds mark sequences contained in a training sequence");
 s.addTable([
   [th("151 experimental Rg"), th("MAE", "right"), th("R²", "right"), th("r", "right")],
   [td("Length only"), td("0.416", "right"), td("0.744", "right"), td("0.865", "right")],
+  [td("Composition + length"), td("0.331", "right"), td("0.822", "right"), td("0.908", "right")],
   [td("ContactGAT"), tdb("0.295"), tdb("0.846"), tdb("0.921")],
   [td("ContactGAT, no overlap (129)"), td("0.296", "right"), td("0.841", "right"), td("0.918", "right")],
-], { x: 6.15, y: 1.65, w: 6.58, colW: [3.28, 1.1, 1.1, 1.1], rowH: 0.42, fontSize: 15, border: { type: "solid", pt: 0.75, color: "D3D9E0" }, margin: [3, 8, 3, 8], objectName: name("exp-table") });
-card(s, 6.15, 3.6, 6.58, 1.65, C.background1);
-cardText(s, 6.15, 3.6, 6.58, 1.65, "Bigger gain than on simulations", "MAE 0.42 → 0.30 nm vs length alone. The 22 orange sequences sit inside training chains; dropping them changes almost nothing.");
-card(s, 6.15, 5.45, 6.58, 1.25, C.background1);
-cardText(s, 6.15, 5.45, 6.58, 1.25, "Error is 3× the simulated test (0.30 vs 0.10 nm)", "We inherit the simulation model’s gap to experiment.");
+], { x: 6.15, y: 1.65, w: 6.58, colW: [3.28, 1.1, 1.1, 1.1], rowH: 0.4, fontSize: 15, border: { type: "solid", pt: 0.75, color: "D3D9E0" }, margin: [3, 8, 3, 8], objectName: name("exp-table") });
+card(s, 6.15, 4.0, 6.58, 1.45, C.background1);
+cardText(s, 6.15, 4.0, 6.58, 1.45, "−0.036 nm vs composition", "Paired bootstrap 95% CI [−0.054, −0.018]; GAT is closer on 61% of sequences. One training seed.");
+card(s, 6.15, 5.6, 6.58, 1.1, C.background1);
+cardText(s, 6.15, 5.6, 6.58, 1.1, "Error is 3× the simulated test (0.30 vs 0.10 nm)", "Labels come from one simulation model, so we inherit its gap to experiment.");
 s.addNotes(notes("resexp"));
 
-// ---------- 13 limitations ----------
+// ---------- 13 diagnosis ----------
 pres.addSection({ title: "Wrap-up" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Wrap-up" });
-head(s, "LIMITATIONS & NEXT STEPS", "What we still need to fix");
-[["Prior counted on all chains", "The contact table used all 28,058 trajectories, including validation and test. ", "Rebuild it from training chains only, as planned."],
- ["Prior has no distance bands", "f(a,b) is one 20 × 20 table, so dividing by p(band) mostly picks the farthest residues. ", "A band-resolved p(a,b,d)."],
- ["Ablations not run yet", "Only the length-only baseline so far, and one seed. ", "Local-chain GAT, prior-free graph, fixed aggregation; 3 seeds."],
- ["Which edges matter?", "No attention or edge-removal analysis yet. ", "Delete top-ranked vs random non-local edges and measure the change in Rg."],
-].forEach(([h, b, nx], i) => {
-  const x = 0.6 + (i % 2) * 6.18;
-  const y = 1.7 + Math.floor(i / 2) * 2.6;
-  card(s, x, y, 5.95, 2.4);
-  s.addShape(S.OVAL, { x: x + 0.25, y: y + 0.25, w: 0.5, h: 0.5, fill: { color: C.accent3 }, line: { color: C.accent3 }, objectName: name("badge") });
-  txt(s, String(i + 1), { x: x + 0.25, y: y + 0.25, w: 0.5, h: 0.5, fontSize: 18, bold: true, color: C.background1, align: "center", valign: "middle", paraSpaceAfter: 0 });
-  txt(s, h, { x: x + 0.95, y: y + 0.3, w: 4.75, h: 0.45, fontSize: 18, bold: true, color: C.text1 });
-  txt(s, [{ text: b }, { text: "Next: ", options: { bold: true, color: C.text1 } }, { text: nx }], { x: x + 0.25, y: y + 0.95, w: 5.45, h: 1.3 });
-});
+head(s, "DIAGNOSIS", "Why the graph adds little: distance decides the edges");
+img(s, "edge_scales.png", 0.6, 1.65, 6.4, 3.98, "Log-scale comparison: average contact frequency across the five distance bands spans about 1,300-fold; across amino-acid pairs it spans only 2.1-fold");
+txt(s, "Edge score = f(a,b) / p(d). The pair term barely moves; the distance term moves 1,300×.", { x: 0.6, y: 5.8, w: 6.4, h: 0.7, fontSize: 13, color: C.accent6 });
+card(s, 7.3, 1.65, 5.43, 2.2);
+bigStat(s, "96.6%", 7.55, 1.8, 4.9, C.accent3);
+txt(s, "of chosen partners lie in the farthest available distance band (300 test chains). Amino-acid type only breaks ties.", { x: 7.55, y: 2.65, w: 4.93, h: 1.05, fontSize: 14 });
+s.addTable([
+  [th("Same composition, reordered"), th("Measured", "right"), th("Predicted", "right")],
+  [td("6 seqs · 107 aa"), td("2.21–2.94 nm", "right"), tdb("3.00–3.08 nm")],
+  [td("7 seqs · 334 aa"), td("4.06–5.44 nm", "right"), tdb("5.27–5.33 nm")],
+], { x: 7.3, y: 4.1, w: 5.43, colW: [2.15, 1.64, 1.64], rowH: 0.42, fontSize: 14, border: { type: "solid", pt: 0.75, color: "D3D9E0" }, margin: [3, 6, 3, 6], objectName: name("perm-table") });
+txt(s, "Also open: contact table counted on all chains, including test; one seed; ablations not yet run.", { x: 7.3, y: 5.8, w: 5.43, h: 0.7, fontSize: 13, color: C.accent6 });
 s.addNotes(notes("limits"));
 
 // ---------- 14 close ----------
 s = pres.addSlide({ masterName: "Statement", sectionTitle: "Wrap-up" });
-head(s, "TAKEAWAYS", "Putting residue pairs into the graph works, with a small model");
-[["1", "Physics as input", "Simulation contacts become a 12 KB table that sets the graph’s edges and edge features. No simulation at prediction time."],
- ["2", "Small and accurate", "18.7k parameters: test MAE 0.10 nm (R² 0.98); experimental MAE 0.30 nm, down from 0.42 nm with length alone."],
- ["3", "Next", "Training-only, band-resolved prior, then the controlled ablations to show which graph choices help."],
+head(s, "TAKEAWAYS", "What we can say, and what comes next");
+[["1", "Small, and it transfers", "18.7k parameters, no simulation at prediction time. On 151 experiments: MAE 0.30 nm, ahead of composition (0.33) and length (0.42)."],
+ ["2", "Report the composition baseline", "On simulated data a 21-parameter composition model ties our graph. A high R² alone says little."],
+ ["3", "Next: fix the edges", "Band-resolved p(a,b,d) from training chains only, then local-only and prior-free ablations over 3 seeds."],
 ].forEach(([n, h, b], i) => {
   const x = 0.6 + i * 4.125;
   card(s, x, 1.75, 3.88, 3.2, C.accent5);

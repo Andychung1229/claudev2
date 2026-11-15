@@ -20,12 +20,12 @@
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~0:45]
-Here is what a whole graph looks like, for a longer chain of 155 residues. This is the adjacency matrix: blue is the local band along the diagonal, orange are the non-local edges.
+<aside>[~0:50]
+Thanks. So that was one residue. Here is a whole graph, for a chain of 155 residues. This is its adjacency matrix: the blue band along the diagonal is the local edges, and the orange cells are the non-local edges.
 
-Only about ten percent of all residue pairs become edges. In general the number of edges grows like N times w plus k, instead of N squared for a complete graph, which keeps message passing cheap.
+Only about ten percent of all residue pairs become edges, so the graph grows like N times w plus k instead of N squared, and message passing stays cheap.
 
-Each edge also carries ten numbers: the contact frequency from our table, the normalised sequence distance, a one-hot code for which distance band it falls in, and two flags for local edges and self-loops.
+Every edge carries ten numbers: the contact frequency from our table, the sequence distance, a one-hot distance band, and two flags for local edges and self-loops.
 
-You might notice that the orange edges all sit far from the diagonal. We come back to why in the limitations.</aside>
+Keep one thing in mind: all the orange edges sit far from the diagonal. That will matter when we look at the results.</aside>
 </section>

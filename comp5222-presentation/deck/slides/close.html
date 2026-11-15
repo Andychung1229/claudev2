@@ -1,33 +1,31 @@
 <section id="close" class="night">
 <p class="eyebrow">Takeaways</p>
-<h2 class="title">Putting residue pairs into the graph works — with a small model</h2>
+<h2 class="title">What we can say, and what comes next</h2>
 <div class="row" style="gap:28px;">
 <div class="card rise" style="--i:0; flex:1;">
 <p class="stepn">1</p>
-<p class="cardh">Physics as input</p>
-<p class="txt">Simulation contacts become a 12 KB table that sets the graph’s edges and edge features. No simulation at prediction time.</p>
+<p class="cardh">Small, and it transfers</p>
+<p class="txt">18.7k parameters, no simulation at prediction time. On 151 experiments: MAE 0.30 nm, ahead of composition (0.33) and length (0.42).</p>
 </div>
 <div class="card rise" style="--i:1; flex:1;">
 <p class="stepn">2</p>
-<p class="cardh">Small and accurate</p>
-<p class="txt">18.7k parameters: test MAE 0.10 nm (R² 0.98); experimental MAE 0.30 nm, down from 0.42 nm with length alone.</p>
+<p class="cardh">Report the composition baseline</p>
+<p class="txt">On simulated data a 21-parameter composition model ties our graph. A high R² alone says little.</p>
 </div>
 <div class="card rise" style="--i:2; flex:1;">
 <p class="stepn">3</p>
-<p class="cardh">Next</p>
-<p class="txt">Training-only, band-resolved prior, then the controlled ablations to show which graph choices help.</p>
+<p class="cardh">Next: fix the edges</p>
+<p class="txt">Band-resolved p(a,b,d) from training chains only, then local-only and prior-free ablations over 3 seeds.</p>
 </div>
 </div>
 <p class="title rise" style="--i:3; margin-top:48px; font-size:60px;">Thank you — questions?</p>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
 <aside>[~0:25]
-To wrap up, three takeaways.
+Three takeaways. One: a tiny, simulation-free graph model predicts IDP size and transfers to experiment better than a composition baseline.
 
-One: we moved pairwise physics out of the network and into the input. Simulation contacts become a tiny table that decides the graph’s edges and edge features, and prediction needs no simulation.
+Two: on simulated data, composition and length already explain most of Rg, so that baseline belongs in every comparison.
 
-Two: with under nineteen thousand parameters, the model reaches 0.10 nanometres error on unseen simulated proteins and 0.30 on real experiments, clearly better than length alone.
+Three: our edge rule was dominated by distance. The fix is the band-resolved contact table from our proposal, which compares amino-acid pairs at the same distance, followed by the planned ablations.
 
-Three: next we fix the prior and run the controlled ablations, to show which graph choices actually help.
-
-Thank you. We are happy to take questions.</aside>
+Thank you.</aside>
 </section>

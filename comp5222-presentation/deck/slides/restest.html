@@ -1,35 +1,37 @@
 <section id="restest">
 <p class="eyebrow">Results · Simulated test set</p>
-<h2 class="title">On unseen proteins, the graph beats length alone</h2>
+<h2 class="title">On simulations, composition and length explain most of Rg</h2>
 <div class="row">
-<img class="fig rise" style="--i:0; width:660px; height:620px;" src="/_blob/c848c2f38a73ab5ccf64713b0887a84a" alt="Parity plot of predicted versus simulated Rg for 4,103 test chains; points lie tightly along the diagonal">
+<img class="fig rise" style="--i:0; width:620px; height:600px;" src="/_blob/c848c2f38a73ab5ccf64713b0887a84a" alt="Parity plot of predicted versus simulated Rg for 4,103 test chains; points lie tightly along the diagonal">
 <div class="col">
 <table class="tbl rise" style="--i:1;">
-<tr><th style="width:40%;">4,103 test chains</th><th style="width:30%; text-align:right;">Length only</th><th style="width:30%; text-align:right;">ContactGAT</th></tr>
-<tr><td>MAE (nm)</td><td style="text-align:right;">0.124</td><td style="text-align:right;">0.100</td></tr>
-<tr><td>RMSE (nm)</td><td style="text-align:right;">0.210</td><td style="text-align:right;">0.173</td></tr>
-<tr><td>R²</td><td style="text-align:right;">0.972</td><td style="text-align:right;">0.981</td></tr>
-<tr><td>Pearson r</td><td style="text-align:right;">0.986</td><td style="text-align:right;">0.992</td></tr>
+<tr><th style="width:31%;">4,103 test chains</th><th style="width:21%; text-align:right;">Length only</th><th style="width:26%; text-align:right;">Composition + length</th><th style="width:22%; text-align:right;">ContactGAT</th></tr>
+<tr><td>Parameters</td><td style="text-align:right;">2</td><td style="text-align:right;">21</td><td style="text-align:right;">18,721</td></tr>
+<tr><td>MAE (nm)</td><td style="text-align:right;">0.124</td><td class="hi" style="text-align:right;"><b>0.098</b></td><td class="hi" style="text-align:right;"><b>0.100</b></td></tr>
+<tr><td>RMSE (nm)</td><td style="text-align:right;">0.210</td><td style="text-align:right;">0.177</td><td style="text-align:right;">0.173</td></tr>
+<tr><td>R²</td><td style="text-align:right;">0.972</td><td style="text-align:right;">0.980</td><td style="text-align:right;">0.981</td></tr>
 </table>
 <div class="row" style="margin-top:8px; gap:24px;">
 <div class="card rise" style="--i:2; flex:1;">
-<p class="big">−19%</p>
-<p class="txt">MAE versus the length-only power law (Rg = R0·N^ν, fitted on train)</p>
+<p class="big">Tie</p>
+<p class="txt">GAT − composition MAE: +0.002 nm, 95% CI [−0.001, +0.005]</p>
 </div>
 <div class="card rise" style="--i:3; flex:1;">
-<p class="big">36%</p>
-<p class="txt">of the variance that length cannot explain is captured by the graph model</p>
+<p class="big">36% <span style="font-size:48px; color:#5E6875;">vs 31%</span></p>
+<p class="txt">of the variance length cannot explain: GAT vs composition model</p>
 </div>
 </div>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~1:10]
-Now the results. First, the simulated test set: four thousand chains from proteins the model never saw.
+<aside>[~1:20]
+On four thousand unseen proteins, the model is accurate: mean error 0.10 nanometres, R squared 0.98.
 
-The parity plot is tight along the diagonal. The mean absolute error is 0.10 nanometres, and R squared is 0.98.
+But a high R squared here proves very little, because length alone already gives 0.97. So we tested two simple baselines on the same split. Against length alone, our model cuts the error by about a fifth.
 
-But we want to be careful here, because length alone explains a lot of Rg. So we compare with the simplest baseline from our proposal: a power law in length, fitted on the training set. That baseline already gets R squared 0.97 — so a high R squared by itself does not prove much.
+The harder test is a linear model on amino-acid composition plus length: just 21 parameters. And on simulated data, it ties with our graph model: 0.098 versus 0.100 nanometres, and the difference is within noise.
 
-Against that baseline, the graph model cuts the mean absolute error by about nineteen percent, from 0.124 to 0.100 nanometres. A better way to see it: if we remove what length explains and look only at what is left — how much more compact or expanded a chain is than its length predicts — the graph model captures about thirty-six percent of that leftover variance. That leftover part is exactly the sequence effect we care about.</aside>
+Of the variation that length cannot explain, our model captures 36 percent and the linear model 31. So on this benchmark, composition and length explain most of what our model predicts. We think any IDP predictor should report this baseline.
+
+Simulations are one thing. What about real experiments?</aside>
 </section>

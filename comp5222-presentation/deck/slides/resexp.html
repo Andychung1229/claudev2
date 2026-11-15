@@ -1,32 +1,35 @@
 <section id="resexp" class="mist">
 <p class="eyebrow">Results · Experimental Rg</p>
-<h2 class="title">Trained only on simulations, it still tracks real experiments</h2>
+<h2 class="title">On real experiments, the graph model does beat composition</h2>
 <div class="row">
-<img class="fig rise" style="--i:0; width:660px; height:620px;" src="/_blob/e181c5a481b1446c9e0217de4b53edfb" alt="Parity plot of predicted versus experimental Rg for 151 sequences; blue circles are sequences not in the training set, orange diamonds are sequences contained in a training sequence; both follow the diagonal">
+<img class="fig rise" style="--i:0; width:620px; height:600px;" src="/_blob/e181c5a481b1446c9e0217de4b53edfb" alt="Parity plot of predicted versus experimental Rg for 151 sequences; blue circles are sequences not in the training set, orange diamonds are sequences contained in a training sequence; both follow the diagonal">
 <div class="col">
 <table class="tbl rise" style="--i:1;">
 <tr><th style="width:52%;">151 experimental Rg</th><th style="width:16%; text-align:right;">MAE</th><th style="width:16%; text-align:right;">R²</th><th style="width:16%; text-align:right;">r</th></tr>
 <tr><td>Length only</td><td style="text-align:right;">0.416</td><td style="text-align:right;">0.744</td><td style="text-align:right;">0.865</td></tr>
-<tr><td>ContactGAT</td><td style="text-align:right;">0.295</td><td style="text-align:right;">0.846</td><td style="text-align:right;">0.921</td></tr>
+<tr><td>Composition + length</td><td style="text-align:right;">0.331</td><td style="text-align:right;">0.822</td><td style="text-align:right;">0.908</td></tr>
+<tr class="hi"><td><b>ContactGAT</b></td><td style="text-align:right;"><b>0.295</b></td><td style="text-align:right;"><b>0.846</b></td><td style="text-align:right;"><b>0.921</b></td></tr>
 <tr><td>ContactGAT, no overlap (129)</td><td style="text-align:right;">0.296</td><td style="text-align:right;">0.841</td><td style="text-align:right;">0.918</td></tr>
 </table>
 <div class="card rise" style="--i:2;">
-<p class="cardh">Bigger gain than on simulations</p>
-<p class="txt">MAE 0.42 → 0.30 nm vs length alone. The 22 orange sequences sit inside training chains; dropping them changes almost nothing.</p>
+<p class="cardh">−0.036 nm vs composition</p>
+<p class="txt">Paired bootstrap 95% CI [−0.054, −0.018]; GAT is closer on 61% of sequences. One training seed.</p>
 </div>
 <div class="card rise" style="--i:3;">
 <p class="cardh">Error is 3× the simulated test</p>
-<p class="txt">We inherit the simulation model’s gap to experiment.</p>
+<p class="txt">Labels come from one simulation model, so we inherit its gap to experiment.</p>
 </div>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~0:55]
-The harder test is real experimental data: 151 sequences with measured Rg. Remember, the model never saw a single experimental label.
+<aside>[~1:00]
+Here are 151 sequences with experimentally measured Rg. The model never saw an experimental label, yet it tracks them with a correlation of 0.92.
 
-It still follows the diagonal, with a Pearson correlation of 0.92 and R squared of 0.85. And here the gain over length alone is larger: the error drops from 0.42 to 0.30 nanometres.
+Here the graph model does beat the composition model: 0.295 versus 0.331 nanometres, and a paired bootstrap puts that difference clearly below zero.
 
-We also checked for overlap. Twenty-two of these 151 sequences, the orange diamonds, appear inside a training sequence. If we remove them, the numbers barely change, so the result is not driven by memorisation.
+Twenty-two of these sequences, the orange diamonds, sit inside training sequences; dropping them changes nothing.
 
-The honest caveat: the error is about three times larger than on the simulated test set. Our labels come from one simulation model, so whatever that model gets wrong about real proteins, we inherit. Closing that gap would need experimental data or a better simulation model, not just a better graph.</aside>
+The caveat is that the error is three times larger than on simulations. Our labels come from one simulation model, so we inherit its gap to experiment.
+
+So why does the graph help so little on simulations? We looked closely at the edges.</aside>
 </section>

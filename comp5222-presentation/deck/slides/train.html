@@ -23,12 +23,10 @@
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~0:40]
-Quickly, the training setup.
+<aside>[~0:30]
+We trained it on a split that really tests unseen proteins. We split seventy, fifteen, fifteen by protein, not by sequence: all regions of the same UniProt protein stay in one split, so the test set holds proteins the model has never seen.
 
-We split the data seventy, fifteen, fifteen, but by protein, not by sequence: all regions from the same UniProt protein, and any identical sequences, stay in the same split. So the test set really contains proteins the model has never seen. We keep chains up to 512 residues, which gives about nineteen thousand training chains and four thousand each for validation and test.
+We minimise squared error on log Rg with AdamW and early stopping. Training takes about thirteen minutes on one consumer GPU. The validation curve is noisy; a learning-rate schedule should fix that.
 
-We minimise mean squared error on log Rg with AdamW, group batches by length so the GPU stays full, and stop early on validation error. Training takes about thirteen minutes on a single consumer GPU.
-
-On the right is the validation curve. The best epoch was 31. You can see the error jumps quite a lot between epochs — a learning-rate schedule should smooth that out.</aside>
+So, how well does it do?</aside>
 </section>
