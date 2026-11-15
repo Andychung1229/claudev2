@@ -102,13 +102,13 @@ Proposal 第 5 節自己寫咗：
 
 | 頁 | 講者 | 一句重點 | 時間 |
 |---|---|---|---|
-| 1 | Partner | 題目同兩個人 | 0:20 |
-| 2 | Partner | IDP 冇固定結構，要用 ensemble 描述 | 0:55 |
-| 3 | Partner | Rg 係 ensemble 嘅大細；長度定 baseline，序列定其餘 | 0:55 |
-| 4 | Partner | 冇結構數據、現有模型讀 1D、數據少 | 0:50 |
-| 5 | Partner | 我哋嘅想法：將殘基對資訊放入 graph | 0:40 |
-| 6 | Partner | 由 2,800 萬幀模擬數出接觸表；同已知物理一致 | 1:05 |
-| 7 | Partner | 序列 → graph：node、local edge、non-local edge | 1:10 |
+| 1 | Partner | 題目同兩個人 | 0:25 |
+| 2 | Partner | AlphaFold 只俾一張靜態結構，睇唔到 IDP 點郁 | 0:50 |
+| 3 | Partner | IDP 冇固定結構，要用 ensemble 描述 | 1:00 |
+| 4 | Partner | Rg 係 ensemble 嘅大細；殘基之間嘅非共價作用決定佢 | 1:00 |
+| 5 | Partner | 我哋嘅想法：將殘基對資訊放入 graph | 0:45 |
+| 6 | Partner | 由 2,800 萬幀模擬數出接觸表；同已知物理一致 | 1:10 |
+| 7 | Partner | 序列 → graph：node、local edge、non-local edge | 1:15 |
 | **8** | **你** | **graph 好稀疏；每條 edge 有 10 個 feature** | **0:50** |
 | **9** | **你** | **edge-aware GAT；先驗經 attention 入去** | **1:00** |
 | **10** | **你** | **按蛋白分 split；13 分鐘 train 完** | **0:30** |
@@ -117,7 +117,7 @@ Proposal 第 5 節自己寫咗：
 | **13** | **你** | **診斷：edge 由距離決定，graph 睇唔到排列** | **0:55** |
 | **14** | **你** | **三個 takeaway + 下一步** | **0:25** |
 
-Partner 6:35，你 6:00。Partner 要再壓 30 秒左右先夠 12 分鐘，最易係第 2、3 頁各減 15 秒。
+Partner 版（第 2 頁換咗 AlphaFold，原本「why it's hard」嗰頁刪咗）按 notes 計大約 6:25，你 6:00。Partner 要再壓 25 秒左右先夠 12 分鐘。
 
 ### 故事嘅弧線（你嗰半）
 
