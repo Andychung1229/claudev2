@@ -21,7 +21,7 @@ def build_graph(
     *,
     min_seq_sep: int = 2,
 ) -> dict[str, np.ndarray]:
-    """单条序列（稠密边：|i-j|≥min_seq_sep）。"""
+    """单条序列（稠密边：|i-j|≥min_seq_sep）。
 
     node: (N, 20) one-hot
     edge: (N, N, 4)  [ε_{a_i a_j}, j-i, i/N, j/N]
