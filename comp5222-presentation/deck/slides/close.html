@@ -1,0 +1,33 @@
+<section id="close" class="night">
+<p class="eyebrow">Takeaways</p>
+<h2 class="title">Putting residue pairs into the graph works — with a small model</h2>
+<div class="row" style="gap:28px;">
+<div class="card rise" style="--i:0; flex:1;">
+<p class="stepn">1</p>
+<p class="cardh">Physics as input</p>
+<p class="txt">Simulation contacts become a 12 KB table that sets the graph’s edges and edge features. No simulation at prediction time.</p>
+</div>
+<div class="card rise" style="--i:1; flex:1;">
+<p class="stepn">2</p>
+<p class="cardh">Small and accurate</p>
+<p class="txt">18.7k parameters: test MAE 0.10 nm (R² 0.98); experimental MAE 0.30 nm, down from 0.42 nm with length alone.</p>
+</div>
+<div class="card rise" style="--i:2; flex:1;">
+<p class="stepn">3</p>
+<p class="cardh">Next</p>
+<p class="txt">Training-only, band-resolved prior, then the controlled ablations to show which graph choices help.</p>
+</div>
+</div>
+<p class="title rise" style="--i:3; margin-top:48px; font-size:60px;">Thank you — questions?</p>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:25]
+To wrap up, three takeaways.
+
+One: we moved pairwise physics out of the network and into the input. Simulation contacts become a tiny table that decides the graph’s edges and edge features, and prediction needs no simulation.
+
+Two: with under nineteen thousand parameters, the model reaches 0.10 nanometres error on unseen simulated proteins and 0.30 on real experiments, clearly better than length alone.
+
+Three: next we fix the prior and run the controlled ablations, to show which graph choices actually help.
+
+Thank you. We are happy to take questions.</aside>
+</section>

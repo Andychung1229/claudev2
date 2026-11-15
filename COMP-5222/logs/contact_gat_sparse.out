@@ -1,0 +1,66 @@
+==== COMP-5222 sparse contact GAT ====
+host=kee1706  date=2026-11-05T00:59:20+08:00
+ROOT=/media/cbe/18TB HDD1/COMP-5222
+PYTHON=/home/cbe/miniconda3/bin/python3  (/home/cbe/miniconda3/bin/python3)
+torch 2.7.1 cuda True gpu NVIDIA GeForce RTX 5060 Ti
+GPU 0: NVIDIA GeForce RTX 5060 Ti (UUID: GPU-aebd2222-38b7-7de0-c934-20a26ee8affa)
+train_tsv=/media/cbe/18TB HDD1/COMP-5222/data/processed/idrome_split_train.tsv  n=19615
+val_tsv=/media/cbe/18TB HDD1/COMP-5222/data/processed/idrome_split_val.tsv  n=4204
+test_tsv=/media/cbe/18TB HDD1/COMP-5222/data/processed/idrome_split_test.tsv  n=4239
+contact_table=/media/cbe/18TB HDD1/COMP-5222/data/processed/aa_contact_table.npz  (12K)
+out=/media/cbe/18TB HDD1/COMP-5222/runs/contact_gat_idrome_sparse
+开始训练  graph=sparse w=2 k=8  loss=MSE(log Rg)  readout=mean+max+logN
+idrome_split_train.tsv: skip 755 sequences with N not in [1, 512]
+idrome_split_val.tsv: skip 184 sequences with N not in [1, 512]
+idrome_split_test.tsv: skip 136 sequences with N not in [1, 512]
+device=cuda  train_n=18860  val_n=4020  test_n=4103  loss=mse  log_target=True  log_base=e  graph=sparse  w=2  k=8  batch=64  pair_budget=8388608  amp=True
+model=ContactGAT  layers=2  heads=4  hidden=64  node_dim=21  edge_in=10  edge_mlp=8  readout=meanmax  params=18721
+epoch   1  train_loss=0.04092  val_mae=0.4171 nm  val_rmse=0.5739 nm  val_r2=0.7855  val_log_mse=0.02684
+epoch   2  train_loss=0.01778  val_mae=0.4087 nm  val_rmse=0.5885 nm  val_r2=0.7745  val_log_mse=0.02495
+epoch   3  train_loss=0.01372  val_mae=0.2893 nm  val_rmse=0.3994 nm  val_r2=0.8961  val_log_mse=0.01437
+epoch   4  train_loss=0.01379  val_mae=0.3981 nm  val_rmse=0.5756 nm  val_r2=0.7842  val_log_mse=0.02292
+epoch   5  train_loss=0.01091  val_mae=0.2743 nm  val_rmse=0.4014 nm  val_r2=0.8951  val_log_mse=0.01197
+epoch   6  train_loss=0.01079  val_mae=0.4264 nm  val_rmse=0.6293 nm  val_r2=0.7421  val_log_mse=0.02630
+epoch   7  train_loss=0.01035  val_mae=0.2869 nm  val_rmse=0.4116 nm  val_r2=0.8896  val_log_mse=0.01214
+epoch   8  train_loss=0.00990  val_mae=0.1485 nm  val_rmse=0.2236 nm  val_r2=0.9674  val_log_mse=0.00476
+epoch   9  train_loss=0.00847  val_mae=0.2893 nm  val_rmse=0.3431 nm  val_r2=0.9233  val_log_mse=0.01710
+epoch  10  train_loss=0.00823  val_mae=0.2976 nm  val_rmse=0.3407 nm  val_r2=0.9244  val_log_mse=0.02484
+epoch  11  train_loss=0.00797  val_mae=0.2137 nm  val_rmse=0.3195 nm  val_r2=0.9335  val_log_mse=0.00731
+epoch  12  train_loss=0.00730  val_mae=0.1572 nm  val_rmse=0.2760 nm  val_r2=0.9504  val_log_mse=0.00429
+epoch  13  train_loss=0.00762  val_mae=0.2616 nm  val_rmse=0.3763 nm  val_r2=0.9078  val_log_mse=0.00988
+epoch  14  train_loss=0.00678  val_mae=0.2626 nm  val_rmse=0.3568 nm  val_r2=0.9171  val_log_mse=0.01021
+epoch  15  train_loss=0.00691  val_mae=0.1678 nm  val_rmse=0.2818 nm  val_r2=0.9483  val_log_mse=0.00482
+epoch  16  train_loss=0.00753  val_mae=0.1748 nm  val_rmse=0.3144 nm  val_r2=0.9356  val_log_mse=0.00509
+epoch  17  train_loss=0.00609  val_mae=0.2458 nm  val_rmse=0.3885 nm  val_r2=0.9017  val_log_mse=0.00888
+epoch  18  train_loss=0.00792  val_mae=0.1877 nm  val_rmse=0.2898 nm  val_r2=0.9453  val_log_mse=0.00571
+epoch  19  train_loss=0.00627  val_mae=0.2174 nm  val_rmse=0.3291 nm  val_r2=0.9294  val_log_mse=0.00709
+epoch  20  train_loss=0.00647  val_mae=0.2659 nm  val_rmse=0.4059 nm  val_r2=0.8927  val_log_mse=0.01014
+epoch  21  train_loss=0.00564  val_mae=0.2333 nm  val_rmse=0.3512 nm  val_r2=0.9197  val_log_mse=0.00811
+epoch  22  train_loss=0.00616  val_mae=0.1542 nm  val_rmse=0.2277 nm  val_r2=0.9662  val_log_mse=0.00457
+epoch  23  train_loss=0.00623  val_mae=0.1416 nm  val_rmse=0.2143 nm  val_r2=0.9701  val_log_mse=0.00407
+epoch  24  train_loss=0.00517  val_mae=0.1573 nm  val_rmse=0.2315 nm  val_r2=0.9651  val_log_mse=0.00485
+epoch  25  train_loss=0.00731  val_mae=0.1920 nm  val_rmse=0.2886 nm  val_r2=0.9457  val_log_mse=0.00572
+epoch  26  train_loss=0.00442  val_mae=0.1674 nm  val_rmse=0.2963 nm  val_r2=0.9428  val_log_mse=0.00465
+epoch  27  train_loss=0.00558  val_mae=0.2069 nm  val_rmse=0.2886 nm  val_r2=0.9458  val_log_mse=0.00671
+epoch  28  train_loss=0.00430  val_mae=0.2244 nm  val_rmse=0.3593 nm  val_r2=0.9159  val_log_mse=0.00739
+epoch  29  train_loss=0.00504  val_mae=0.1664 nm  val_rmse=0.2225 nm  val_r2=0.9678  val_log_mse=0.00545
+epoch  30  train_loss=0.00453  val_mae=0.1973 nm  val_rmse=0.2982 nm  val_r2=0.9421  val_log_mse=0.00596
+epoch  31  train_loss=0.00453  val_mae=0.1045 nm  val_rmse=0.1855 nm  val_r2=0.9776  val_log_mse=0.00237
+epoch  32  train_loss=0.00437  val_mae=0.1675 nm  val_rmse=0.2231 nm  val_r2=0.9676  val_log_mse=0.00562
+epoch  33  train_loss=0.00420  val_mae=0.1353 nm  val_rmse=0.1981 nm  val_r2=0.9744  val_log_mse=0.00411
+epoch  34  train_loss=0.00543  val_mae=0.1704 nm  val_rmse=0.2709 nm  val_r2=0.9522  val_log_mse=0.00476
+epoch  35  train_loss=0.00441  val_mae=0.1405 nm  val_rmse=0.2111 nm  val_r2=0.9710  val_log_mse=0.00361
+epoch  36  train_loss=0.00384  val_mae=0.1104 nm  val_rmse=0.1862 nm  val_r2=0.9774  val_log_mse=0.00259
+epoch  37  train_loss=0.00657  val_mae=0.1881 nm  val_rmse=0.2598 nm  val_r2=0.9560  val_log_mse=0.00579
+epoch  38  train_loss=0.00437  val_mae=0.1394 nm  val_rmse=0.2121 nm  val_r2=0.9707  val_log_mse=0.00395
+epoch  39  train_loss=0.00406  val_mae=0.2177 nm  val_rmse=0.2890 nm  val_r2=0.9456  val_log_mse=0.00726
+epoch  40  train_loss=0.00365  val_mae=0.1542 nm  val_rmse=0.2737 nm  val_r2=0.9512  val_log_mse=0.00384
+epoch  41  train_loss=0.00474  val_mae=0.2714 nm  val_rmse=0.4094 nm  val_r2=0.8908  val_log_mse=0.01023
+epoch  42  train_loss=0.00397  val_mae=0.1375 nm  val_rmse=0.2333 nm  val_r2=0.9645  val_log_mse=0.00320
+epoch  43  train_loss=0.00408  val_mae=0.1388 nm  val_rmse=0.2323 nm  val_r2=0.9649  val_log_mse=0.00318
+epoch  44  train_loss=0.00348  val_mae=0.1540 nm  val_rmse=0.2416 nm  val_r2=0.9620  val_log_mse=0.00367
+epoch  45  train_loss=0.00347  val_mae=0.1056 nm  val_rmse=0.1769 nm  val_r2=0.9796  val_log_mse=0.00229
+epoch  46  train_loss=0.00404  val_mae=0.1514 nm  val_rmse=0.2260 nm  val_r2=0.9667  val_log_mse=0.00363
+early stop @ 46  best_val_mae_nm=0.10449
+test  mae=0.1002 nm  rmse=0.1727 nm  r2=0.9810
+完成 2026-11-05T01:12:22+08:00  out=/media/cbe/18TB HDD1/COMP-5222/runs/contact_gat_idrome_sparse

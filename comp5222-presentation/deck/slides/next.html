@@ -1,0 +1,29 @@
+<section id="next" class="slide alt">
+<p class="eyebrow in" style="--i:0">Status vs proposal</p>
+<h2 class="title in" style="--i:1">The graph pipeline runs end to end; the controlled tests are next</h2>
+<div class="row" style="gap:48px; align-items:flex-start">
+<div class="card blue in" style="--i:2">
+<h3 class="col-title">Done</h3>
+<ul class="list">
+<li>Group split 70/15/15 by UniProt and identical sequence</li>
+<li>8 Å contact table: f(a,b) and band means p(d)</li>
+<li>Sparse graph: self + local (w = 2) + top-8 non-local</li>
+<li>10-d edge features, edge-aware GAT, mean ‖ max ‖ log N</li>
+<li>Evaluated on IDRome test and 151 experimental R<i>g</i></li>
+</ul>
+</div>
+<div class="card orange in" style="--i:3">
+<h3 class="col-title">Next</h3>
+<ul class="list">
+<li>Baselines: length-only power law, composition MLP, 1D CNN</li>
+<li>Graph ablations: local-only, no prior, random edges, fixed weights</li>
+<li>Sweep k ∈ {4, 8, 16}; three seeds</li>
+<li>Contact table from training chains only (now all 28,058)</li>
+<li>Band-aware table p(a,b,d) with smoothing λ</li>
+<li>Edge removal: top-ranked vs random non-local edges</li>
+</ul>
+</div>
+</div>
+<div class="foot"><p class="src">Plan: proposal Table 1 and Section 4</p><div class="pnum"></div></div>
+<aside>The full graph pipeline from the proposal works end to end. What is missing are the controlled comparisons that answer our three questions: do non-local edges beat a local chain, does the contact prior beat distance features alone, and does attention beat fixed weights. Two fixes come first: the contact table currently uses all 28,058 chains, including validation and test, so we will rebuild it from training chains only; and we will switch to the band-aware table so edge ranking is not dominated by separation.</aside>
+</section>

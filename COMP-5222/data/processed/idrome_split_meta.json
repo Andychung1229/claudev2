@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "rule": "same UniProt_ID and identical sequences stay together; 70/15/15 of connected groups",
+  "n_sequences": 28058,
+  "n_groups": 15331,
+  "n_uniprot": 15424,
+  "n_train_groups": 10732,
+  "n_val_groups": 2300,
+  "n_test_groups": 2299,
+  "n_train": 19615,
+  "n_val": 4204,
+  "n_test": 4239,
+  "n_train_le512": 18860,
+  "n_val_le512": 4020,
+  "n_test_le512": 4103
+}

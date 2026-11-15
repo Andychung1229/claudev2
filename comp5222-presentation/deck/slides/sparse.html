@@ -1,0 +1,31 @@
+<section id="sparse">
+<p class="eyebrow">Method · Step 3</p>
+<h2 class="title">The graph is sparse, and every edge carries features</h2>
+<div class="row">
+<img class="fig rise" style="--i:0; width:620px; height:620px;" src="/_blob/4367d15ccb2d8d26fb4ce9c6bfb53385" alt="Adjacency matrix of a 155-residue test chain: a blue band along the diagonal for local edges and scattered orange cells for non-local edges, which all lie far from the diagonal">
+<div class="col">
+<div class="card rise" style="--i:1;">
+<p class="big">10%</p>
+<p class="txt">of residue pairs become edges in this 155-residue chain (1,192 of 11,935). Edges grow as O(N·(w + k)), not O(N²).</p>
+</div>
+<div class="card rise" style="--i:2;">
+<p class="cardh">10 numbers per edge</p>
+<ul class="pts">
+<li>Contact frequency f(a,b) from the prior</li>
+<li>Sequence distance |i − j| / (N − 1)</li>
+<li>Distance band, one-hot: 1, 2–4, 5–8, 9–16, 17–32, &gt;32</li>
+<li>Local-edge flag and self-loop flag</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:45]
+Here is what a whole graph looks like, for a longer chain of 155 residues. This is the adjacency matrix: blue is the local band along the diagonal, orange are the non-local edges.
+
+Only about ten percent of all residue pairs become edges. In general the number of edges grows like N times w plus k, instead of N squared for a complete graph, which keeps message passing cheap.
+
+Each edge also carries ten numbers: the contact frequency from our table, the normalised sequence distance, a one-hot code for which distance band it falls in, and two flags for local edges and self-loops.
+
+You might notice that the orange edges all sit far from the diagonal. We come back to why in the limitations.</aside>
+</section>

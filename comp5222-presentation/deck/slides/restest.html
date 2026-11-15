@@ -1,0 +1,35 @@
+<section id="restest">
+<p class="eyebrow">Results · Simulated test set</p>
+<h2 class="title">On unseen proteins, the graph beats length alone</h2>
+<div class="row">
+<img class="fig rise" style="--i:0; width:660px; height:620px;" src="/_blob/c848c2f38a73ab5ccf64713b0887a84a" alt="Parity plot of predicted versus simulated Rg for 4,103 test chains; points lie tightly along the diagonal">
+<div class="col">
+<table class="tbl rise" style="--i:1;">
+<tr><th style="width:40%;">4,103 test chains</th><th style="width:30%; text-align:right;">Length only</th><th style="width:30%; text-align:right;">ContactGAT</th></tr>
+<tr><td>MAE (nm)</td><td style="text-align:right;">0.124</td><td style="text-align:right;">0.100</td></tr>
+<tr><td>RMSE (nm)</td><td style="text-align:right;">0.210</td><td style="text-align:right;">0.173</td></tr>
+<tr><td>R²</td><td style="text-align:right;">0.972</td><td style="text-align:right;">0.981</td></tr>
+<tr><td>Pearson r</td><td style="text-align:right;">0.986</td><td style="text-align:right;">0.992</td></tr>
+</table>
+<div class="row" style="margin-top:8px; gap:24px;">
+<div class="card rise" style="--i:2; flex:1;">
+<p class="big">−19%</p>
+<p class="txt">MAE versus the length-only power law (Rg = R0·N^ν, fitted on train)</p>
+</div>
+<div class="card rise" style="--i:3; flex:1;">
+<p class="big">36%</p>
+<p class="txt">of the variance that length cannot explain is captured by the graph model</p>
+</div>
+</div>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~1:10]
+Now the results. First, the simulated test set: four thousand chains from proteins the model never saw.
+
+The parity plot is tight along the diagonal. The mean absolute error is 0.10 nanometres, and R squared is 0.98.
+
+But we want to be careful here, because length alone explains a lot of Rg. So we compare with the simplest baseline from our proposal: a power law in length, fitted on the training set. That baseline already gets R squared 0.97 — so a high R squared by itself does not prove much.
+
+Against that baseline, the graph model cuts the mean absolute error by about nineteen percent, from 0.124 to 0.100 nanometres. A better way to see it: if we remove what length explains and look only at what is left — how much more compact or expanded a chain is than its length predicts — the graph model captures about thirty-six percent of that leftover variance. That leftover part is exactly the sequence effect we care about.</aside>
+</section>

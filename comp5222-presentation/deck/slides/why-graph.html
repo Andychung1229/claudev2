@@ -1,0 +1,17 @@
+<section id="why-graph" class="slide alt">
+<p class="eyebrow in" style="--i:0">Motivation</p>
+<h2 class="title in" style="--i:1">R<i>g</i> is set by pairs of residues, so we hand the model the pairs</h2>
+<div class="row in" style="--i:2">
+<div class="card ink">
+<h3>Sequence-only models</h3>
+<p class="body">1D CNNs and protein language models read the chain as a string of tokens. Long-range contacts have to be learned from about 19k scalar R<i>g</i> labels.</p>
+</div>
+<div class="card orange">
+<h3>Our residue graph</h3>
+<p class="body">Contact statistics from simulations become edges and edge features. The GAT only learns how to weigh them, with 18,721 parameters.</p>
+</div>
+</div>
+<p class="lead in" style="--i:3">Proposal hypothesis: an explicit, sequence-derived interaction graph helps graph-level regression when labels are limited.</p>
+<div class="foot"><p class="src">COMP 5222 · ContactGAT</p><div class="pnum"></div></div>
+<aside>Rg comes from the balance between chain entropy and pairwise interactions between residues. A sequence model has to rediscover those pairwise effects from scalar labels alone. We move that pairwise knowledge into the input: the graph already tells the model which residue pairs tend to touch, so the network can stay small. This is a hypothesis we test, not something we assume.</aside>
+</section>

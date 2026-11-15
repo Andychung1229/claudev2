@@ -1,0 +1,34 @@
+<section id="train" class="mist">
+<p class="eyebrow">Method · Training</p>
+<h2 class="title">Training on unseen-protein splits</h2>
+<div class="row">
+<div class="col">
+<table class="tbl rise" style="--i:0;">
+<tr><th style="width:50%;">Split (70 / 15 / 15)</th><th style="width:50%; text-align:right;">Chains, N ≤ 512</th></tr>
+<tr><td>Train</td><td style="text-align:right;">18,860</td></tr>
+<tr><td>Validation</td><td style="text-align:right;">4,020</td></tr>
+<tr><td>Test</td><td style="text-align:right;">4,103</td></tr>
+</table>
+<p class="txt rise" style="--i:1;">Regions from the <b>same UniProt protein</b>, and identical sequences, stay in one split (15,331 groups).</p>
+<ul class="pts rise" style="--i:2;">
+<li>Loss: MSE on ln Rg · AdamW, lr 10⁻³</li>
+<li>Batches grouped by length to fill the GPU</li>
+<li>Early stop on validation MAE (patience 15)</li>
+<li>~13 min on one RTX 5060 Ti</li>
+</ul>
+</div>
+<div class="col">
+<img class="fig rise" style="--i:3; width:808px; height:502px;" src="/_blob/f72d85d638cff04505d4a05d78c4d57e" alt="Validation MAE and RMSE over 46 epochs, falling from about 0.42 nm to about 0.10 nm with large jumps between epochs; best epoch 31 marked">
+<p class="small">Best epoch 31, stopped at 46. Validation error jumps between epochs.</p>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:40]
+Quickly, the training setup.
+
+We split the data seventy, fifteen, fifteen, but by protein, not by sequence: all regions from the same UniProt protein, and any identical sequences, stay in the same split. So the test set really contains proteins the model has never seen. We keep chains up to 512 residues, which gives about nineteen thousand training chains and four thousand each for validation and test.
+
+We minimise mean squared error on log Rg with AdamW, group batches by length so the GPU stays full, and stop early on validation error. Training takes about thirteen minutes on a single consumer GPU.
+
+On the right is the validation curve. The best epoch was 31. You can see the error jumps quite a lot between epochs — a learning-rate schedule should smooth that out.</aside>
+</section>

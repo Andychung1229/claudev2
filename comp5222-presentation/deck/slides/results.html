@@ -1,0 +1,21 @@
+<section id="results" class="slide">
+<p class="eyebrow in" style="--i:0">Results</p>
+<h2 class="title in" style="--i:1">Close to simulation, weaker on experiment</h2>
+<div class="row" style="gap:32px; align-items:flex-start">
+<img class="fig fade" style="--i:2" src="/_blob/bee1c149031e9d6fce2d0d301840f3f3" alt="Parity plot of predicted versus CALVADOS-simulated Rg on 4,103 IDRome test chains; points hug the diagonal">
+<img class="fig fade" style="--i:3" src="/_blob/962ba12efcd6d4d1fce1da1d7cf3e303" alt="Parity plot of predicted versus experimental Rg for 151 proteins; wider scatter around the diagonal">
+<div class="in" style="--i:4; flex:1; display:flex; flex-direction:column; gap:20px">
+<table class="tbl-sm">
+<tr><th style="width:30%"></th><th style="width:35%; text-align:right">IDRome test</th><th style="width:35%; text-align:right">Experiment</th></tr>
+<tr><td>n</td><td style="text-align:right">4,103</td><td style="text-align:right">151</td></tr>
+<tr><td>MAE</td><td style="text-align:right">0.100 nm</td><td style="text-align:right">0.295 nm</td></tr>
+<tr><td>RMSE</td><td style="text-align:right">0.173 nm</td><td style="text-align:right">0.417 nm</td></tr>
+<tr><td>R²</td><td style="text-align:right">0.981</td><td style="text-align:right">0.846</td></tr>
+<tr><td>Pearson r</td><td style="text-align:right">0.992</td><td style="text-align:right">0.921</td></tr>
+</table>
+<p class="small">Test labels come from the same simulation model as training. One seed so far; 22 of the 151 experimental sequences sit inside a training sequence (3 exact).</p>
+</div>
+</div>
+<div class="foot"><p class="src">runs/contact_gat_idrome_sparse · plot_metrics.json</p><div class="pnum"></div></div>
+<aside>On held-out IDRome proteins the model matches the simulated Rg closely: MAE 0.10 nanometres, R squared 0.98. On 151 experimental Rg values the error triples, which is expected because training labels come from a simulation model, not experiment. Two cautions: this is a single seed, and a few experimental sequences overlap the training set, so the experimental number is slightly optimistic until we remove them.</aside>
+</section>

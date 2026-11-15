@@ -1,0 +1,20 @@
+<section id="finding" class="slide dark">
+<p class="eyebrow in" style="--i:0">What we learned about the graph</p>
+<h2 class="title in" style="--i:1">In long chains, every top-k edge spans more than 32 residues</h2>
+<div class="row" style="gap:64px; align-items:flex-start">
+<div class="in" style="--i:2; flex:1; display:flex; flex-direction:column; gap:16px">
+<p class="big">100%</p>
+<p class="body">of 91,295 non-local edges in 60 test chains with N ≥ 100 fall in the &gt;32 band</p>
+</div>
+<div class="in" style="--i:3; flex:1.4; display:flex; flex-direction:column; gap:16px">
+<p class="body">The score f(a,b) / (p(d) + ε) is ruled by p(d), which falls about 1,300× with separation, while f(a,b) moves only about 2×.</p>
+<p class="body">Residue type only breaks ties inside the farthest band, so mid-range partners (5–32 apart) never get a non-local edge.</p>
+</div>
+</div>
+<div class="fix in" style="--i:4">
+<h3>Fix, as the proposal planned</h3>
+<p class="body">Count contacts per (a, b, band) to get p(a,b,d), then rank by p(a,b,d) / p(d). The score then measures enrichment within each band.</p>
+</div>
+<div class="foot"><p class="src">Re-ran the edge selection on the test split with the saved contact table</p><div class="pnum"></div></div>
+<aside>When we checked which edges the graph actually picks, we found a side effect. Because the band mean p(d) drops by three orders of magnitude with separation, while the amino-acid term only changes by a factor of two, dividing by p(d) pushes every pick into the farthest band. For chains of 100 residues or more, all non-local edges are more than 32 apart. Residue type still matters, but only within that band. The proposal's three-way table p(a,b,d) would fix this, because the ratio would then compare a pair with its own band.</aside>
+</section>

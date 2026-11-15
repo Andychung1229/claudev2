@@ -1,0 +1,36 @@
+<section id="rg">
+<p class="eyebrow">Biology background</p>
+<h2 class="title">We summarise the ensemble by its size: radius of gyration, Rg</h2>
+<div class="row">
+<div class="col">
+<div class="card rise" style="--i:0;">
+<p class="cardh">What Rg measures</p>
+<p class="txt">The root-mean-square distance of residues from the chain’s centre of mass, averaged over the ensemble. Compact chain → small Rg; expanded chain → large Rg. Measured in the lab by <b>SAXS</b>.</p>
+</div>
+<div class="card rise" style="--i:1;">
+<p class="cardh">Length sets the baseline</p>
+<p class="txt">Polymer physics: Rg ≈ R0 · N^ν. Fitted on our 18,860 training chains:</p>
+<p class="big">ν = 0.53</p>
+</div>
+</div>
+<div class="col">
+<div class="card rise" style="--i:2; flex:1;">
+<p class="cardh">Sequence decides the rest</p>
+<p class="txt">At the same length, chains differ because <b>pairs of residues</b> attract or repel:</p>
+<ul class="pts">
+<li>Charges and how they are patterned (electrostatics)</li>
+<li>Aromatic “stickers” such as W, Y, F</li>
+<li>Prolines and other residues that stiffen or expand the chain</li>
+</ul>
+<p class="txt" style="margin-top:8px;"><b>Same length, different sequence → different Rg.</b></p>
+</div>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~1:00]
+Since there is no single structure, we need a number that summarises the ensemble. The standard one is the radius of gyration, Rg: how far, on average, the residues sit from the centre of mass. A compact chain has a small Rg, an expanded chain a large one. It can be measured experimentally with small-angle X-ray scattering, SAXS, which is why it is the main benchmark for sequence-to-ensemble predictors.
+
+Two things set Rg. First, length. Polymer physics says Rg grows like N to the power nu. When we fit our training data we get nu around 0.53 — between an ideal chain at 0.5 and a fully expanded chain at about 0.59.
+
+Second, and more interesting, the sequence. Two chains of the same length can have quite different sizes, because pairs of residues attract or repel each other: charges and their patterning, aromatic “sticker” residues like tryptophan and tyrosine, and prolines. The key word here is pairs. That is what motivates a graph.</aside>
+</section>

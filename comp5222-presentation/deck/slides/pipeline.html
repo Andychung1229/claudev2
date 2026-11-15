@@ -1,0 +1,25 @@
+<section id="pipeline" class="slide">
+<p class="eyebrow in" style="--i:0">Pipeline</p>
+<h2 class="title in" style="--i:1">Trajectories are used once; inference needs only the sequence</h2>
+<div class="pipe in" style="--i:2">
+<p class="band-label" style="grid-column:1 / 10; grid-row:1">Offline · run once</p>
+<div class="box offline" style="grid-column:1; grid-row:2"><h3>IDRome trajectories</h3><p>28,058 chains · 28M frames</p></div>
+<div class="arrow-cell" style="grid-column:2; grid-row:2"><x-shape kind="arrow-right" class="arrow-r"></x-shape></div>
+<div class="box offline key" style="grid-column:3; grid-row:2"><h3>Contact table</h3><p>20×20 f(a,b) + band means p(d)</p></div>
+<p class="note" style="grid-column:5 / 10; grid-row:2">Count 8 Å contacts in every frame, then pool them by amino-acid pair. The result is a 12 KB file.</p>
+<div class="arrow-cell" style="grid-column:3; grid-row:3"><x-shape kind="arrow-down" class="arrow-d"></x-shape></div>
+<p class="note" style="grid-column:5 / 10; grid-row:3">Table lookup only: no trajectory or contact map of the query protein.</p>
+<p class="band-label" style="grid-column:1 / 10; grid-row:4">Per sequence · one forward pass</p>
+<div class="box" style="grid-column:1; grid-row:5"><h3>Sequence</h3><p class="mono">DSSEEKFLRRIGRFG</p></div>
+<div class="arrow-cell" style="grid-column:2; grid-row:5"><x-shape kind="arrow-right" class="arrow-r"></x-shape></div>
+<div class="box key" style="grid-column:3; grid-row:5"><h3>Residue graph</h3><p>self + local + top-8 edges</p></div>
+<div class="arrow-cell" style="grid-column:4; grid-row:5"><x-shape kind="arrow-right" class="arrow-r"></x-shape></div>
+<div class="box" style="grid-column:5; grid-row:5"><h3>Edge-aware GAT</h3><p>2 layers × 4 heads</p></div>
+<div class="arrow-cell" style="grid-column:6; grid-row:5"><x-shape kind="arrow-right" class="arrow-r"></x-shape></div>
+<div class="box" style="grid-column:7; grid-row:5"><h3>Readout</h3><p>mean ‖ max ‖ log N</p></div>
+<div class="arrow-cell" style="grid-column:8; grid-row:5"><x-shape kind="arrow-right" class="arrow-r"></x-shape></div>
+<div class="box" style="grid-column:9; grid-row:5"><h3>Predicted R<i>g</i></h3><p>no sampling or rollout</p></div>
+</div>
+<div class="foot"><p class="src">COMP 5222 · ContactGAT</p><div class="pnum"></div></div>
+<aside>Two halves. Offline, once: we scan all Human IDRome trajectories and count residue contacts within 8 Å, then pool them into a 20 by 20 table by amino-acid pair. Online, per sequence: we look up that table to build a residue graph, run two edge-aware GAT layers, pool, and output Rg. At inference we never need a trajectory for the new protein.</aside>
+</section>

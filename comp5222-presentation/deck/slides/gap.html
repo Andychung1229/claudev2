@@ -1,0 +1,30 @@
+<section id="gap" class="mist">
+<p class="eyebrow">Problem</p>
+<h2 class="title">Why predicting Rg from sequence is hard</h2>
+<div class="row">
+<div class="card rise" style="--i:0; flex:1;">
+<p class="bigo">01</p>
+<p class="cardh">No static structures to learn from</p>
+<p class="txt">AlphaFold learned from crystal and cryo-EM structures in the PDB. IDRs have none, so it outputs low-confidence ribbons or wrongly collapsed shapes.</p>
+</div>
+<div class="card rise" style="--i:1; flex:1;">
+<p class="bigo">02</p>
+<p class="cardh">Current models read a 1D string</p>
+<p class="txt">Scalar predictors (ALBATROSS, IDP-Bert) and 3D generators (idpGAN, STARLING, IDPFold) all treat the sequence as tokens. Pairwise physics must be learned from scratch, and generators need costly sampling to get Rg.</p>
+</div>
+<div class="card rise" style="--i:2; flex:1;">
+<p class="bigo">03</p>
+<p class="cardh">Not much labelled data</p>
+<p class="txt">The Human IDRome has 28,058 simulated chains. Large sequence models are over-sized for this, and it is hard to see which residue pairs drive their predictions.</p>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:55]
+So why is this hard?
+
+First, there is no structural data to learn from. AlphaFold works because the PDB holds a huge number of solved structures. Disordered regions do not crystallise, so AlphaFold gives low-confidence ribbons or shapes that are wrongly collapsed.
+
+Second, the dedicated IDP methods split into two families. Scalar predictors like ALBATROSS and IDP-Bert map sequence straight to Rg. Generative models like idpGAN, STARLING and IDPFold produce 3D ensembles, but then you must sample many structures to estimate Rg. Both families read the sequence as a one-dimensional string, so the network has to rediscover the pairwise physics from scratch.
+
+Third, data. The largest consistent dataset, the Human IDRome, has about twenty-eight thousand simulated chains. A very large model is a poor match for that, and it is hard to explain which residue pairs drive its predictions.</aside>
+</section>

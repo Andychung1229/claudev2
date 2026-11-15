@@ -1,0 +1,69 @@
+<section id="graph-build" class="slide" style="gap:24px">
+<p class="eyebrow in" style="--i:0">Step 2 · Building the graph</p>
+<h2 class="title in" style="--i:1">One node per residue, three kinds of edges</h2>
+<div class="graph-wrap fade" style="--i:2; height:270px">
+<svg width="1664" height="270" viewBox="0 0 1664 270" aria-label="Example graph for the 15-residue sequence DSSEEKFLRRIGRFG: a backbone line through the residues, blue arcs below linking residues two apart, and orange arcs above linking each residue to its top-scoring distant partner">
+<g fill="none" stroke="#E07A1F" stroke-width="4" opacity="0.9">
+<path d="M56 156 Q555 -36 1054 156"/>
+<path d="M56 156 Q610 -56 1165 156"/>
+<path d="M56 156 Q776 -116 1497 156"/>
+<path d="M167 156 Q721 -56 1275 156"/>
+<path d="M167 156 Q887 -116 1608 156"/>
+<path d="M278 156 Q776 -36 1275 156"/>
+<path d="M389 156 Q887 -36 1386 156"/>
+<path d="M499 156 Q1053 -56 1608 156"/>
+<path d="M610 156 Q1109 -36 1608 156"/>
+<path d="M721 156 Q1109 4 1497 156"/>
+<path d="M832 156 Q1109 44 1386 156"/>
+<path d="M943 156 Q1275 24 1608 156"/>
+</g>
+<g fill="none" stroke="#2C5282" stroke-width="3" opacity="0.65">
+<path d="M56 224 Q167 300 278 224"/>
+<path d="M167 224 Q278 300 389 224"/>
+<path d="M278 224 Q388 300 499 224"/>
+<path d="M389 224 Q499 300 610 224"/>
+<path d="M499 224 Q610 300 721 224"/>
+<path d="M610 224 Q721 300 832 224"/>
+<path d="M721 224 Q832 300 943 224"/>
+<path d="M832 224 Q943 300 1054 224"/>
+<path d="M943 224 Q1054 300 1165 224"/>
+<path d="M1054 224 Q1164 300 1275 224"/>
+<path d="M1165 224 Q1275 300 1386 224"/>
+<path d="M1275 224 Q1386 300 1497 224"/>
+<path d="M1386 224 Q1497 300 1608 224"/>
+</g>
+<line x1="56" y1="190" x2="1608" y2="190" stroke="#2C5282" stroke-width="5"/>
+<g fill="#FBFBF8" stroke="#14213D" stroke-width="3">
+<circle cx="56" cy="190" r="34"/><circle cx="167" cy="190" r="34"/><circle cx="278" cy="190" r="34"/><circle cx="389" cy="190" r="34"/><circle cx="499" cy="190" r="34"/><circle cx="610" cy="190" r="34"/><circle cx="721" cy="190" r="34"/><circle cx="832" cy="190" r="34"/><circle cx="943" cy="190" r="34"/><circle cx="1054" cy="190" r="34"/><circle cx="1165" cy="190" r="34"/><circle cx="1275" cy="190" r="34"/><circle cx="1386" cy="190" r="34"/><circle cx="1497" cy="190" r="34"/><circle cx="1608" cy="190" r="34"/>
+</g>
+</svg>
+<p class="node" style="left:22px">D</p>
+<p class="node" style="left:133px">S</p>
+<p class="node" style="left:244px">S</p>
+<p class="node" style="left:355px">E</p>
+<p class="node" style="left:465px">E</p>
+<p class="node" style="left:576px">K</p>
+<p class="node" style="left:687px">F</p>
+<p class="node" style="left:798px">L</p>
+<p class="node" style="left:909px">R</p>
+<p class="node" style="left:1020px">R</p>
+<p class="node" style="left:1131px">I</p>
+<p class="node" style="left:1241px">G</p>
+<p class="node" style="left:1352px">R</p>
+<p class="node" style="left:1463px">F</p>
+<p class="node" style="left:1574px">G</p>
+</div>
+<div class="legend in" style="--i:3">
+<div class="item"><div class="swatch-o"></div><p class="small" style="color:#3D4A5C">non-local, drawn with k = 1</p></div>
+<div class="item"><div class="swatch-b"></div><p class="small" style="color:#3D4A5C">local, |i − j| ≤ 2</p></div>
+<p class="small" style="flex:1">The model uses k = 8: in this 15-residue chain that already links 70 of the 78 non-local pairs.</p>
+</div>
+<div class="row in" style="--i:4">
+<div class="card ink"><h3>Node</h3><p class="body">21 features: amino-acid one-hot (20) plus position i / (N − 1).</p></div>
+<div class="card ink"><h3>Self-loop</h3><p class="body">Each residue attends to itself. Its contact prior is set to 0.</p></div>
+<div class="card blue"><h3>Local edge</h3><p class="body">1 ≤ |i − j| ≤ 2. Keeps the chain connected.</p></div>
+<div class="card orange"><h3>Non-local edge</h3><p class="body">|i − j| &gt; 2. Each residue keeps its top 8 by f(a,b) / (p(d) + ε), then union.</p></div>
+</div>
+<div class="foot"><p class="src">Example: experimental sequence exp3_0000 · edges from build_sparse_graph</p><div class="pnum"></div></div>
+<aside>Each residue is a node with a one-hot amino-acid code and its relative position. Edges come in three kinds. Self-loops let a residue keep its own state. Local edges join residues one or two apart, so the chain is always connected. Non-local edges are the interesting part: for every residue we score all partners more than two apart by f(a,b) divided by the band mean p(d), keep the top 8, and make the result undirected. The picture uses k equals 1 so it stays readable; with k equals 8, a chain this short is almost fully connected.</aside>
+</section>

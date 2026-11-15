@@ -1,0 +1,41 @@
+<section id="gat">
+<p class="eyebrow">Method · Step 4</p>
+<h2 class="title">An edge-aware graph attention network reads the graph</h2>
+<div class="row">
+<div class="colnarrow" style="width:900px;">
+<p class="eqlabel rise" style="--i:0;">ATTENTION SCORE (per head)</p>
+<p class="eq rise" style="--i:0;">u(i,j) = LeakyReLU( a_src · Wh(i) + a_dst · Wh(j) + a_edge · MLP(e(i,j)) )</p>
+<p class="eqlabel rise" style="--i:1;">NORMALISE OVER NEIGHBOURS ONLY</p>
+<p class="eq rise" style="--i:1;">α(i,j) = softmax over j ∈ N(i) of u(i,j)</p>
+<p class="eqlabel rise" style="--i:2;">UPDATE (residual + LayerNorm)</p>
+<p class="eq rise" style="--i:2;">h′(i) = ELU( LayerNorm( h(i) + Σ_j α(i,j) · Wh(j) ) )</p>
+<p class="eqlabel rise" style="--i:3;">READOUT</p>
+<p class="eq rise" style="--i:3;">ln Rg = MLP( mean h ‖ max h ‖ log N )</p>
+</div>
+<div class="col">
+<div class="card rise" style="--i:4;">
+<p class="cardh">The prior steers attention</p>
+<p class="txt">Contact frequency enters the score as an edge feature, not as a fixed weight. The model learns how much to trust it.</p>
+</div>
+<div class="card rise" style="--i:5;">
+<p class="cardh">Small on purpose</p>
+<p class="txt">2 layers × 4 heads × 16 channels: <b>18,721 parameters</b>.</p>
+</div>
+<div class="card rise" style="--i:6;">
+<p class="cardh">Length stays visible</p>
+<p class="txt">log N goes straight into the readout, next to mean and max pooling.</p>
+</div>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~1:10]
+Step three is the model: a graph attention network that also looks at edge features.
+
+For each edge from j to i, every attention head computes a score from three parts: the transformed features of node i, of node j, and the edge features passed through a small MLP. That is where the contact prior enters. It is an input to the attention score, not a fixed weight, so the network can learn how much to trust it.
+
+The scores are normalised with a softmax over the neighbours of i only — the edges we built. Then each node takes a weighted sum of its neighbours’ messages, with a residual connection, LayerNorm and an ELU.
+
+After two layers we pool over the whole chain: the mean, the max, and log of the length, so the model always knows how long the chain is. A small MLP maps this to log Rg.
+
+The whole model has under nineteen thousand parameters, which is tiny compared with protein language models. In the code we implement it as dense attention with an edge mask, which is equivalent to running on the sparse graph.</aside>
+</section>

@@ -1,0 +1,32 @@
+<section id="contact-prior" class="slide alt">
+<p class="eyebrow in" style="--i:0">Step 1 · Contact prior</p>
+<h2 class="title in" style="--i:1">Contacts from 28 million frames, folded into one 20×20 table</h2>
+<div class="row" style="gap:48px; align-items:flex-start">
+<div class="in" style="--i:2; flex:1; display:flex; flex-direction:column; gap:28px">
+<div class="card ink">
+<h3>What counts as a contact</h3>
+<p class="body">Two residues closer than 8 Å and at least 2 apart in sequence. The first 10 frames of each trajectory are skipped.</p>
+<p class="eq">f(a,b) = contacts(a,b) / opportunities(a,b)</p>
+</div>
+<div style="display:flex; gap:28px; align-items:center">
+<p class="big blue">2.1×</p>
+<p class="big-label">spread of f(a,b) across residue pairs: W–W 0.0145 (most), K–P 0.0068 (least)</p>
+</div>
+</div>
+<div class="in" style="--i:3; flex:1; display:flex; flex-direction:column; gap:16px">
+<h3 class="col-title">Mean contact frequency by separation, p(d)</h3>
+<table class="tbl">
+<tr><th style="width:50%">|i − j|</th><th style="width:50%; text-align:right">p(d)</th></tr>
+<tr><td>1</td><td style="text-align:right">not counted</td></tr>
+<tr><td>2–4</td><td style="text-align:right">0.42</td></tr>
+<tr><td>5–8</td><td style="text-align:right">0.025</td></tr>
+<tr><td>9–16</td><td style="text-align:right">0.0085</td></tr>
+<tr><td>17–32</td><td style="text-align:right">0.0030</td></tr>
+<tr><td>&gt;32</td><td style="text-align:right">0.00032</td></tr>
+</table>
+<p class="body" style="font-weight:600; color:#A04F08">About 1,300× drop from 2–4 to &gt;32</p>
+</div>
+</div>
+<div class="foot"><p class="src">Source: aa_contact_table.npz · all 28,058 IDRome chains</p><div class="pnum"></div></div>
+<aside>A contact is two residues within 8 angstroms, at least two apart in sequence. We count contacts and opportunities for every amino-acid pair across all frames, so f(a,b) is how often that pair type is in contact. We also keep the mean contact frequency for each separation band, p(d). Notice the scale: residue type changes f by about 2 times, but separation changes p(d) by about 1,300 times. This matters for how we rank edges, which we come back to later.</aside>
+</section>

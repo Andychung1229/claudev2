@@ -1,0 +1,45 @@
+contact:
+  cutoff_A: 8.0
+  min_seq_sep: 2
+  skip_equil_frames: 10
+  log_delta: 1.0e-6
+
+graph:
+  mode: sparse
+  local_window: 2     # 局部边 1 ≤ |i-j| ≤ w
+  topk: 8             # 每点 k 条非局部边，再取无向并
+
+paths:
+  idrome_db: data/raw/idrome/IDRome_DB.csv
+  train_tsv: data/processed/idrome_split_train.tsv
+  val_tsv: data/processed/idrome_split_val.tsv
+  test_tsv: data/processed/idrome_split_test.tsv
+  contact_table: data/processed/aa_contact_table.npz
+  out_dir: runs/contact_gat_idrome_sparse
+
+model:
+  node_dim: 21        # 20 one-hot + 归一化位置
+  hidden: 64          # 4 heads × 16
+  n_layers: 2
+  n_heads: 4
+  edge_in: 10         # f_ab, |i-j|/(N-1), 6 band, local, self
+  edge_hidden: 8
+  dropout: 0.2
+  max_len: 512
+  readout: meanmax
+  activate: true
+
+train:
+  epochs: 100
+  batch_size: 64
+  pair_budget: 8388608
+  amp: true
+  lr: 0.001
+  weight_decay: 0.0
+  patience: 15
+  seed: 42
+  log_target: true
+  log_base: e
+  loss: mse
+  early_stop_metric: val_mae_nm
+  num_workers: 4

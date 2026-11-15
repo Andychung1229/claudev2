@@ -1,0 +1,28 @@
+<section id="prior">
+<p class="eyebrow">Method · Step 1–2</p>
+<h2 class="title">Learn a contact prior from 28 million simulation frames</h2>
+<div class="row">
+<div class="col">
+<div class="card rise" style="--i:0;">
+<p class="cardh">How we count</p>
+<p class="txt">In every frame, a pair (i, j) with |i − j| ≥ 2 is a <b>contact</b> if closer than <b>8 Å</b>. Pooled by amino-acid type:</p>
+<p class="eq">f(a,b) = contacts / opportunities<br>ε(a,b) = log( f(a,b) / mean f )</p>
+<p class="small">28,058 chains → a 12 KB table, built once.</p>
+</div>
+<div class="card rise" style="--i:1;">
+<p class="cardh">What it learned</p>
+<p class="txt"><span class="legend-o">Enriched:</span> W–W (+0.48), A–A, Y–Y (+0.35), aromatic stickers.<br><span class="legend-b">Depleted:</span> K–P (−0.27), D–P, E–P, proline with charges.</p>
+</div>
+</div>
+<img class="fig rise" style="--i:2; width:600px; height:640px;" src="/_blob/a473d0c263c7b88e86e28cba9c2aa12a" alt="20 by 20 heatmap of amino-acid contact enrichment; aromatic pairs such as W-W and Y-Y are red (enriched), proline with charged residues is blue (depleted)">
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~1:10]
+Step one is the contact prior.
+
+We went through every frame of every Human IDRome trajectory — about twenty-eight thousand chains and twenty-eight million frames in total. For each pair of residues at least two apart in the sequence, we ask: are they closer than eight angstroms? We then pool these counts by amino-acid type. For each pair type a, b we get a contact frequency f: the number of contacts divided by the number of chances. We also log-normalise it against the average, which gives the enrichment epsilon you see in the heatmap. Red means that pair touches more often than average; blue means less often.
+
+The table makes physical sense. The most enriched pairs are aromatic: tryptophan–tryptophan, tyrosine–tyrosine — the “sticker” residues known to drive compaction and phase separation. The most depleted are proline with charged residues like lysine and aspartate.
+
+One caution: these are contact tendencies in this dataset, not true interaction energies. And the whole thing is a twelve-kilobyte file, so at inference we never touch a trajectory.</aside>
+</section>

@@ -1,0 +1,15 @@
+<section id="sparsity" class="slide">
+<p class="eyebrow in" style="--i:0">Step 2 · Sparsity</p>
+<h2 class="title in" style="--i:1">About 16 neighbours per residue, not N − 1</h2>
+<div class="row">
+<div class="card ink in" style="--i:2"><p class="big">≈16</p><p class="big-label">neighbours per residue on average, self-loop not counted</p></div>
+<div class="card ink in" style="--i:3"><p class="big">7.5%</p><p class="big-label">of all residue pairs become edges</p></div>
+<div class="card ink in" style="--i:4"><p class="big">O(N)</p><p class="big-label">edges, since each residue adds at most w + k; a complete graph has O(N²)</p></div>
+</div>
+<div class="card orange in" style="--i:5">
+<h3>Caveat in our current code</h3>
+<p class="body">The GAT stores a padded N×N tensor with an edge mask, so memory is still O(N²): batches are capped at B·N² ≤ 8.4M. Switching to PyG GATConv with edge lists, as the proposal planned, would turn the sparsity into real savings.</p>
+</div>
+<div class="foot"><p class="src">Measured on 400 test chains, w = 2, k = 8</p><div class="pnum"></div></div>
+<aside>Each residue has two local neighbours on each side plus its top-8 non-local partners, and the union adds a few more, so on average a residue has about 16 neighbours. Across 400 test chains only 7.5 percent of residue pairs are edges. One honest caveat: our implementation still uses a dense padded tensor with a mask, so the sparsity limits what attention sees but does not yet save memory. Moving to an edge-list GAT, as planned, would fix that.</aside>
+</section>

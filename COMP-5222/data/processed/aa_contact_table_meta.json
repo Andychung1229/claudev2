@@ -1,0 +1,30 @@
+{
+  "cutoff_A": 8.0,
+  "min_seq_sep": 2,
+  "n_chains": 28058,
+  "n_frames_total": 28055120,
+  "log_delta": 1e-06,
+  "mean_freq": 0.008949516304895808,
+  "aa_order": [
+    "A",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "K",
+    "L",
+    "M",
+    "N",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "V",
+    "W",
+    "Y"
+  ]
+}

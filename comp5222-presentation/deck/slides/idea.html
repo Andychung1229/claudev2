@@ -1,0 +1,47 @@
+<section id="idea" class="night">
+<p class="eyebrow">Our approach</p>
+<h2 class="title">Give the model the residue pairs directly, as a graph</h2>
+<div class="pipe">
+<div class="step rise" style="--i:0;">
+<p class="stepn">1</p>
+<p class="steph">Simulation trajectories</p>
+<p class="txt">Human IDRome: 28,058 chains, ~1,000 frames each</p>
+<p class="offline">Offline, once</p>
+</div>
+<div class="arrowcell"><x-shape kind="arrow-right" class="pipearrow"></x-shape></div>
+<div class="step rise" style="--i:1;">
+<p class="stepn">2</p>
+<p class="steph">Contact prior</p>
+<p class="txt">20 × 20 table: how often each amino-acid pair is within 8 Å</p>
+<p class="offline">Offline, once</p>
+</div>
+<div class="arrowcell"><x-shape kind="arrow-right" class="pipearrow"></x-shape></div>
+<div class="step rise" style="--i:2;">
+<p class="stepn">3</p>
+<p class="steph">Residue graph</p>
+<p class="txt">One node per residue; local + top-k contact edges</p>
+<p class="online">Per sequence</p>
+</div>
+<div class="arrowcell"><x-shape kind="arrow-right" class="pipearrow"></x-shape></div>
+<div class="step rise" style="--i:3;">
+<p class="stepn">4</p>
+<p class="steph">Edge-aware GAT</p>
+<p class="txt">Message passing → pooling → predicted Rg</p>
+<p class="online">Per sequence</p>
+</div>
+</div>
+<p class="lead rise" style="--i:4; margin-top:56px;">Pairwise physics moves from <b>learned weights</b> into the <b>input graph</b>. A new sequence needs only steps 3–4: no simulation, one forward pass.</p>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:45]
+Here is our idea in one picture.
+
+Instead of asking the network to rediscover which residue pairs matter, we hand it that information as a graph.
+
+Steps one and two happen once, offline. We take the Human IDRome simulation trajectories and count how often each type of amino-acid pair comes into contact. That gives us a small contact table.
+
+Steps three and four run for every sequence. We turn the sequence into a residue graph whose edges come from that table, and a small graph attention network reads the graph and predicts Rg.
+
+The important point: at prediction time we need only the sequence and the frozen table. No simulation, just one forward pass.
+
+Now let me go through each step.</aside>
+</section>

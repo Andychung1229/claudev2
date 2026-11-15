@@ -1,0 +1,33 @@
+<section id="limits">
+<p class="eyebrow">Limitations &amp; next steps</p>
+<h2 class="title">What we still need to fix</h2>
+<div class="row" style="flex-wrap:wrap; gap:28px;">
+<div class="card rise" style="--i:0; width:818px; box-sizing:border-box;">
+<p class="cardh">1 · Prior counted on all chains</p>
+<p class="txt">The contact table used all 28,058 trajectories, including validation and test. <b>Next:</b> rebuild it from training chains only, as planned.</p>
+</div>
+<div class="card rise" style="--i:1; width:818px; box-sizing:border-box;">
+<p class="cardh">2 · Prior has no distance bands</p>
+<p class="txt">f(a,b) is one 20 × 20 table, so dividing by p(band) mostly picks the farthest residues. <b>Next:</b> a band-resolved p(a,b,d).</p>
+</div>
+<div class="card rise" style="--i:2; width:818px; box-sizing:border-box;">
+<p class="cardh">3 · Ablations not run yet</p>
+<p class="txt">Only the length-only baseline so far, and one seed. <b>Next:</b> local-chain GAT, prior-free graph, fixed aggregation; 3 seeds.</p>
+</div>
+<div class="card rise" style="--i:3; width:818px; box-sizing:border-box;">
+<p class="cardh">4 · Which edges matter?</p>
+<p class="txt">No attention or edge-removal analysis yet. <b>Next:</b> delete top-ranked vs random non-local edges and measure the change in Rg.</p>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~0:55]
+Before we finish, here is what we still need to fix. We think it is important to be upfront about these.
+
+One: our contact table was counted over all twenty-eight thousand trajectories, including the validation and test chains. It is only a twenty-by-twenty summary, so the leak is small, but our proposal said training data only, and we will rebuild it that way.
+
+Two: the table has no distance bands. Because the pair frequency is the same at every distance, dividing by the average for each band mostly favours the farthest residues — that is why the orange edges sat far from the diagonal earlier. The amino-acid type only decides among those far residues. A band-resolved table, as in our proposal, should fix this.
+
+Three: we have run only the length-only baseline so far, with one seed. The controlled comparisons — a local-only graph, a graph with random edges, and fixed instead of learned attention — are next, with three seeds.
+
+Four: we have not yet tested which edges the model actually relies on. We plan edge-removal experiments for that.</aside>
+</section>

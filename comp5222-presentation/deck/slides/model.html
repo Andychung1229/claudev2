@@ -1,0 +1,34 @@
+<section id="model" class="slide alt">
+<p class="eyebrow in" style="--i:0">Step 3 · Model</p>
+<h2 class="title in" style="--i:1">Edge-aware attention, then a length-aware pool</h2>
+<div class="row" style="gap:48px; align-items:flex-start">
+<div style="flex:1.7; display:flex; flex-direction:column; gap:22px">
+<div class="in" style="--i:2; display:flex; flex-direction:column; gap:8px">
+<p class="step-num">1 · Score each edge</p>
+<p class="eq">α_ij = softmax_j LeakyReLU(a_s·Wh_i + a_t·Wh_j + a_e·φ(e_ij))</p>
+<p class="small">Softmax runs only over the residue’s graph neighbours (edge mask).</p>
+</div>
+<div class="in" style="--i:3; display:flex; flex-direction:column; gap:8px">
+<p class="step-num">2 · Update each residue</p>
+<p class="eq">h_i ← ELU(LayerNorm(h_i + Σ_j α_ij · W h_j))</p>
+<p class="small">4 heads × 16 channels = 64; 2 layers; dropout 0.2.</p>
+</div>
+<div class="in" style="--i:4; display:flex; flex-direction:column; gap:8px">
+<p class="step-num">3 · Pool the chain</p>
+<p class="eq">ln R̂g = MLP([mean_i h_i ‖ max_i h_i ‖ log N])</p>
+<p class="small">log N keeps chain length visible to the regression head.</p>
+</div>
+</div>
+<div class="card ink in" style="--i:5; flex:1">
+<div class="spec">
+<div><p class="k">Parameters</p><p class="v">18,721</p></div>
+<div><p class="k">Loss</p><p class="v">MSE on ln R<i>g</i></p></div>
+<div><p class="k">Optimiser</p><p class="v">AdamW, lr 10⁻³</p></div>
+<div><p class="k">Early stopping on val MAE</p><p class="v">best epoch 31 of 46</p></div>
+<div><p class="k">Training time</p><p class="v">≈13 min, one RTX 5060 Ti</p></div>
+</div>
+</div>
+</div>
+<div class="foot"><p class="src">contact_mpnn/model.py · configs/sparse_gat.yaml</p><div class="pnum"></div></div>
+<aside>Each GAT layer scores an edge from the two node states plus the embedded edge features, so the contact prior enters the attention logit. Softmax runs only over graph neighbours. The update is a residual connection with LayerNorm and ELU. After two layers we take the mean and max over residues and append log N, then a small MLP predicts ln Rg. The whole model has under 19 thousand parameters and trains in about 13 minutes.</aside>
+</section>

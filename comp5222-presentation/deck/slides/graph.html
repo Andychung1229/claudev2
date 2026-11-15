@@ -1,0 +1,31 @@
+<section id="graph">
+<p class="eyebrow">Method · Step 3</p>
+<h2 class="title">Turn each sequence into a residue graph</h2>
+<img class="fig rise" style="--i:0; width:1664px; height:400px; margin-top:32px;" src="/_blob/b444c9d63b27259ed7d7d6e9d3cdabfb" alt="A real 36-residue test-set sequence drawn as a chain of nodes; residue F16 is highlighted with blue local edges to its two neighbours on each side and orange arcs to its eight chosen non-local partners C, C, F, F, C, H, S, Q">
+<p class="small" style="margin-top:12px;">Real test-set IDR (36 aa). Edges chosen for one residue, F16: <span class="legend-b">local neighbours</span> and its <span class="legend-o">8 non-local partners</span>.</p>
+<div class="row" style="margin-top:28px; gap:28px;">
+<div class="card rise" style="--i:1; flex:1;">
+<p class="cardh">Nodes</p>
+<p class="txt">One per residue: 20-dim one-hot + position i / (N − 1)</p>
+</div>
+<div class="card rise" style="--i:2; flex:1;">
+<p class="cardh" style="color:#2F6FB0;">Local edges</p>
+<p class="txt">1 ≤ |i − j| ≤ 2, plus self-loops. Keep the chain connected.</p>
+</div>
+<div class="card rise" style="--i:3; flex:1;">
+<p class="cardh" style="color:#A34D18;">Non-local edges</p>
+<p class="txt">Each residue keeps its top k = 8 partners by f(a,b) / p(band), then made undirected.</p>
+</div>
+</div>
+<div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
+<aside>[~1:15]
+Step two: turning a sequence into a graph. This is a real thirty-six-residue sequence from our test set.
+
+Every residue becomes a node. The node feature is just a one-hot code for the amino acid plus its relative position along the chain. No large pretrained embeddings.
+
+Then we add two kinds of edges. Local edges, in blue, connect each residue to its neighbours up to two positions away, plus a self-loop. They keep the graph connected, like the backbone.
+
+Non-local edges, in orange, are where the contact prior comes in. For every residue we score all residues more than two positions away: the contact frequency of that amino-acid pair, divided by the average contact frequency at that sequence distance. Each residue keeps its eight highest-scoring partners, and we make the edges undirected. Here you can see the choice for one residue, phenylalanine sixteen: it connects to the cysteines, phenylalanines and other residues further down the chain.
+
+These edges are candidate interactions, not measured contacts: they come only from the sequence and the frozen table.</aside>
+</section>

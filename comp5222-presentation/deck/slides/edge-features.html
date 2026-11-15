@@ -1,0 +1,16 @@
+<section id="edge-features" class="slide alt">
+<p class="eyebrow in" style="--i:0">Step 2 · Edge features</p>
+<h2 class="title in" style="--i:1">Each edge carries 10 numbers</h2>
+<table class="tbl in" style="--i:2">
+<tr><th style="width:27%">Feature</th><th style="width:9%">Dims</th><th style="width:34%">Value</th><th style="width:30%">What it tells attention</th></tr>
+<tr><td>Contact prior</td><td>1</td><td>f(a,b) from the table; 0 on self-loops</td><td>how sticky this residue pair is</td></tr>
+<tr><td>Normalised separation</td><td>1</td><td>|i − j| / (N − 1)</td><td>where the pair sits on the chain</td></tr>
+<tr><td>Separation band</td><td>6</td><td>one-hot: 1, 2–4, 5–8, 9–16, 17–32, &gt;32</td><td>short vs long range</td></tr>
+<tr><td>Local flag</td><td>1</td><td>1 if 1 ≤ |i − j| ≤ 2</td><td>backbone neighbour</td></tr>
+<tr><td>Self flag</td><td>1</td><td>1 if i = j</td><td>the self-loop</td></tr>
+<tr><td>Total</td><td>10</td><td>embedded by an MLP, 10 → 8 → 8</td><td>fed into every attention head</td></tr>
+</table>
+<p class="lead in" style="--i:3">The prior is an input feature, not a fixed attention weight: the GAT can learn how much to trust it.</p>
+<div class="foot"><p class="src">COMP 5222 · ContactGAT</p><div class="pnum"></div></div>
+<aside>Every edge, including self-loops, gets a 10-dimensional feature vector: the contact prior, the normalised separation, a one-hot of the six separation bands, and flags for local and self edges. A small MLP turns this into 8 numbers that enter the attention score. The key design choice from the proposal is that the prior is a feature, not a hard-coded weight, so the model decides how much it matters.</aside>
+</section>
