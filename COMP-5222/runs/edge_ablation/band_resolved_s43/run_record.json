@@ -1,0 +1,6 @@
+{
+  "variant": "band_resolved",
+  "seed": 43,
+  "status": "blocked_missing_trajectory_table",
+  "error": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+}
