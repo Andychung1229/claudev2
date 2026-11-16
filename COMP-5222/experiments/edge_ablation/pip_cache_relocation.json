@@ -3,7 +3,7 @@
   "destination": "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/pip-cache",
   "file_count": 257,
   "bytes": 1107979033,
-  "ownership_evidence": "all cache entries owned by this UID and created during the experiment bootstrap window",
-  "action": "moved experiment-created wheel cache into persistent data storage; older cache entries absent; left empty original directory",
+  "ownership_evidence": "All cache files were owned by this UID and their mtime was within the experiment bootstrap window; no file with an older mtime was observed.",
+  "action": "Moved the identified bootstrap cache into persistent data storage, preserving contents; left the original cache directory empty.",
   "time_utc": "2026-11-16T04:13:10Z"
 }

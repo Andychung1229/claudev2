@@ -14,5 +14,6 @@
     "nvcc": null,
     "rsync": "/usr/bin/rsync"
   },
-  "gpu_snapshot_is_reservation": false
+  "gpu_snapshot_is_reservation": false,
+  "compute_cost_basis": "Shared institutional GPU compute; no verified monetary rate; unpriced."
 }

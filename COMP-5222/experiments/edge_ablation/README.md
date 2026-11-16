@@ -23,6 +23,7 @@ branch is `comp5222-presentation` at `26673f7`; work is on `exp/edge-ablation`.
 From `COMP-5222/`, in an environment satisfying `requirements.txt`:
 
 ```bash
+python -m pip install -r requirements-test.txt
 python -m pytest -q tests/
 python experiments/edge_ablation/audit_graphs.py .
 ```
@@ -121,6 +122,9 @@ uses proper average tied ranks; the old diagnostic used double argsort.
 Figures are rendered separately with matplotlib. Main-table sd is sample sd
 across seeds. Bootstrap intervals condition on the fitted seeds and resample
 sequences after averaging predictions across seeds.
+`source_manifest_initial.json` and `source_manifest.json` preserve the two
+training-code snapshots. `analysis_source_manifest.json` records the final
+analysis/helpers, and summary.json also records the analysis script's own hash.
 
 ## Execution environment and unavailable data
 
