@@ -57,6 +57,30 @@ class ContactTable:
     n_chains: int
     n_frames_total: int
     log_delta: float = 1e-6
+    band_counts: np.ndarray | None = None  # (20, 20, N_BANDS), frame-pairs
+    band_opps: np.ndarray | None = None
+
+    def _require_band_counts(self) -> tuple[np.ndarray, np.ndarray]:
+        if self.band_counts is None or self.band_opps is None:
+            raise ValueError("band_resolved requires band counts; rebuild the contact table")
+        shape = (N_AA, N_AA, N_BANDS)
+        if self.band_counts.shape != shape or self.band_opps.shape != shape:
+            raise ValueError(f"band_counts and band_opps must have shape {shape}")
+        return self.band_counts, self.band_opps
+
+    def band_pair_frequency(self) -> np.ndarray:
+        counts, opps = self._require_band_counts()
+        return np.divide(counts, opps, out=np.zeros_like(counts), where=opps > 0)
+
+    def band_enrichment(self, alpha: float = 1e5) -> np.ndarray:
+        """Shrink toward p_d; an unobserved/zero-probability band is neutral."""
+        if not np.isfinite(alpha) or alpha < 0:
+            raise ValueError("band_pseudocount must be finite and non-negative")
+        counts, opps = self._require_band_counts()
+        pd = self.band_frequency()[None, None, :]
+        shrunk = np.broadcast_to(pd, counts.shape).copy()
+        np.divide(counts + alpha * pd, opps + alpha, out=shrunk, where=opps + alpha > 0)
+        return np.divide(shrunk, pd, out=np.ones_like(shrunk), where=pd > 0)
 
     @property
     def frequency(self) -> np.ndarray:
@@ -103,6 +127,9 @@ class ContactTable:
     def save(self, path: Path) -> None:
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
+        arrays = {}
+        if self.band_counts is not None or self.band_opps is not None:
+            arrays["band_counts"], arrays["band_opps"] = self._require_band_counts()
         np.savez_compressed(
             path,
             cutoff_A=self.cutoff_A,
@@ -117,6 +144,7 @@ class ContactTable:
             aa_order=np.array(list(AA_ORDER)),
             interaction=self.interaction,
             frequency=self.frequency,
+            **arrays,
         )
         self.save_tables(path.with_suffix(""))
 
@@ -143,6 +171,20 @@ class ContactTable:
                     f"{freq[i, j]:.8g}\t{float(eps[i, j]):.8g}"
                 )
         (stem.parent / f"{stem.name}_pairs.tsv").write_text("\n".join(pair_lines) + "\n")
+        if self.band_counts is not None:
+            pabd = self.band_pair_frequency()
+            enrichment = self.band_enrichment()
+            lines = ["aa_i\taa_j\tband\tcounts\topps\tp_abd\tE_abd"]
+            for i, a in enumerate(aa):
+                for j in range(i, N_AA):
+                    for d, (lo, hi) in enumerate(SEP_BANDS):
+                        label = str(lo) if lo == hi else (f"{lo}-{hi}" if hi else f">{lo - 1}")
+                        lines.append(
+                            f"{a}\t{aa[j]}\t{label}\t{self.band_counts[i,j,d]:.1f}\t"
+                            f"{self.band_opps[i,j,d]:.1f}\t{pabd[i,j,d]:.8g}\t"
+                            f"{enrichment[i,j,d]:.8g}"
+                        )
+            (stem.parent / f"{stem.name}_band_enrichment.tsv").write_text("\n".join(lines) + "\n")
         meta = {
             "cutoff_A": self.cutoff_A,
             "min_seq_sep": self.min_seq_sep,
@@ -151,6 +193,8 @@ class ContactTable:
             "log_delta": self.log_delta,
             "mean_freq": float(freq[self.opportunities > 0].mean()) if np.any(self.opportunities > 0) else 0.0,
             "aa_order": aa,
+            "has_band_counts": self.band_counts is not None,
+            "band_enrichment_alpha": 1e5 if self.band_counts is not None else None,
         }
         (stem.parent / f"{stem.name}_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
 
@@ -167,6 +211,8 @@ class ContactTable:
             n_chains=int(z["n_chains"]),
             n_frames_total=int(z["n_frames_total"]),
             log_delta=float(z["log_delta"]),
+            band_counts=z["band_counts"].astype(np.float64) if "band_counts" in z else None,
+            band_opps=z["band_opps"].astype(np.float64) if "band_opps" in z else None,
         )
 
 
@@ -195,7 +241,7 @@ def accumulate_chain(
     cutoff_nm: float,
     min_seq_sep: int,
     max_sep_bins: int,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """一条链所有生产帧：更新 20×20 与按间隔的接触/观测。
 
     xyz_nm: (F, N, 3) nm
@@ -205,6 +251,8 @@ def accumulate_chain(
     opps = np.zeros((N_AA, N_AA), dtype=np.float64)
     sep_c = np.zeros(max_sep_bins, dtype=np.float64)
     sep_o = np.zeros(max_sep_bins, dtype=np.float64)
+    band_c = np.zeros((N_AA, N_AA, N_BANDS), dtype=np.float64)
+    band_o = np.zeros_like(band_c)
     cutoff2 = cutoff_nm * cutoff_nm
     for sep in range(min_seq_sep, n):
         diff = xyz_nm[:, : n - sep] - xyz_nm[:, sep:]
@@ -216,6 +264,11 @@ def accumulate_chain(
         np.add.at(counts, (b, a), hit)
         np.add.at(opps, (a, b), n_frames)
         np.add.at(opps, (b, a), n_frames)
+        band = sep_band_index(sep)
+        np.add.at(band_c, (a, b, band), hit)
+        np.add.at(band_c, (b, a, band), hit)
+        np.add.at(band_o, (a, b, band), n_frames)
+        np.add.at(band_o, (b, a, band), n_frames)
         sbin = min(sep, max_sep_bins - 1)
         sep_c[sbin] += float(hit.sum())
         sep_o[sbin] += float(n_frames * (n - sep))
@@ -223,7 +276,9 @@ def accumulate_chain(
     diag = np.arange(N_AA)
     counts[diag, diag] *= 0.5
     opps[diag, diag] *= 0.5
-    return counts, opps, sep_c, sep_o
+    band_c[diag, diag, :] *= 0.5
+    band_o[diag, diag, :] *= 0.5
+    return counts, opps, sep_c, sep_o, band_c, band_o
 
 
 def empty_accumulators(max_sep_bins: int = 512) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:

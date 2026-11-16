@@ -25,6 +25,8 @@ class IdromeGraphDataset(Dataset):
         graph_mode: str = "dense",
         local_window: int = 2,
         topk: int = 8,
+        edge_rule: str = "flat",
+        band_pseudocount: float = 1e5,
         sequence_col: str = "sequence",
         label_col: str = "rg_nm",
         id_col: str = "id",
@@ -43,6 +45,8 @@ class IdromeGraphDataset(Dataset):
         self.graph_mode = str(graph_mode)
         self.local_window = int(local_window)
         self.topk = int(topk)
+        self.edge_rule = str(edge_rule)
+        self.band_pseudocount = float(band_pseudocount)
         self.sequence_col = sequence_col
         self.label_col = label_col
         self.id_col = id_col
@@ -61,6 +65,8 @@ class IdromeGraphDataset(Dataset):
                 self.table,
                 local_window=self.local_window,
                 topk=self.topk,
+                edge_rule=self.edge_rule,
+                band_pseudocount=self.band_pseudocount,
             )
         else:
             g = build_graph(seq, self.interaction, min_seq_sep=self.min_seq_sep)

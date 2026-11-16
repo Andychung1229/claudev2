@@ -46,6 +46,8 @@ def _dataset_kwargs(cfg: dict) -> dict:
         graph_mode=str(gcfg.get("mode", "dense")),
         local_window=int(gcfg.get("local_window", 2)),
         topk=int(gcfg.get("topk", 8)),
+        edge_rule=str(gcfg.get("edge_rule", "flat")),
+        band_pseudocount=float(gcfg.get("band_pseudocount", 1e5)),
     )
 
 

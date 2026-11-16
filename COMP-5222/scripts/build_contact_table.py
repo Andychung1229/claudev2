@@ -1,170 +1,150 @@
 #!/usr/bin/env python3
-"""从 Human IDRome conformational_ensembles.zip 统计 8 Å 非相邻接触。
-
-轨迹只在有 zip 的机器上扫一次；写出的是小表（npz + tsv），训练不再需要 zip。
-默认 zip：Rg_hpc4 原始位置（不在 COMP-5222 内）。
-"""
+"""Count 8 Å contacts once; optionally restrict by training sequence strings."""
 from __future__ import annotations
 
 import argparse
+import csv
+import hashlib
+import json
 import os
 import sys
 import tempfile
+import time
 import zipfile
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-
-from contact_mpnn.contacts import (  # noqa: E402
-    ContactTable,
-    accumulate_chain,
-    empty_accumulators,
-    fasta_from_pdb_resnames,
-    production_frames,
-    seq_to_idx,
+from contact_mpnn.contacts import (
+    N_AA, N_BANDS, ContactTable, accumulate_chain, empty_accumulators,
+    fasta_from_pdb_resnames, production_frames, seq_to_idx,
 )
 
-DEFAULT_ZIP = Path("/media/cbe/18TB HDD1/Rg_hpc4/data/raw/idrome/conformational_ensembles.zip")
+DEFAULT_ZIP = Path('/media/cbe/18TB HDD1/Rg_hpc4/data/raw/idrome/conformational_ensembles.zip')
 
 
 def load_yaml_cutoff(config: Path | None) -> tuple[float, int, int, float]:
-    cutoff_A, min_sep, skip, delta = 8.0, 2, 10, 1e-6
+    defaults = (8.0, 2, 10, 1e-6)
     if config is None or not config.is_file():
-        return cutoff_A, min_sep, skip, delta
+        return defaults
     import yaml
-
-    cfg = yaml.safe_load(config.read_text())
-    c = cfg.get("contact", {})
-    return (
-        float(c.get("cutoff_A", cutoff_A)),
-        int(c.get("min_seq_sep", min_sep)),
-        int(c.get("skip_equil_frames", skip)),
-        float(c.get("log_delta", delta)),
-    )
+    c = yaml.safe_load(config.read_text()).get('contact', {})
+    return (float(c.get('cutoff_A', 8.0)), int(c.get('min_seq_sep', 2)),
+            int(c.get('skip_equil_frames', 10)), float(c.get('log_delta', 1e-6)))
 
 
-def _write_ckpt(path: Path, *, counts, opps, sep_c, sep_o, n_chains, n_frames, n_done) -> None:
-    import numpy as np
-
+def _write_ckpt(path: Path, **arrays) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name.replace(".npz", ".writing.npz"))
-    np.savez_compressed(
-        tmp,
-        counts=counts,
-        opportunities=opps,
-        sep_counts=sep_c,
-        sep_opps=sep_o,
-        n_chains=n_chains,
-        n_frames_total=n_frames,
-        n_done=n_done,
-    )
-    Path(tmp).replace(path)
+    tmp = path.with_name(path.name.replace('.npz', '.writing.npz'))
+    np.savez_compressed(tmp, **arrays)
+    tmp.replace(path)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--zip", type=Path, default=DEFAULT_ZIP)
-    ap.add_argument("--out", type=Path, default=ROOT / "data/processed/aa_contact_table.npz")
-    ap.add_argument("--config", type=Path, default=ROOT / "configs/sparse_gat.yaml")
-    ap.add_argument("--limit", type=int, default=0, help="只处理前 N 条，0=全部")
-    ap.add_argument("--ckpt-every", type=int, default=200)
+    ap.add_argument('--zip', type=Path, default=DEFAULT_ZIP)
+    ap.add_argument('--out', type=Path, default=ROOT / 'data/processed/aa_contact_table.npz')
+    ap.add_argument('--config', type=Path, default=ROOT / 'configs/sparse_gat.yaml')
+    ap.add_argument('--train-tsv', type=Path)
+    ap.add_argument('--limit', type=int, default=0, help='first N trajectories; 0=all')
+    ap.add_argument('--ckpt-every', type=int, default=200)
     args = ap.parse_args()
-
     if not args.zip.is_file():
-        raise SystemExit(f"找不到轨迹 zip：{args.zip}（建表只需跑一次，训练不需要 zip）")
-
+        raise SystemExit(f'Missing trajectory archive: {args.zip}')
+    if args.out.exists():
+        raise SystemExit(f'Refusing to overwrite completed table: {args.out}')
     cutoff_A, min_sep, skip, delta = load_yaml_cutoff(args.config)
-    cutoff_nm = cutoff_A / 10.0
+    train_sequences = None
+    expected = None
+    if args.train_tsv:
+        with args.train_tsv.open() as f:
+            rows = list(csv.DictReader(f, delimiter='\t'))
+        train_sequences = {r['sequence'].strip().upper() for r in rows}
+        expected = len(rows)
+        if not expected:
+            raise SystemExit('Training TSV is empty')
+    identity = json.dumps({
+        'zip': str(args.zip.resolve()), 'zip_size': args.zip.stat().st_size,
+        'zip_mtime_ns': args.zip.stat().st_mtime_ns,
+        'train_sha256': hashlib.sha256(args.train_tsv.read_bytes()).hexdigest() if args.train_tsv else None,
+        'cutoff_A': cutoff_A, 'min_seq_sep': min_sep, 'skip': skip, 'limit': args.limit,
+        'schema': 2,
+    }, sort_keys=True)
     counts, opps, sep_c, sep_o = empty_accumulators(512)
-    n_chains = 0
-    n_frames_total = 0
-    start = 0
-    ckpt = args.out.with_suffix(".partial.npz")
+    band_c = np.zeros((N_AA, N_AA, N_BANDS), dtype=np.float64)
+    band_o = np.zeros_like(band_c)
+    n_chains = n_frames_total = n_skipped = start = 0
+    ckpt = args.out.with_suffix('.partial.npz')
     if ckpt.is_file():
-        import numpy as np
-
-        z = np.load(ckpt)
-        counts = z["counts"].astype(np.float64)
-        opps = z["opportunities"].astype(np.float64)
-        sep_c = z["sep_counts"].astype(np.float64)
-        sep_o = z["sep_opps"].astype(np.float64)
-        n_chains = int(z["n_chains"])
-        n_frames_total = int(z["n_frames_total"])
-        start = int(z["n_done"])
-        print(f"resume from {ckpt}  n_done={start}  chains={n_chains}", flush=True)
-
+        with np.load(ckpt, allow_pickle=False) as z:
+            if 'identity' not in z or str(z['identity']) != identity:
+                raise SystemExit('Checkpoint inputs/schema differ; use a new scratch --out path')
+            counts, opps = z['counts'].copy(), z['opportunities'].copy()
+            sep_c, sep_o = z['sep_counts'].copy(), z['sep_opps'].copy()
+            band_c, band_o = z['band_counts'].copy(), z['band_opps'].copy()
+            n_chains, n_frames_total = int(z['n_chains']), int(z['n_frames_total'])
+            n_skipped, start = int(z['n_skipped']), int(z['n_done'])
+        print(f'resume n_done={start} kept={n_chains} skipped={n_skipped}', flush=True)
     import mdtraj as md
-
-    tmpdir = Path(os.environ.get("TMPDIR", "/dev/shm"))
-    if not tmpdir.is_dir() or os.statvfs(str(tmpdir)).f_bavail * os.statvfs(str(tmpdir)).f_frsize < 64 * 1024**2:
+    tmpdir = Path(os.environ.get('TMPDIR', tempfile.gettempdir()))
+    if not tmpdir.is_dir():
         tmpdir = Path(tempfile.gettempdir())
-
+    began = time.monotonic()
     with zipfile.ZipFile(args.zip) as z:
-        infos = [i for i in z.infolist() if i.filename.endswith("/traj.xtc")]
-        infos.sort(key=lambda i: i.header_offset)
+        infos = sorted((i for i in z.infolist() if i.filename.endswith('/traj.xtc')),
+                       key=lambda i: i.header_offset)
         if args.limit > 0:
-            infos = infos[: args.limit]
-        n_all = len(infos)
-        print(f"xtc={n_all}  zip={args.zip}  tmp={tmpdir}", flush=True)
-        with tempfile.TemporaryDirectory(dir=str(tmpdir)) as tmp:
-            top_p = Path(tmp) / "top.pdb"
-            xtc_p = Path(tmp) / "traj.xtc"
+            infos = infos[:args.limit]
+        total = len(infos)
+        print(f'trajectories={total} expected_train={expected} tmp={tmpdir}', flush=True)
+        with tempfile.TemporaryDirectory(dir=tmpdir) as tmp:
+            top_p, xtc_p = Path(tmp) / 'top.pdb', Path(tmp) / 'traj.xtc'
             for k, info in enumerate(infos, 1):
                 if k <= start:
                     continue
-                top_name = info.filename.replace("traj.xtc", "top.pdb")
-                with z.open(top_name) as src, top_p.open("wb") as dst:
-                    dst.write(src.read())
-                with z.open(info.filename) as src, xtc_p.open("wb") as dst:
-                    dst.write(src.read())
-                traj = md.load(str(xtc_p), top=str(top_p))
-                resnames = [res.name for res in traj.top.residues]
-                fasta = fasta_from_pdb_resnames(resnames)
-                xyz = production_frames(traj.xyz, skip=skip)
-                aa = seq_to_idx(fasta)
-                c, o, sc, so = accumulate_chain(
-                    xyz, aa, cutoff_nm=cutoff_nm, min_seq_sep=min_sep, max_sep_bins=512
-                )
-                counts += c
-                opps += o
-                sep_c += sc
-                sep_o += so
-                n_chains += 1
-                n_frames_total += int(xyz.shape[0])
-                if k % 50 == 0 or k == n_all:
-                    print(
-                        f"{k}/{n_all}  chains={n_chains}  frames={n_frames_total}",
-                        flush=True,
-                    )
-                if args.ckpt_every > 0 and (k % args.ckpt_every == 0 or k == n_all):
-                    _write_ckpt(
-                        ckpt,
-                        counts=counts,
-                        opps=opps,
-                        sep_c=sep_c,
-                        sep_o=sep_o,
-                        n_chains=n_chains,
-                        n_frames=n_frames_total,
-                        n_done=k,
-                    )
-
-    table = ContactTable(
-        cutoff_A=cutoff_A,
-        min_seq_sep=min_sep,
-        counts=counts,
-        opportunities=opps,
-        sep_counts=sep_c,
-        sep_opps=sep_o,
-        n_chains=n_chains,
-        n_frames_total=n_frames_total,
-        log_delta=delta,
-    )
+                top_p.write_bytes(z.read(info.filename.replace('traj.xtc', 'top.pdb')))
+                topology = md.load_pdb(str(top_p)).topology
+                sequence = fasta_from_pdb_resnames([r.name for r in topology.residues])
+                if train_sequences is not None and sequence not in train_sequences:
+                    n_skipped += 1
+                else:
+                    xtc_p.write_bytes(z.read(info.filename))
+                    xyz = production_frames(md.load(str(xtc_p), top=str(top_p)).xyz, skip)
+                    c, o, sc, so, bc, bo = accumulate_chain(
+                        xyz, seq_to_idx(sequence), cutoff_nm=cutoff_A / 10,
+                        min_seq_sep=min_sep, max_sep_bins=512)
+                    counts += c
+                    opps += o
+                    sep_c += sc
+                    sep_o += so
+                    band_c += bc
+                    band_o += bo
+                    n_chains += 1
+                    n_frames_total += len(xyz)
+                if k % 50 == 0 or k == total:
+                    print(f'{k}/{total} kept={n_chains} skipped={n_skipped} frames={n_frames_total}', flush=True)
+                if args.ckpt_every > 0 and (k % args.ckpt_every == 0 or k == total):
+                    _write_ckpt(ckpt, counts=counts, opportunities=opps,
+                                sep_counts=sep_c, sep_opps=sep_o, band_counts=band_c,
+                                band_opps=band_o, n_chains=n_chains, n_frames_total=n_frames_total,
+                                n_skipped=n_skipped, n_done=k, identity=identity)
+    if expected is not None and args.limit == 0 and abs(n_chains - expected) > max(1, expected * .01):
+        raise SystemExit(f'Train count far off: kept {n_chains}, expected {expected}; checkpoint retained')
+    table = ContactTable(cutoff_A=cutoff_A, min_seq_sep=min_sep, counts=counts,
+                         opportunities=opps, sep_counts=sep_c, sep_opps=sep_o,
+                         n_chains=n_chains, n_frames_total=n_frames_total,
+                         log_delta=delta, band_counts=band_c, band_opps=band_o)
     table.save(args.out)
-    if ckpt.is_file():
-        ckpt.unlink()
-    print(f"wrote {args.out}  n_chains={n_chains}  mean_f={table.frequency[opps > 0].mean():.6f}")
+    meta_path = args.out.with_name(args.out.stem + '_meta.json')
+    meta = json.loads(meta_path.read_text())
+    meta.update({'source': json.loads(identity), 'n_skipped': n_skipped,
+                 'expected_train_chains': expected, 'wall_seconds_this_pass': time.monotonic() - began})
+    meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+    ckpt.unlink(missing_ok=True)
+    print(f'wrote {args.out}; kept={n_chains} skipped={n_skipped}', flush=True)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

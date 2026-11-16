@@ -18,8 +18,14 @@ from contact_mpnn.train import train_loop  # noqa: E402
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, default=ROOT / "configs/sparse_gat.yaml")
+    ap.add_argument("--seed", type=int)
+    ap.add_argument("--out-dir", type=Path)
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text())
+    if args.seed is not None:
+        cfg["train"]["seed"] = args.seed
+    if args.out_dir is not None:
+        cfg["paths"]["out_dir"] = str(args.out_dir)
 
     def _abs(p: str | Path) -> Path:
         p = Path(p)

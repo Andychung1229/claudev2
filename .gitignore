@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+*.partial.npz
+*.writing.npz
+COMP-5222/logs/edge_ablation/*.lock

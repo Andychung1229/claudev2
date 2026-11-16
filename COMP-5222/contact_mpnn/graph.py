@@ -7,12 +7,38 @@ from __future__ import annotations
 
 import numpy as np
 import torch
+import zlib
 
 from .aa import AA_INDEX
 from .contacts import N_BANDS, ContactTable, sep_band_index
 
 N_AA = 20
 SPARSE_EDGE_DIM = 2 + N_BANDS + 2  # prior, |i-j|/N, band one-hot, local, self
+
+
+def select_nonlocal(score: np.ndarray, nl: np.ndarray, topk: int,
+                    sequence: str, edge_rule: str) -> np.ndarray:
+    """Directed selections, before the undirected union; also used by the audit."""
+    n = len(sequence)
+    score_work = np.where(nl, score, -1e30).astype(np.float64)
+    if edge_rule == "distance_only":
+        rng = np.random.RandomState(zlib.crc32(sequence.encode()))
+        # Permute before stable sorting, so exact ties are random but reproducible.
+        order = np.stack([rng.permutation(n) for _ in range(n)]) if n else np.empty((0, 0), int)
+        permuted = np.take_along_axis(score_work, order, axis=1)
+        rank = np.argsort(-permuted, axis=1, kind="stable")
+        idx = np.take_along_axis(order, rank, axis=1)[:, :max(0, min(int(topk), n))]
+    else:
+        # Preserve the original arithmetic and argpartition exactly for flat.
+        score_work = score_work - np.arange(n, dtype=np.float64)[None, :] * 1e-12
+        k_eff = min(int(topk), n)
+        if k_eff <= 0 or n == 0:
+            return np.zeros((n, n), dtype=bool)
+        idx = np.argpartition(score_work, -k_eff, axis=1)[:, -k_eff:]
+    chosen = np.zeros((n, n), dtype=bool)
+    rows = np.arange(n)[:, None]
+    chosen[rows, idx] = nl[rows, idx]
+    return chosen
 
 
 def build_graph(
@@ -62,6 +88,8 @@ def build_sparse_graph(
     local_window: int = 2,
     topk: int = 8,
     rank_eps: float = 1e-8,
+    edge_rule: str = "flat",
+    band_pseudocount: float = 1e5,
 ) -> dict[str, np.ndarray]:
     """PDF 构图：局部边 1≤|i-j|≤w，非局部每点 top-k（无向下接触富集），加自环。
 
@@ -69,6 +97,8 @@ def build_sparse_graph(
     p_d 用表内按间隔带汇总的平均接触频率。边特征仍用原始频率 f_ab。
     """
     seq = sequence.strip().upper()
+    if edge_rule not in {"flat", "distance_only", "band_resolved"}:
+        raise ValueError(f"unknown edge_rule {edge_rule!r}")
     n = len(seq)
     node = np.zeros((n, N_AA + 1), dtype=np.float32)
     aa = np.empty(n, dtype=np.int32)
@@ -90,20 +120,19 @@ def build_sparse_graph(
     valid_band = band >= 0
     p_ij[valid_band] = p_d[band[valid_band]]
     score = f_ab / (p_ij + rank_eps)
+    prior_values = f_ab
+    if edge_rule == "distance_only":
+        score = 1.0 / (p_ij + rank_eps)
+    elif edge_rule == "band_resolved":
+        enrichment = table.band_enrichment(band_pseudocount)
+        score = enrichment[aa[:, None], aa[None, :], np.maximum(band, 0)]
+        prior_values = np.clip(np.log(np.maximum(score, np.exp(-3.0))), -3.0, 3.0)
 
     local = (abs_sep >= 1) & (abs_sep <= local_window)
     self_loop = abs_sep == 0
     nl = abs_sep > local_window
-    score_work = np.where(nl, score, -1e30).astype(np.float64)
-    # 同分时取较小 j，保证可复现
-    score_work = score_work - np.arange(n, dtype=np.float64)[None, :] * 1e-12
-    k_eff = min(int(topk), n)
-    topk_mask = np.zeros((n, n), dtype=bool)
-    if k_eff > 0 and n > 0:
-        idx = np.argpartition(score_work, -k_eff, axis=1)[:, -k_eff:]
-        rows = np.arange(n)[:, None]
-        topk_mask[rows, idx] = nl[rows, idx]
-        topk_mask |= topk_mask.T
+    topk_mask = select_nonlocal(score, nl, topk, seq, edge_rule)
+    topk_mask |= topk_mask.T
 
     mask = local | self_loop | topk_mask
     band_oh = np.zeros((n, n, N_BANDS), dtype=np.float32)
@@ -113,7 +142,7 @@ def build_sparse_graph(
     sep_norm = abs_sep.astype(np.float32) / denom
     local_ind = local.astype(np.float32)
     self_ind = self_loop.astype(np.float32)
-    prior = np.where(self_loop, 0.0, f_ab).astype(np.float32)
+    prior = np.where(self_loop, 0.0, prior_values).astype(np.float32)
     edge = np.concatenate(
         [
             prior[..., None],
@@ -138,7 +167,8 @@ def graphs_from_table(sequence: str, table: ContactTable, **kwargs) -> dict[str,
     mode = str(kwargs.pop("graph_mode", "dense"))
     if mode == "sparse":
         kw = dict(local_window=2, topk=8)
-        kw.update({k: v for k, v in kwargs.items() if k in {"local_window", "topk", "rank_eps"}})
+        keys = {"local_window", "topk", "rank_eps", "edge_rule", "band_pseudocount"}
+        kw.update({k: v for k, v in kwargs.items() if k in keys})
         return build_sparse_graph(sequence, table, **kw)
     kw = dict(min_seq_sep=table.min_seq_sep)
     kw.update({k: v for k, v in kwargs.items() if k == "min_seq_sep"})

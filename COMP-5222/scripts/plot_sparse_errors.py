@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 import sys
 from pathlib import Path
 
@@ -212,12 +213,26 @@ def plot_residual(frame: pd.DataFrame, out: Path, stem: str, xlabel_true: str) -
 
 
 def main() -> None:
-    _style()
-    cfg = yaml.safe_load((RUN / "config.yaml").read_text())
-    history = json.loads((RUN / "history.json").read_text())
-    ckpt = torch.load(RUN / "best.pt", map_location="cpu", weights_only=False)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--run", type=Path, default=RUN)
+    ap.add_argument("--no-figs", action="store_true")
+    args = ap.parse_args()
+    run = args.run.resolve()
+    cfg = yaml.safe_load((run / "config.yaml").read_text())
+    # Allow archived runs to be evaluated after moving to another host.
+    for key in ("train_tsv", "val_tsv", "test_tsv", "contact_table"):
+        p = Path(cfg["paths"][key])
+        if not p.is_file():
+            p = ROOT / p if not p.is_absolute() else ROOT / "data/processed" / p.name
+        if not p.is_file():
+            raise FileNotFoundError(f"{key}: {p}")
+        cfg["paths"][key] = str(p)
+    history = json.loads((run / "history.json").read_text())
+    ckpt = torch.load(run / "best.pt", map_location="cpu", weights_only=False)
     best_epoch = int(ckpt["best_epoch"])
-    plot_history(history, best_epoch, RUN)
+    if not args.no_figs:
+        _style()
+        plot_history(history, best_epoch, run)
 
     device = torch.device("cpu")
     table = ContactTable.load(Path(cfg["paths"]["contact_table"]))
@@ -237,40 +252,39 @@ def main() -> None:
     model.to(device)
     model.eval()
 
-    test_path = RUN / "predictions_test.tsv"
-    if test_path.is_file():
-        test = pd.read_csv(test_path, sep="\t")
-    else:
-        test = predict_split(model, cfg, table, Path(cfg["paths"]["test_tsv"]), device)
-        test.to_csv(test_path, sep="\t", index=False)
+    test_path = run / "predictions_test.tsv"
+    test = predict_split(model, cfg, table, Path(cfg["paths"]["test_tsv"]), device)
+    test.to_csv(test_path, sep="\t", index=False)
     st_test = metrics(test.rg_true_nm.to_numpy(), test.rg_pred_nm.to_numpy())
     print("test", json.dumps(st_test))
-    plot_parity(
-        test,
-        st_test,
-        RUN,
-        "test_parity",
-        "ContactGAT sparse  ·  IDRome test",
-        r"CALVADOS $R_g$ (nm)",
-        dense=True,
-    )
-    plot_residual(test, RUN, "test_residual", r"CALVADOS $R_g$ (nm)")
+    if not args.no_figs:
+        plot_parity(
+            test,
+            st_test,
+            run,
+            "test_parity",
+            "ContactGAT sparse  ·  IDRome test",
+            r"CALVADOS $R_g$ (nm)",
+            dense=True,
+        )
+        plot_residual(test, run, "test_residual", r"CALVADOS $R_g$ (nm)")
 
     exp = predict_split(model, cfg, table, EXP_TSV, device)
-    exp.to_csv(RUN / "predictions_exp151.tsv", sep="\t", index=False)
+    exp.to_csv(run / "predictions_exp151.tsv", sep="\t", index=False)
     st_exp = metrics(exp.rg_true_nm.to_numpy(), exp.rg_pred_nm.to_numpy())
     print("exp151", json.dumps(st_exp))
-    plot_parity(
-        exp,
-        st_exp,
-        RUN,
-        "exp151_parity",
-        "ContactGAT sparse  ·  experimental $R_g$",
-        r"experimental $R_g$ (nm)",
-        dense=False,
-    )
-    plot_residual(exp, RUN, "exp151_residual", r"experimental $R_g$ (nm)")
-    (RUN / "plot_metrics.json").write_text(
+    if not args.no_figs:
+        plot_parity(
+            exp,
+            st_exp,
+            run,
+            "exp151_parity",
+            "ContactGAT sparse  ·  experimental $R_g$",
+            r"experimental $R_g$ (nm)",
+            dense=False,
+        )
+        plot_residual(exp, run, "exp151_residual", r"experimental $R_g$ (nm)")
+    (run / "plot_metrics.json").write_text(
         json.dumps({"test": st_test, "exp151": st_exp, "best_epoch": best_epoch}, indent=2) + "\n"
     )
 
