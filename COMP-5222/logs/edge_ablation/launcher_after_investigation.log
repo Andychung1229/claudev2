@@ -1,0 +1,24 @@
+full: degree=12.469, farthest=0.9663608333832245, band_counts=[0, 0, 0, 2240, 27142, 237866]
+local_only: degree=0.000, farthest=None, band_counts=[0, 0, 0, 0, 0, 0]
+distance_only: degree=14.753, farthest=0.9663608333832245, band_counts=[0, 0, 0, 2240, 27142, 237866]
+train_table: BLOCKED, missing /data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz
+band_resolved: BLOCKED, missing /data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz
+SKIP complete full_s42
+HISTORICAL MAE NOT REPRODUCED; untouched-source equivalence verified. Continue against common-runtime E0 MAE=0.127605
+START full_s43 on GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b
+START local_only_s42 on GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458
+START full_s44 on GPU-5c1ba65f-10ff-a704-6065-5c5867e72807
+DONE full_s43, training=1914.0s
+START local_only_s43 on GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b
+DONE full_s44, training=2256.3s
+START local_only_s44 on GPU-5c1ba65f-10ff-a704-6065-5c5867e72807
+DONE local_only_s42, training=3549.7s
+START distance_only_s42 on GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458
+DONE distance_only_s42, training=806.8s
+START distance_only_s43 on GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458
+DONE local_only_s43, training=2656.7s
+DONE local_only_s44, training=2394.4s
+START distance_only_s44 on GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b
+DONE distance_only_s44, training=3039.1s
+DONE distance_only_s43, training=4104.3s
+completed 9 / 15 runs

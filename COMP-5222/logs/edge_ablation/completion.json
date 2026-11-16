@@ -1,0 +1,55 @@
+{
+  "status": "finished_available_runs",
+  "available_variants": [
+    "full",
+    "local_only",
+    "distance_only"
+  ],
+  "outcomes": [
+    {
+      "variant": "full",
+      "seed": 42,
+      "status": "complete"
+    },
+    {
+      "variant": "full",
+      "seed": 43,
+      "status": "complete"
+    },
+    {
+      "variant": "full",
+      "seed": 44,
+      "status": "complete"
+    },
+    {
+      "variant": "local_only",
+      "seed": 42,
+      "status": "complete"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 42,
+      "status": "complete"
+    },
+    {
+      "variant": "local_only",
+      "seed": 43,
+      "status": "complete"
+    },
+    {
+      "variant": "local_only",
+      "seed": 44,
+      "status": "complete"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 44,
+      "status": "complete"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 43,
+      "status": "complete"
+    }
+  ]
+}
