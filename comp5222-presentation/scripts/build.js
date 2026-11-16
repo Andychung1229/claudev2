@@ -260,7 +260,7 @@ s.addNotes(notes("graph"));
 // ---------- speaker notes for slides 8-14 (about 6 minutes in total), written for a graph audience ----------
 const NOTE = {
   sparse: `[~1:00]
-Thanks. Let me explain our task in graph terms.
+Thanks. We have seen how the sequence becomes a graph. Now, let's see how we use that graph to predict protein size, and whether those extra edges actually help.
 
 Each protein is a chain. We turn it into a graph, with one node for each amino acid. Each node has a type and a position.
 
@@ -278,7 +278,7 @@ We then combine information from all nodes using mean and max pooling, add the l
 
 The model has fewer than nineteen thousand parameters. Now, let's test whether it helps, and which edges we need.`,
   train: `[~0:50]
-We compare three graphs using the same network: contact edges, distance-only edges, and chain-only edges.
+Our idea was that contact information could help us build a better graph. To test this, we compare three graphs using the same network: contact edges, distance-only edges, and chain-only edges.
 
 The distance-only control uses the same top-eight selection budget, but ranks partners by distance. The chain-only graph removes all long-range edges.
 

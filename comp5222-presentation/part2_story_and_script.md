@@ -112,7 +112,7 @@ Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬
 | **13** | **你** | **Audit：距離主導揀邊；短鏈嗰組對次序較唔敏感** | **1:00** |
 | **14** | **你** | **Graph 有用，但點連 edges 好重要；下一步改善連邊同 message passing** | **0:45** |
 
-**時間：** Speaker notes 共 602 個英文詞。每分鐘 115–125 詞，加約 30 秒轉頁同指圖，約 5.3–5.7 分鐘。逐頁時間係排練參考；第 8、13 頁要預留指圖停頓，第 9 頁唔讀公式。
+**時間：** Speaker notes 共 638 個英文詞。每分鐘 115–125 詞，加約 30 秒轉頁同指圖，約 5.6–6.0 分鐘。逐頁時間係排練參考；第 8、13 頁要預留指圖停頓，第 9 頁唔讀公式。
 
 ### 你嗰半嘅弧線
 
@@ -133,7 +133,7 @@ Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬
 ### 第 8 頁：The task in graph terms: one graph per protein（1:00）
 - **指住：** 先指 table，再指藍色 local edges 同橙色 long-range edges；講清楚一個 graph 預測一個數。
 
-> Thanks. Let me explain our task in graph terms.
+> Thanks. We have seen how the sequence becomes a graph. Now, let's see how we use that graph to predict protein size, and whether those extra edges actually help.
 >
 > Each protein is a chain. We turn it into a graph, with one node for each amino acid. Each node has a type and a position.
 >
@@ -157,7 +157,7 @@ Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬
 ### 第 10 頁：The test: three graphs and two baselines（0:50）
 - **指住：** 指三個 graph，再指兩個 baselines；模型配色：contact 藍、distance 灰、chain-only 橙。
 
-> We compare three graphs using the same network: contact edges, distance-only edges, and chain-only edges.
+> Our idea was that contact information could help us build a better graph. To test this, we compare three graphs using the same network: contact edges, distance-only edges, and chain-only edges.
 >
 > The distance-only control uses the same top-eight selection budget, but ranks partners by distance. The chain-only graph removes all long-range edges.
 >
