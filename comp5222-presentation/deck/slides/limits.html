@@ -1,31 +1,27 @@
 <section id="limits">
 <p class="eyebrow">Diagnosis</p>
-<h2 class="title">Why the graph adds little: distance decides the edges</h2>
+<h2 class="title">Why: distance picks the contact edges, and they blur residue order</h2>
 <div class="row">
-<div class="colnarrow" style="width:840px;">
-<img class="fig rise" style="--i:0; width:840px; height:522px;" src="/_blob/dab44b1cdf0cd4e78d9b1a098ec925d6" alt="Log-scale comparison: average contact frequency across the five distance bands spans about 1,300-fold, from 0.42 at separation 2 to 4 down to 0.0003 beyond 32; contact frequency across amino-acid pairs spans only 2.1-fold">
-<p class="small rise" style="--i:1;">Edge score = f(a,b) / p(d). The pair term barely moves; the distance term moves 1,300×.</p>
+<div class="colnarrow" style="width:800px;">
+<img class="fig rise" style="--i:0; width:800px; height:497px;" src="/_blob/dab44b1cdf0cd4e78d9b1a098ec925d6" alt="Log-scale comparison: average contact frequency across the five distance bands spans about 1,300-fold, from 0.42 at separation 2 to 4 down to 0.0003 beyond 32; contact frequency across amino-acid pairs spans only 2.1-fold">
+<p class="small rise" style="--i:1;">Edge score = f(a,b) / p(d). The pair term varies 2×; the distance term 1,300×.</p>
 </div>
 <div class="col">
 <div class="card rise" style="--i:2;">
 <p class="bigo">96.6%</p>
-<p class="txt">of chosen partners lie in the farthest available distance band (300 test chains). Amino-acid type only breaks ties.</p>
+<p class="txt">of chosen partners sit in the farthest distance band. Distance-only edges behave the same.</p>
 </div>
 <table class="tbl rise" style="--i:3;">
-<tr><th style="width:40%;">Same composition, reordered</th><th style="width:30%; text-align:right;">Measured</th><th style="width:30%; text-align:right;">Predicted</th></tr>
-<tr><td>6 seqs · 107 aa</td><td style="text-align:right;">2.21–2.94 nm</td><td class="hi" style="text-align:right;"><b>3.00–3.08 nm</b></td></tr>
-<tr><td>7 seqs · 334 aa</td><td style="text-align:right;">4.06–5.44 nm</td><td class="hi" style="text-align:right;"><b>5.27–5.33 nm</b></td></tr>
+<tr><th style="width:34%;">Same composition, reordered</th><th style="width:22%; text-align:right;">Measured</th><th style="width:22%; text-align:right;">Contact edges</th><th style="width:22%; text-align:right;">Local only</th></tr>
+<tr><td>6 seqs · 107 aa</td><td style="text-align:right;">0.73</td><td style="text-align:right;">0.06</td><td class="hi" style="text-align:right;"><b>0.47</b></td></tr>
+<tr><td>7 seqs · 334 aa</td><td style="text-align:right;">1.39</td><td style="text-align:right;">0.08</td><td style="text-align:right;">0.17</td></tr>
 </table>
-<p class="small rise" style="--i:4;">Also open: contact table counted on all chains, including test; one seed; ablations not yet run.</p>
+<p class="small rise" style="--i:4;">Spread of Rg within each group (nm), predictions averaged over 3 seeds.</p>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
 <aside>[~0:55]
-Our edge score divides the pair's contact frequency by the average frequency at that distance. But contact frequency varies only two-fold between amino-acid pairs, while the distance term varies over a thousand-fold.
+Our edge score divides the pair's contact frequency by the average frequency at that distance. Pair frequency varies only two-fold, but the distance term varies over a thousand-fold. So distance wins: 97 percent of chosen partners sit in the farthest distance band, and amino-acid type only breaks ties. A control that picks edges by distance alone behaves the same.
 
-So distance always wins: 97 percent of chosen partners lie in the farthest available distance band. The amino-acid type only breaks ties inside a band.
-
-You can see the consequence in the experiments. Here are six sequences with the same composition in different orders: their measured Rg spans 0.7 nanometres, but our predictions span less than 0.1. In other words, our graph barely sees residue order, and order, like charge patterning, is exactly what matters for disordered proteins.
-
-That points directly to what we do next.</aside>
+The cost shows up in residue order. Here are six sequences with the same composition in different orders. Their measured Rg spans 0.73 nanometres. With contact edges, our predictions span 0.06. Without them, 0.47, almost in the right order. Our guess is that a dozen far-away edges per residue drown out the local signal in attention. For the long chains, no variant sees order yet.</aside>
 </section>

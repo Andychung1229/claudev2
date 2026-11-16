@@ -4,28 +4,28 @@
 <div class="row" style="gap:28px;">
 <div class="card rise" style="--i:0; flex:1;">
 <p class="stepn">1</p>
-<p class="cardh">Small, and it transfers</p>
-<p class="txt">18.7k parameters, no simulation at prediction time. On 151 experiments: MAE 0.30 nm, ahead of composition (0.33) and length (0.42).</p>
+<p class="cardh">Chain message passing works</p>
+<p class="txt">An 18.7k-parameter GAT on local edges beats composition on simulations (0.066 vs 0.098 nm) and experiments (0.30 vs 0.33).</p>
 </div>
 <div class="card rise" style="--i:1; flex:1;">
 <p class="stepn">2</p>
-<p class="cardh">Report the composition baseline</p>
-<p class="txt">On simulated data a 21-parameter composition model ties our graph. A high R² alone says little.</p>
+<p class="cardh">Our contact edges don't help yet</p>
+<p class="txt">Distance, not chemistry, picks them. They hurt on simulations, change nothing on experiments, and blur order.</p>
 </div>
 <div class="card rise" style="--i:2; flex:1;">
 <p class="stepn">3</p>
-<p class="cardh">Next: fix the edges</p>
-<p class="txt">Band-resolved p(a,b,d) from training chains only, then local-only and prior-free ablations over 3 seeds.</p>
+<p class="cardh">Next: chemistry-chosen edges</p>
+<p class="txt">A band-resolved contact table from training chains only. Long chains still miss residue order.</p>
 </div>
 </div>
 <p class="title rise" style="--i:3; margin-top:48px; font-size:60px;">Thank you — questions?</p>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~0:25]
-Three takeaways. One: a tiny, simulation-free graph model predicts IDP size and transfers to experiment better than a composition baseline.
+<aside>[~0:30]
+Three takeaways. One: a small graph network that passes messages along the chain beats composition, on simulations and on experiments.
 
-Two: on simulated data, composition and length already explain most of Rg, so that baseline belongs in every comparison.
+Two: our contact edges, as built, do not help, because sequence distance, not chemistry, decides which edges we draw.
 
-Three: our edge rule was dominated by distance. The fix is the band-resolved contact table from our proposal, which compares amino-acid pairs at the same distance, followed by the planned ablations.
+Three: next we rebuild the contact table by distance band, from training chains only, and test whether chemistry-chosen edges can add to the chain.
 
-Thank you.</aside>
+Thank you. We are happy to take questions.</aside>
 </section>

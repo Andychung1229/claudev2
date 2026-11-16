@@ -14,19 +14,19 @@
 <li>Loss: MSE on ln Rg · AdamW, lr 10⁻³</li>
 <li>Batches grouped by length to fill the GPU</li>
 <li>Early stop on validation MAE (patience 15)</li>
-<li>~13 min on one RTX 5060 Ti</li>
+<li>Every model trained with 3 seeds (42, 43, 44)</li>
 </ul>
 </div>
 <div class="col">
 <img class="fig rise" style="--i:3; width:808px; height:502px;" src="/_blob/f72d85d638cff04505d4a05d78c4d57e" alt="Validation MAE and RMSE over 46 epochs, falling from about 0.42 nm to about 0.10 nm with large jumps between epochs; best epoch 31 marked">
-<p class="small">Best epoch 31, stopped at 46. Validation error jumps between epochs.</p>
+<p class="small">Original seed-42 run: best epoch 31, stopped at 46. Validation error jumps between epochs.</p>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~0:30]
-We trained it on a split that really tests unseen proteins. We split seventy, fifteen, fifteen by protein, not by sequence: all regions of the same UniProt protein stay in one split, so the test set holds proteins the model has never seen.
+<aside>[~0:35]
+We split the data seventy, fifteen, fifteen by protein. Regions from the same protein, and identical sequences, stay in one split, so test proteins are truly unseen. That gives about nineteen thousand training chains and four thousand each for validation and test.
 
-We minimise squared error on log Rg with AdamW and early stopping. Training takes about thirteen minutes on one consumer GPU. The validation curve is noisy; a learning-rate schedule should fix that.
+We train on log Rg and keep the checkpoint with the lowest validation error. Because single runs turned out to be noisy, we trained every model with three random seeds.
 
 So, how well does it do?</aside>
 </section>

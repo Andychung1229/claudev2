@@ -1,37 +1,36 @@
 <section id="restest">
-<p class="eyebrow">Results · Simulated test set</p>
-<h2 class="title">On simulations, composition and length explain most of Rg</h2>
+<p class="eyebrow">Results · Simulated test set · 3 seeds</p>
+<h2 class="title">Simulations: the GAT is best without contact edges</h2>
 <div class="row">
-<img class="fig rise" style="--i:0; width:620px; height:600px;" src="/_blob/c848c2f38a73ab5ccf64713b0887a84a" alt="Parity plot of predicted versus simulated Rg for 4,103 test chains; points lie tightly along the diagonal">
+<img class="fig rise" style="--i:0; width:620px; height:585px;" src="/_blob/74d292c2dbf02aedd3578b758ec38f98" alt="Bar chart of test MAE with one dot per training seed: length only 0.124, composition plus length 0.098, GAT with contact edges 0.111, GAT with distance edges 0.094 with one poor seed, GAT with local edges only 0.066 with all three seeds below the composition line">
 <div class="col">
 <table class="tbl rise" style="--i:1;">
-<tr><th style="width:31%;">4,103 test chains</th><th style="width:21%; text-align:right;">Length only</th><th style="width:26%; text-align:right;">Composition + length</th><th style="width:22%; text-align:right;">ContactGAT</th></tr>
-<tr><td>Parameters</td><td style="text-align:right;">2</td><td style="text-align:right;">21</td><td style="text-align:right;">18,721</td></tr>
-<tr><td>MAE (nm)</td><td style="text-align:right;">0.124</td><td class="hi" style="text-align:right;"><b>0.098</b></td><td class="hi" style="text-align:right;"><b>0.100</b></td></tr>
-<tr><td>RMSE (nm)</td><td style="text-align:right;">0.210</td><td style="text-align:right;">0.177</td><td style="text-align:right;">0.173</td></tr>
-<tr><td>R²</td><td style="text-align:right;">0.972</td><td style="text-align:right;">0.980</td><td style="text-align:right;">0.981</td></tr>
+<tr><th style="width:50%;">4,103 test chains</th><th style="width:28%; text-align:right;">MAE (nm)</th><th style="width:22%; text-align:right;">R²</th></tr>
+<tr><td>Length only</td><td style="text-align:right;">0.124</td><td style="text-align:right;">0.972</td></tr>
+<tr><td>Composition + length</td><td style="text-align:right;">0.098</td><td style="text-align:right;">0.980</td></tr>
+<tr><td>GAT, contact edges</td><td style="text-align:right;">0.111 ± 0.015</td><td style="text-align:right;">0.981</td></tr>
+<tr class="hi"><td><b>GAT, local only</b></td><td style="text-align:right;"><b>0.066 ± 0.007</b></td><td style="text-align:right;"><b>0.990</b></td></tr>
 </table>
-<div class="row" style="margin-top:8px; gap:24px;">
+<div class="row" style="margin-top:0; gap:24px; flex:0;">
 <div class="card rise" style="--i:2; flex:1;">
-<p class="big">Tie</p>
-<p class="txt">GAT − composition MAE: +0.002 nm, 95% CI [−0.001, +0.005]</p>
+<p class="bigo">−0.036</p>
+<p class="txt">nm vs composition, 95% CI [−0.038, −0.033]</p>
 </div>
 <div class="card rise" style="--i:3; flex:1;">
-<p class="big">36% <span style="font-size:48px; color:#5E6875;">vs 31%</span></p>
-<p class="txt">of the variance length cannot explain: GAT vs composition model</p>
+<p class="bigo">68%</p>
+<p class="txt">of what length cannot explain (composition: 31%)</p>
 </div>
 </div>
+<p class="small rise" style="--i:4;">Mean ± sd over 3 seeds. Our earlier single run (0.100) did not reproduce.</p>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~1:20]
-On four thousand unseen proteins, the model is accurate: mean error 0.10 nanometres, R squared 0.98.
+<aside>[~1:15]
+Here is the simulated test set: four thousand proteins the model never saw. The grey bars are two simple baselines. Length alone gives 0.124 nanometres. Adding amino-acid composition, with just 21 parameters, gives 0.098.
 
-But a high R squared here proves very little, because length alone already gives 0.97. So we tested two simple baselines on the same split. Against length alone, our model cuts the error by about a fifth.
+Our full model, with the contact edges, averages 0.111 over three seeds. That is no better than composition. Our earlier single run gave 0.100, but it did not reproduce on retraining, so we report the three-seed mean.
 
-The harder test is a linear model on amino-acid composition plus length: just 21 parameters. And on simulated data, it ties with our graph model: 0.098 versus 0.100 nanometres, and the difference is within noise.
+Now the orange bar. Same network, same training, but we remove every non-local edge and keep only the chain. The error drops to 0.066, and all three seeds beat composition. It explains about two thirds of what length cannot explain, against one third for composition.
 
-Of the variation that length cannot explain, our model captures 36 percent and the linear model 31. So on this benchmark, composition and length explain most of what our model predicts. We think any IDP predictor should report this baseline.
-
-Simulations are one thing. What about real experiments?</aside>
+So message passing along the chain works. Our contact edges are what hold it back.</aside>
 </section>

@@ -1,104 +1,83 @@
-# COMP 5222 簡報後半段：故事線同講稿（第 8–14 頁，6 分鐘）
+# COMP 5222 簡報後半段：故事線同講稿（第 8–14 頁，約 6 分鐘）
 
 > 你負責第 8–14 頁：graph 長咩樣、模型點運作、結果、同埋我哋學到咩。
-> 第 1–7 頁（背景、接觸表、點樣將序列變成 graph）由你 partner 講。
-> 本文所有數字都由 zip 入面嘅數據同 run 結果計出嚟，出處喺最尾。
+> 第 1–7 頁（背景、AlphaFold、接觸表、點樣將序列變成 graph）由 partner 講。
+> 呢版已經加入 Codex 喺 2026-11-16 跑嘅 3-seed edge ablation（GitHub branch `exp/edge-ablation`）。
+> 所有數字都由 prediction 檔重新計過，出處喺最尾。
 
 ---
 
 ## 0. 一句講晒
 
-**我哋整咗一個好細（18.7k 參數）、唔使模擬就預測到 IDP 大細嘅 graph 模型，佢喺真實實驗數據上贏一個只睇胺基酸組成嘅簡單模型；但喺模擬 test set 上兩者打和，而我哋搵到原因：揀 edge 嘅規則幾乎只睇序列距離，所以個 graph 未真正用到「邊對殘基會黐埋」呢個資訊。**
+**沿住條鏈做 message passing 嘅細 GAT（18.7k 參數）喺模擬同實驗數據都贏胺基酸組成模型；但我哋加嘅 non-local contact edge 冇幫手，喺模擬數據仲拖低咗表現，因為揀 edge 嘅規則幾乎只睇序列距離。**
 
-英文版（可以用嚟收尾）：
+英文版：
 
-> *A small, simulation-free graph model predicts IDP size and transfers to experiment better than a composition baseline — but our edge rule is dominated by sequence distance, so the graph does not yet use pairwise contact information. Fixing that is the clear next step.*
+> *A small graph network that passes messages along the chain beats a composition baseline on simulations and experiments. Our contact edges do not help yet: sequence distance, not chemistry, decides which edges we draw.*
 
 ---
 
-## 1. 我哋份 project 有冇嘢講？
+## 1. 故事點樣變咗
 
-**有，但唔係「graph 贏晒」。** 有三樣嘢係講得出、又企得穩嘅，另外有兩樣嘢唔可以講。
+| | 上一版（單一 run） | 而家（每個模型 3 個 seed） |
+|---|---|---|
+| Full model（有 contact edge）模擬 MAE | 0.100 | **0.111 ± 0.015**；舊嘅 0.100 重新 train 唔到 |
+| 同組成模型比（模擬） | 打和 | Full 差過組成；**local-only 好過組成** |
+| 實驗 | GAT 贏組成 | 所有 GAT 都贏組成；有冇 contact edge 冇分別 |
+| 點解 graph 冇用？ | 只係推論（edge 由距離決定） | **有對照實驗**：拎走 non-local edge，模擬表現好咗，模型亦睇到排列 |
 
 ### 講得出（有數據支持）
 
 | # | 結論 | 證據 |
 |---|---|---|
-| 1 | 模型準、細、唔使模擬 | 18,721 參數；4,103 條未見過嘅蛋白：MAE 0.100 nm，R² 0.981 |
-| 2 | 由模擬學到嘅嘢，搬去真實實驗都用得 | 151 條實驗 Rg：r = 0.92，MAE 0.295 nm（只睇長度：0.416） |
-| 3 | 喺實驗數據上，GAT 明顯贏只睇組成嘅模型 | MAE 0.295 vs 0.331 nm；差 −0.036 nm，95% CI [−0.054, −0.018]；61% 序列 GAT 較準 |
-| 4 | **（新發現）模擬 test set 上，組成 + 長度已經夠** | 21 參數線性模型：MAE 0.098 vs GAT 0.100；差距 95% CI [−0.001, +0.005]，即係打和 |
-| 5 | **（新發現）點解 graph 幫唔到手：edge 幾乎只由距離決定** | 揀出嚟嘅 partner 有 96.6% 喺「最遠嗰個距離 band」；組成一樣但排列唔同嘅序列，GAT 幾乎俾同一個答案 |
+| 1 | 沿住條鏈嘅 GAT 喺模擬數據贏組成模型 | Local-only 0.066 ± 0.007 vs 組成 0.098；bootstrap −0.036 nm [−0.038, −0.033]；3 個 seed 全部好過組成 |
+| 2 | 所有 GAT 喺實驗數據都贏組成模型 | Full 0.301、local-only 0.303 vs 組成 0.331；兩個 CI 都唔包 0 |
+| 3 | 我哋嘅 contact edge 冇幫手 | 模擬：local-only 比 full 好 0.044 nm [−0.046, −0.041]；實驗：差 +0.008 [−0.012, +0.028]，即係冇分別 |
+| 4 | 原因：edge 由距離決定 | 96.6% partner 喺最遠 band；只按距離揀 edge 嘅對照組表現差唔多 |
+| 5 | 拎走 contact edge 之後，模型睇到短鏈嘅排列 | 6 條同組成、107 aa：實驗 Rg 相差 0.73；full 預測相差 0.06，local-only 相差 0.47（Spearman 0.94） |
 
-### 唔可以講（冇數據支持）
+### 唔可以講
 
-- ❌ 「graph／non-local edge／接觸先驗令模型更準」：未做 ablation，而且第 4 點反而顯示喺模擬數據上冇額外幫助。
-- ❌ 「模型可解釋，睇到邊對殘基推動壓縮」：attention 同刪 edge 實驗都未做。
-
-### 點解呢個仍然係一個好故事
-
-Proposal 第 5 節自己寫咗：
-
-> *“The project remains informative if the graph model does not outperform simpler baselines: that outcome would identify limits of the proposed contact representation rather than justify unsupported performance claims.”*
-
-我哋而家正正係咁：有一個 controlled baseline，有一個具體診斷（點解 graph 未發揮作用），仲有一個同 proposal 公式 (2) 一致嘅修正方法。老師通常好欣賞呢種誠實、有證據嘅分析，多過一句冇根據嘅「我哋贏晒」。
+- ❌「接觸先驗令模型更準」：而家嘅證據顯示相反。
+- ❌「我哋嘅模型睇得到排列」：只係短鏈嗰組；7 條 334 aa 嗰組冇一個 variant 排得啱。
+- ❌「Band-resolved 表會解決問題」：未跑，只可以講係下一步。
+- ❌ 用 0.100 做 full model 嘅成績：重新 train 唔到，要用 3-seed 平均。
 
 ---
 
-## 2. 三個新檢查（之前份 slides 未有）
+## 2. 新實驗（Codex，`exp/edge-ablation` branch）
 
-呢三樣係我喺寫呢份文件之前做嘅，**會改變第 11–14 頁要講嘅嘢**。
+**設計：** 同一個 split、模型、optimizer 同 early stopping，只改 graph 規則同 seed（42、43、44）。
 
-### 檢查 A：只用組成 + 長度嘅線性模型
+| Variant | 意思 |
+|---|---|
+| full | 原本嘅 graph：local edge + 每個殘基 top-8 contact edge |
+| local_only | 只留 \|i−j\| ≤ 2 嘅 local edge 同 self-loop（proposal Table 1 嘅「Local-chain GAT」） |
+| distance_only | Non-local edge 數目一樣，但只按距離揀（唔睇胺基酸） |
+| train_table / band_resolved | **未跑**：要原本嘅 trajectory zip（`conformational_ensembles.zip`），server 上搵唔到 |
 
-- 模型：ln Rg = w₀ + w₁·ln N + Σ wₐ·(胺基酸 a 嘅比例)，共 21 個參數；用同一個 training split（N ≤ 512）fit，ridge λ = 10⁻³。
-- 呢個係 proposal Table 1 「Composition MLP」嘅簡化版（線性，唔係 MLP），所以如果用 MLP，baseline 只會更強。
+### 結果（每個 seed 嘅 MAE，單位 nm）
 
-| | 只睇長度 | 組成 + 長度（21 參數） | ContactGAT（18,721 參數） |
-|---|---|---|---|
-| **模擬 test（n = 4,103）** MAE | 0.124 | **0.098** | 0.100 |
-| RMSE | 0.210 | 0.177 | **0.173** |
-| R² | 0.972 | 0.980 | **0.981** |
-| 長度解釋唔到嘅 variance，捉到幾多 | — | 31% | **36%** |
-| **實驗（n = 151）** MAE | 0.416 | 0.331 | **0.295** |
-| R² | 0.744 | 0.822 | **0.846** |
-| Pearson r | 0.865 | 0.908 | **0.921** |
+| | Seed 42 | 43 | 44 | 平均 ± sd |
+|---|---|---|---|---|
+| Full，模擬 | 0.128 | 0.108 | 0.098 | 0.111 ± 0.015 |
+| Local-only，模擬 | 0.061 | 0.064 | 0.074 | **0.066 ± 0.007** |
+| Distance-only，模擬 | 0.140 | 0.073 | 0.070 | 0.094 ± 0.040 |
+| Full，實驗 | 0.298 | 0.311 | 0.294 | 0.301 ± 0.009 |
+| Local-only，實驗 | 0.299 | 0.299 | 0.311 | 0.303 ± 0.007 |
+| Distance-only，實驗 | 0.343 | 0.312 | 0.307 | 0.320 ± 0.020 |
 
-**點讀：** 模擬數據上兩者打和；實驗數據上 GAT 贏，而且 paired bootstrap 嘅 95% CI 唔包 0。注意 GAT 只 train 咗一個 seed，所以呢個 CI 只反映「揀邊啲序列」嘅不確定性，唔包括 training 隨機性。
+Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬 0.098、實驗 0.331。
 
-### 檢查 B：non-local edge 實際上點揀
-
-規則係：分數 = f(a,b) / p(band)，每個殘基揀分數最高嘅 8 個。問題係兩個數嘅變化幅度差太遠：
-
-| | 最細 | 最大 | 幅度 |
-|---|---|---|---|
-| f(a,b)：唔同胺基酸對嘅接觸頻率 | 0.0068 | 0.0145 | **約 2.1 倍** |
-| p(band)：唔同距離 band 嘅平均接觸頻率 | 0.00032（> 32） | 0.42（2–4） | **約 1,300 倍** |
-
-相鄰兩個 band 之間，最細嘅差距都有 2.8 倍（9–16 對 17–32），**大過**所有胺基酸對之間最大嘅差距（2.1 倍）。所以：
-
-- 胺基酸種類**永遠**唔可以將一條 edge 由一個 band 推去另一個 band，佢只係喺同一個 band 入面揀邊個。
-- 實測：隨機抽 300 條 test 鏈，揀出嚟嘅 partner **96.6%** 喺嗰個殘基「最遠嗰個 band」。剩低 3.4% 係因為最遠 band 唔夠 8 個殘基，要去下一個 band 補。
-- 結果：graph 嘅 topology 基本上等於「每個殘基連去最遠嗰批殘基」。接觸資訊只係透過 edge feature f(a,b) 入去，而嗰個數只得 2 倍變化。
-
-**點解會咁：** Proposal 公式 (2) 嘅 p_abd 係按 (a, b, 距離 band) 分開計，enrichment = p_abd / p_d 會喺同一個 band 入面比較，距離效應自動抵銷。我哋嘅實作冇三維計數，用咗一張 20 × 20 嘅 f(a,b) 代替，所以除以 p_d 就變咗主要喺度量距離。`contact_mpnn/graph.py` 入面 `build_sparse_graph` 個 docstring 都有寫明呢個簡化。
-
-### 檢查 C：組成一樣、排列唔同嘅序列
-
-151 條實驗序列入面，有 2 組係組成完全一樣、只係排列唔同（共 13 條）：
-
-| 組 | 長度 | 實驗 Rg 範圍 | GAT 預測範圍 |
-|---|---|---|---|
-| 6 條 | 107 | 2.21 – 2.94 nm（差 0.73） | 3.00 – 3.08 nm（差 0.08） |
-| 7 條 | 334 | 4.06 – 5.44 nm（差 1.38） | 5.27 – 5.33 nm（差 0.06） |
-
-**點讀：** 真實世界入面，排列唔同可以令 Rg 差到 1.4 nm，但我哋個模型幾乎俾同一個答案。排序方向大致啱（rank correlation 0.54、0.68），但幅度細到冇用。呢個同檢查 B 一致：**個 graph 幾乎睇唔到排列**，而排列（例如電荷分佈）正正係 IDP 生物學最關心嘅嘢。
-
-> 咁點解 GAT 喺實驗數據會贏組成模型？我哋唔肯定。可能係 non-linear 嘅組成效應，或者組成同長度之間嘅交互作用，線性模型捉唔到。**唔好講係因為佢識睇排列**，檢查 C 顯示唔係。
+### 要知嘅限制
+- **0.100 重新 train 唔到。** Codex 喺新機用同一個 seed 42 train 出 0.128。用舊 checkpoint 重新做 inference 仍然係 0.100，所以問題出喺 training 嗰邊，可能同硬件或者 runtime 有關，原因未搵到。所以簡報用 3-seed 平均。
+- **Bootstrap 嘅計法：** 先將 3 個 seed 嘅預測平均，再對序列 resample。所以 CI 唔包括 seed 之間嘅差異；要配合「每個 seed 都好過」呢點一齊講。
+- **Distance-only 唔穩定：** 3 個 seed 由 0.070 到 0.140。所以只講「胺基酸項冇顯示到有幫助」，唔好講「distance-only 好過 full」。
+- **「Attention 被遠距離 edge 沖淡」只係推測。** 每個殘基平均有約 12 條 non-local edge，但得 2–4 條 local edge。未做 attention 分析。
 
 ---
 
-## 3. 成個故事點樣串連（14 頁）
+## 3. 成個簡報點樣串連
 
 | 頁 | 講者 | 一句重點 | 時間 |
 |---|---|---|---|
@@ -107,189 +86,156 @@ Proposal 第 5 節自己寫咗：
 | 3 | Partner | IDP 冇固定結構，要用 ensemble 描述 | 1:00 |
 | 4 | Partner | Rg 係 ensemble 嘅大細；殘基之間嘅非共價作用決定佢 | 1:00 |
 | 5 | Partner | 我哋嘅想法：將殘基對資訊放入 graph | 0:45 |
-| 6 | Partner | 由 2,800 萬幀模擬數出接觸表；同已知物理一致 | 1:10 |
+| 6 | Partner | 由 2,800 萬幀模擬數出接觸表 | 1:10 |
 | 7 | Partner | 序列 → graph：node、local edge、non-local edge | 1:15 |
-| **8** | **你** | **graph 好稀疏；每條 edge 有 10 個 feature** | **0:50** |
-| **9** | **你** | **edge-aware GAT；先驗經 attention 入去** | **1:00** |
-| **10** | **你** | **按蛋白分 split；13 分鐘 train 完** | **0:30** |
-| **11** | **你** | **模擬 test：準，但組成 + 長度都做到** | **1:20** |
-| **12** | **你** | **實驗：GAT 贏組成模型，但誤差係模擬嘅 3 倍** | **1:00** |
-| **13** | **你** | **診斷：edge 由距離決定，graph 睇唔到排列** | **0:55** |
-| **14** | **你** | **三個 takeaway + 下一步** | **0:25** |
+| **8** | **你** | **Graph 好稀疏；橙色 edge 全部離對角線好遠（伏筆）** | **0:50** |
+| **9** | **你** | **Edge-aware GAT；18.7k 參數** | **0:55** |
+| **10** | **你** | **按蛋白分 split；每個模型 3 個 seed** | **0:35** |
+| **11** | **你** | **模擬：拎走 contact edge 先贏組成模型** | **1:10** |
+| **12** | **你** | **實驗：所有 GAT 都贏組成；edge 冇分別** | **0:45** |
+| **13** | **你** | **原因：距離揀 edge，排列被沖淡** | **1:00** |
+| **14** | **你** | **三個 takeaway** | **0:30** |
 
-Partner 版（第 2 頁換咗 AlphaFold，原本「why it's hard」嗰頁刪咗）按 notes 計大約 6:25，你 6:00。Partner 要再壓 25 秒左右先夠 12 分鐘。
+你嗰半 speaker notes 共 748 字，照每分鐘 130 字計大約 5:45，加埋停頓剛好 6 分鐘。如果超時，第 9 頁最易縮。
 
-### 故事嘅弧線（你嗰半）
+Partner 嗰半照 notes 計大約 6:25，要再壓 25 秒左右。另外第 4 頁最好加返一行 Rg 定義（Rg ∝ N^ν，ν ≈ 0.53），因為第 11 頁要用「只睇長度」嚟做 baseline。
 
-1. **建立期望（8–10）：** 我哋有一個好有物理意義嘅 graph 同一個細模型。
-2. **好消息（11 前半、12 前半）：** 準、可以搬去實驗。
-3. **轉折（11 後半）：** 但一個 21 參數嘅組成模型喺模擬數據做到一樣好。
-4. **偵探（13）：** 點解？因為 edge 規則被距離主導，graph 睇唔到排列。
-5. **收尾（14）：** 呢個係有價值嘅發現，同埋點樣修正。
+### 你嗰半嘅弧線
+1. **鋪墊（8–10）：** Graph 長咩樣、模型點讀佢、點樣公平咁 test。第 8 頁埋伏筆：橙色 edge 全部好遠。
+2. **好消息加轉折（11）：** GAT 贏組成模型，但要拎走我哋自己加嘅 contact edge 先得。
+3. **再確認（12）：** 實驗數據上所有 GAT 都贏組成模型，edge 冇分別。
+4. **偵探（13）：** 點解？因為 edge 由距離揀，而且佢哋令模型睇唔到排列。
+5. **收尾（14）：** 邊樣行得通、邊樣未得、下一步做咩。
 
-**轉折位係成段最重要嘅地方**，唔好講得好似道歉，要講得好似「我哋做咗一個認真嘅檢查，而且搵到原因」。
+**第 11 頁係成段最重要嘅一頁。** 要講得自信：我哋做咗受控實驗，搵到邊個部分有用、邊個部分冇用。
 
 ---
 
-## 4. 你嘅 6 分鐘：逐頁講稿
-
-每頁有：目的、要指住咩、要記嘅數字、英文講稿（按每分鐘大約 140 字寫）、過場句。
-✅ 第 5 節嘅修改已經做咗：.pptx 同網頁版 deck 嘅第 8–14 頁 slides 同 speaker notes 已經同下面嘅講稿一致。
+## 4. 逐頁講稿（同 .pptx speaker notes 一樣）
 
 ### 第 8 頁：The graph is sparse, and every edge carries features（0:50）
+- **指住：** 先指 adjacency matrix 嘅藍色對角線，再指橙色點，強調橙色全部離對角線好遠。
+- **數字：** 155 個殘基；10%（1,192 / 11,935）；每條 edge 10 個 feature。
 
-- **目的：** 由 partner 嘅「一個殘基點揀 edge」拉闊到「成條鏈嘅 graph」，並為第 13 頁埋伏筆。
-- **指住：** adjacency matrix 嘅藍色對角線（local），然後橙色點（non-local），強調橙色點全部離對角線好遠。
-- **數字：** 155 個殘基；1,192 / 11,935 對 = 10%；每條 edge 10 個 feature。
+> Thanks. So that was one residue. Here is a whole graph, for a chain of 155 residues. This is its adjacency matrix: the blue band along the diagonal is the local edges, and the orange cells are the non-local edges.
+>
+> Only about ten percent of all residue pairs become edges, so the graph grows like N times w plus k instead of N squared, and message passing stays cheap.
+>
+> Every edge carries ten numbers: the contact frequency from our table, the sequence distance, a one-hot distance band, and two flags for local edges and self-loops.
+>
+> Keep one thing in mind: all the orange edges sit far from the diagonal. That will matter when we look at the results.
 
-> **Script:**
-> Thanks. So that was one residue — here is a whole graph, for a chain of 155 residues. This is its adjacency matrix. The blue band along the diagonal is the local edges; the orange cells are the non-local edges. Only about ten percent of all residue pairs become edges, so the graph grows like N times w plus k instead of N squared, and message passing stays cheap. Every edge carries ten numbers: the contact frequency from our table, the sequence distance, a one-hot distance band, and two flags for local edges and self-loops. Keep one thing in mind: all the orange edges sit far from the diagonal. That will matter when we look at the results.
+### 第 9 頁：An edge-aware graph attention network reads the graph（0:55）
+- **指住：** 第一條公式入面嘅 `a_edge · MLP(e(i,j))`，然後指右邊 18,721。唔使逐條讀公式。
 
-- **過場：** “Now, how does the model read this graph?”
+> Now, how does the model read this graph? It is a graph attention network that also reads edge features.
+>
+> For each edge, every attention head scores it from three parts: the sending node, the receiving node, and the edge features. That third term is where the contact prior enters. It is an input to the attention score, not a fixed weight, so the model learns how much to trust it.
+>
+> The scores are normalised only over each node's neighbours, and each node takes a weighted sum of their messages, with a residual connection and LayerNorm.
+>
+> After two layers, we pool the whole chain: mean, max, and log of the length. A small MLP then predicts log Rg. The whole model has under nineteen thousand parameters.
 
-### 第 9 頁：An edge-aware graph attention network reads the graph（1:00）
+### 第 10 頁：Training on unseen-protein splits（0:35）
+- **數字：** 18,860 / 4,020 / 4,103；每個模型 3 個 seed。
 
-- **目的：** 解釋接觸先驗點樣影響模型，同埋模型有幾細。
-- **指住：** 第一條公式嘅 `a_edge · MLP(e(i,j))`，然後右邊「18,721 parameters」。
-- **數字：** 2 層 × 4 heads × 16 channels；18,721 參數；readout = mean ‖ max ‖ log N。
+> We split the data seventy, fifteen, fifteen by protein. Regions from the same protein, and identical sequences, stay in one split, so test proteins are truly unseen. That gives about nineteen thousand training chains and four thousand each for validation and test.
+>
+> We train on log Rg and keep the checkpoint with the lowest validation error. Because single runs turned out to be noisy, we trained every model with three random seeds.
+>
+> So, how well does it do?
 
-> **Script:**
-> The model is a graph attention network that also reads edge features. For each edge, every attention head scores it from three parts: the sending node, the receiving node, and the edge features. That third term is where the contact prior enters — as an input to the attention score, not a fixed weight, so the model learns how much to trust it. The scores are normalised only over each node’s neighbours, and each node takes a weighted sum of their messages, with a residual connection and LayerNorm. After two layers, we pool the whole chain — mean, max, and log of the length — and a small MLP predicts log Rg. The whole model has under nineteen thousand parameters.
+### 第 11 頁：Simulations: the GAT is best without contact edges（1:10）
+- **指住：** 先指兩條灰色 bar 同虛線（組成模型），再指藍色 full model 嘅三粒點，最後指橙色 bar。講完「0.066」停一停。
+- **數字：** 0.124、0.098、0.111 ± 0.015、0.066 ± 0.007；−0.036 [−0.038, −0.033]；68% vs 31%。
 
-- **過場：** “We trained it on a split that really tests unseen proteins.”
+> Here is the simulated test set: four thousand proteins the model never saw. The grey bars are two simple baselines. Length alone gives 0.124 nanometres. Adding amino-acid composition, with just 21 parameters, gives 0.098.
+>
+> Our full model, with the contact edges, averages 0.111 over three seeds. That is no better than composition. Our earlier single run gave 0.100, but it did not reproduce on retraining, so we report the three-seed mean.
+>
+> Now the orange bar. Same network, same training, but we remove every non-local edge and keep only the chain. The error drops to 0.066, and all three seeds beat composition. It explains about two thirds of what length cannot explain, against one third for composition.
+>
+> So message passing along the chain works. Our contact edges are what hold it back.
 
-### 第 10 頁：Training on unseen-protein splits（0:30）
+### 第 12 頁：On experiments, every GAT beats composition（0:45）
+- **指住：** 虛線（組成模型），然後指藍色同橙色兩條 bar 差唔多高。
+- **數字：** 0.301 / 0.303 vs 0.331；CI 見 slide。
 
-- **目的：** 證明 test set 係公平嘅（按蛋白分）。快快講過。
-- **數字：** 18,860 / 4,020 / 4,103；15,331 組；13 分鐘；best epoch 31。
+> Next, 151 sequences with measured Rg. The models saw only simulation labels.
+>
+> Every graph model beats composition here: about 0.30 nanometres against 0.33, and the bootstrap intervals exclude zero for both the full and the local-only model.
+>
+> But between the two graph models there is no detectable difference. Removing the contact edges neither helps nor hurts on real data.
+>
+> The error is still several times larger than on simulations, because we inherit the gap between the simulation model and experiment.
+>
+> So why do the contact edges fail? We looked at how they are chosen.
 
-> **Script:**
-> We split seventy–fifteen–fifteen by protein, not by sequence: all regions of the same UniProt protein stay in one split, so the test set holds proteins the model has never seen. We minimise squared error on log Rg with AdamW and early stopping. Training takes about thirteen minutes on one consumer GPU. The validation curve is noisy — a learning-rate schedule should fix that.
+### 第 13 頁：Why: distance picks the contact edges, and they blur residue order（1:00）
+- **指住：** 左邊張圖：藍色線好長、橙色線好短。然後指右上 96.6%，最後指表入面 0.06 同 0.47。
+- **數字：** 2.1× vs 1,338×；96.6%；0.73 / 0.06 / 0.47。
 
-- **過場：** “So, how well does it do?”
+> Our edge score divides the pair's contact frequency by the average frequency at that distance. Pair frequency varies only two-fold, but the distance term varies over a thousand-fold. So distance wins: 97 percent of chosen partners sit in the farthest distance band, and amino-acid type only breaks ties. A control that picks edges by distance alone behaves the same.
+>
+> The cost shows up in residue order. Here are six sequences with the same composition in different orders. Their measured Rg spans 0.73 nanometres. With contact edges, our predictions span 0.06. Without them, 0.47, almost in the right order. Our guess is that a dozen far-away edges per residue drown out the local signal in attention. For the long chains, no variant sees order yet.
 
-### 第 11 頁：On simulations, composition and length explain most of Rg（1:20）
+### 第 14 頁：What we can say, and what comes next（0:30）
 
-- **目的：** 好消息 + 轉折。呢頁係你成段最重要嘅一頁。
-- **指住：** 先指 parity plot，再指 table 三欄，最後指「打和」嗰個 callout。
-- **數字：** GAT 0.100 / R² 0.981；只睇長度 0.124 / 0.972；組成 + 長度 0.098 / 0.980；36% vs 31%。
-
-> **Script:**
-> On four thousand unseen proteins, the model is accurate: mean error 0.10 nanometres, R squared 0.98. But a high R squared here proves very little, because length alone already gives 0.97. So we tested two simple baselines on the same split. Against length alone, our model cuts the error by about a fifth. The harder test is a linear model on amino-acid composition plus length — just 21 parameters. And on simulated data, it ties with our graph model: 0.098 versus 0.100 nanometres, and the difference is within noise. Of the variation that length cannot explain, our model captures 36 percent, the linear model 31. So on this benchmark, composition and length explain most of what our model predicts. We think any IDP predictor should report this baseline.
-
-- **過場：** “Simulations are one thing. What about real experiments?”
-
-### 第 12 頁：On real experiments, the graph model does beat composition（1:00）
-
-- **目的：** 第二個好消息，加一個誠實嘅限制。
-- **指住：** parity plot（橙色菱形 = 同 training 重疊），然後 table 嘅組成模型一行。
-- **數字：** GAT 0.295 / r 0.921；組成 0.331 / r 0.908；長度 0.416；差 −0.036，CI [−0.054, −0.018]；61%；22 條重疊，剔走後 0.296。
-
-> **Script:**
-> Here are 151 sequences with experimentally measured Rg. The model never saw an experimental label, yet it tracks them with a correlation of 0.92. Here the graph model does beat the composition model: 0.295 versus 0.331 nanometres, and a paired bootstrap puts that difference clearly below zero. Twenty-two of these sequences, the orange diamonds, sit inside training sequences; dropping them changes nothing. The caveat is that the error is three times larger than on simulations. Our labels come from one simulation model, so we inherit its gap to experiment.
-
-- **過場：** “So why does the graph help so little on simulations? We looked closely at the edges.”
-
-### 第 13 頁：Why the graph adds little: distance decides the edges（0:55）
-
-- **目的：** 偵探時間，解釋原因。要講得自信，因為呢個係我哋自己搵到嘅結果。
-- **指住：** 左邊張 log-scale 圖：藍色（距離 band）橫跨成條軸，橙色（胺基酸對）得一小段；然後右上 96.6%，最後右下排列測試嘅兩行（實驗差好遠，預測幾乎一樣）。
-- **數字：** f 2.1×；p(band) 1,300×；96.6%；Rg 2.21–2.94 vs 預測 3.00–3.08。
-
-> **Script:**
-> Our edge score divides the pair’s contact frequency by the average frequency at that distance. But contact frequency varies only two-fold between amino-acid pairs, while the distance term varies over a thousand-fold. So distance always wins: 97 percent of chosen partners lie in the farthest available distance band. The amino-acid type only breaks ties inside a band. You can see the consequence in the experiments. Here are six sequences with the same composition in different orders: their measured Rg spans 0.7 nanometres, but our predictions span less than 0.1. In other words, our graph barely sees residue order — and order, like charge patterning, is exactly what matters for disordered proteins.
-
-- **過場：** “That points directly to what we do next.”
-
-### 第 14 頁：Takeaways（0:25）
-
-> **Script:**
-> Three takeaways. One: a tiny, simulation-free graph model predicts IDP size and transfers to experiment better than a composition baseline. Two: on simulated data, composition and length already explain most of Rg, so that baseline belongs in every comparison. Three: our edge rule was dominated by distance. The fix is the band-resolved contact table from our proposal, which compares amino-acid pairs at the same distance — then the planned ablations. Thank you.
-
----
-
-## 5. Slides 改咗咩（已完成）
-
-舊版 .pptx 係檢查 A–C **之前**整嘅，有兩句企唔住，而家已經改好（.pptx、網頁版 deck、GitHub 都係新版）：
-
-- 第 11 頁標題「On unseen proteins, the graph beats length alone」：字面上啱，但會令人以為係 graph 嘅功勞。
-- 第 14 頁標題「Putting residue pairs into the graph works」：**而家冇證據支持**，一定要改。
-
-| 頁 | 舊版 | 新版 |
-|---|---|---|
-| 8 | Speaker notes 開頭冇過場 | 加「Thanks. So that was one residue…」；結尾嘅伏筆保留 |
-| 11 | 2 欄 table；callout「−19%」「36%」 | 標題：*On simulations, composition and length explain most of Rg*；table 加「Composition + length (21 params)」一欄；callout 改為「Tie: 0.100 vs 0.098 nm」同「36% vs 31%」 |
-| 12 | 冇組成 baseline | 標題：*On real experiments, the graph model does beat composition*；table 加組成一行（0.331 / 0.822 / 0.908）；callout：「−0.036 nm, 95% CI [−0.054, −0.018]」 |
-| 13 | 4 格 limitations | 標題：*Why the graph adds little: distance decides the edges*；左邊一張新圖（`edge_scales.png`，log scale 比較兩個幅度）；右上 96.6%；右邊排列測試 table；底部一行細字列埋餘下限制（接觸表用咗全部鏈、只有一個 seed） |
-| 14 | 「Putting residue pairs into the graph works」 | 標題：*What we can say, and what comes next*；三點跟第 4 節第 14 頁講稿 |
-
-第 8–10 頁嘅 slides 內容冇改，只係 speaker notes 換成第 4 節嘅講稿（加咗過場句，第 10 頁縮到 30 秒）。
+> Three takeaways. One: a small graph network that passes messages along the chain beats composition, on simulations and on experiments.
+>
+> Two: our contact edges, as built, do not help, because sequence distance, not chemistry, decides which edges we draw.
+>
+> Three: next we rebuild the contact table by distance band, from training chains only, and test whether chemistry-chosen edges can add to the chain.
+>
+> Thank you. We are happy to take questions.
 
 ---
 
-## 6. Q&A 準備
+## 5. Q&A 準備
 
-**Q1. 咁你哋個 graph 究竟有冇用？**
-> On simulated data, not beyond composition and length — we show that directly. On experiments it does beat composition, with a confidence interval that excludes zero, though from one training seed. And we found why it helps less than we hoped: the edge rule is dominated by distance.
+**Q1. 咁你哋個 contact graph 究竟有冇用？**
+> As built, no. A controlled ablation with three seeds shows the chain-only graph does better on simulations and the same on experiments. We traced it to the edge rule: distance, not amino-acid type, decides the edges.
 
-**Q2. R² 0.98 唔係好高咩？**
-> It is, but length alone gives 0.97. That is why we report the length and composition baselines and the share of the length-residual variance.
+**Q2. Local-only 點解會好過 full？**
+> We don't know for sure. Our hypothesis is dilution: each residue has two to four local neighbours but about twelve distant ones, and attention is normalised over all of them. We haven't tested that directly yet.
 
-**Q3. 點解 GAT 喺實驗贏，但喺模擬打和？**
-> We don’t know yet. It is not order sensitivity — the permutation test rules that out. Likely non-linear composition effects or composition–length interactions, which a linear model can’t capture. A composition MLP, from our proposal, would test that.
+**Q3. 咁點解唔直接報 local-only，仲要講 contact prior？**
+> Because the project question was whether pairwise contact information helps. Answering "not this way, and here is why" is the result. Local-only is the baseline that any future contact graph has to beat.
 
-**Q4. 你哋同 ALBATROSS 或者 STARLING 比點？**
-> We haven’t compared on the same split, so we won’t quote numbers. That needs running them on our test proteins.
->（⚠️ 唔好即場講佢哋 paper 嘅數字，唔同數據集冇得直接比。）
+**Q4. 之前 0.100 嘅結果去咗邊？**
+> It came from one run on a different machine. Re-evaluating that saved checkpoint still gives 0.100, but retraining with the same seed on the new machine gives 0.128. So we report the mean over three seeds, which is 0.111.
 
-**Q5. 接觸表有冇 data leakage？**
-> Yes, a small one: it was counted over all 28,058 trajectories, including validation and test. It is only a 20 × 20 summary, so we expect little effect, but we will rebuild it from training chains only, as the proposal says.
+**Q5. Bootstrap CI 有冇包括 seed 嘅不確定性？**
+> No. We average predictions over seeds and then resample sequences. That's why we also show every seed: all three local-only seeds beat composition and every full-model seed.
 
-**Q6. 點解唔用 proposal 講嘅 PyTorch Geometric GATConv？**
-> We implemented the same edge-aware attention as dense tensors with an edge mask, which is mathematically equivalent on our graph and lets us batch chains of similar length.
+**Q6. Local-only GAT 睇到幾遠？**
+> Two layers over neighbours up to two apart, so each residue sees about four residues either side, plus global mean and max pooling. So it learns local sequence patterns, which is consistent with it sensing order in short chains but not long ones.
 
-**Q7. 點解 predict log Rg？**
-> Rg follows a power law in length, which is linear in log space, and errors scale with size, so log makes the loss treat short and long chains fairly.
+**Q7. 點解 band-resolved 表未做？**
+> It needs pair counts per distance band, which must be recounted from the raw trajectories. That archive wasn't available on our compute server, and we didn't want to fake it from the pooled table.
 
-**Q8. 點解只用 ≤ 512 個殘基？**
-> Our attention is stored densely, so memory grows with N squared. That drops 1,075 of 28,058 chains; a sparse implementation would remove the limit.
+**Q8. 接觸表有冇 data leakage？**
+> Yes, a small one: it was counted over all chains, including test. It's a 20 × 20 summary, and our best model, local-only, uses it only as an edge feature on local edges. A training-only rebuild needs the same trajectory archive.
 
-**Q9. 只 train 一個 seed，結果穩唔穩？**
-> No, one seed is a limitation; the validation curve is noisy too. The proposal plans three seeds.
+**Q9. 同 ALBATROSS 或者 STARLING 比點？**
+> We haven't run them on our split, so we won't quote numbers.（唔好即場講佢哋 paper 嘅數字。）
 
-**Q10. 你哋講可解釋，有冇證據？**
-> Not yet. The contact table itself is interpretable — aromatic pairs enriched, prolines with charges depleted — but we haven’t tested which edges the model relies on.
-
----
-
-## 7. 如果簡報前仲有一個 GPU 小時（可選）
-
-做到第一個實驗，第 13 頁嘅論點會強好多。
-
-1. **先修好 `contact_mpnn/graph.py`**：第 25 行尾嘅 `"""` 刪咗（docstring 提早收咗尾，而家成個 package import 唔到，乜都 run 唔到）。
-2. **Local-only GAT（proposal Table 1 嘅 “Local-chain GAT”）**：複製 `configs/sparse_gat.yaml`，將 `graph.topk` 改做 `0`，`paths.out_dir` 改做 `runs/contact_gat_local_only`，然後 `python scripts/train.py --config <新 config>`，大約 13 分鐘。
-   - 如果結果同 full model 差唔多，就直接證明 non-local edge 而家冇幫手，同檢查 B 吻合。
-3. **Band-resolved 接觸表**：要改 `build_contact_table.py` 按 (a, b, band) 計數，仲要有原本嗰個 trajectory zip（喺你部 server 度），唔係一個鐘做得完。放喺「下一步」就得。
+**Q10. R² 0.99 唔係好高咩？**
+> Length alone gives 0.97, so R² hides most of the differences. That's why we compare MAE against length and composition baselines.
 
 ---
 
-## 8. 數字速查同出處
+## 6. 數字速查同出處
 
 | 數字 | 值 | 出處 |
 |---|---|---|
-| GAT test MAE / RMSE / R² / r | 0.100 / 0.173 / 0.981 / 0.992 | `runs/contact_gat_idrome_sparse/plot_metrics.json` |
-| GAT 實驗 MAE / RMSE / R² / r | 0.295 / 0.417 / 0.846 / 0.921 | 同上 |
-| 參數數目 | 18,721 | `logs/contact_gat_sparse.out` |
-| Split | 18,860 / 4,020 / 4,103（N ≤ 512） | 同上 |
-| 只睇長度：ν，test MAE，實驗 MAE | 0.535，0.124，0.416 | `make_figs.py` |
-| 組成 + 長度：test MAE / R²；實驗 MAE / R² / r | 0.098 / 0.980；0.331 / 0.822 / 0.908 | `check_story.py` |
-| 長度殘差 variance 捉到 | GAT 36%，組成 31% | `make_figs.py`、`check_story.py` |
-| GAT − 組成（實驗）MAE 差 | −0.036 nm，95% CI [−0.054, −0.018]，61% 序列 GAT 較準 | `bootstrap.py` |
-| GAT − 組成（test）MAE 差 | +0.002 nm，95% CI [−0.001, +0.005] | `bootstrap.py` |
-| f(a,b) 範圍 | 0.0068 – 0.0145 | `check_story.py` |
-| p(band)：2–4 / 5–8 / 9–16 / 17–32 / > 32 | 0.422 / 0.0248 / 0.00847 / 0.00302 / 0.00032 | `check_story.py` |
-| Partner 喺最遠 band 嘅比例 | 96.6%（300 條隨機 test 鏈） | `check_story.py` |
-| 排列組 | 6 條（107 aa）：實驗 2.21–2.94，預測 3.00–3.08；7 條（334 aa）：實驗 4.06–5.44，預測 5.27–5.33 | `perm_check.py` |
-| 實驗序列同 training 重疊 | 22 / 151；剔走後 MAE 0.296 | `make_figs.py` |
-
-Script 全部喺 GitHub `comp5222-presentation/analysis/` 同 `comp5222-presentation/scripts/`，用法：`python <script> <COMP-5222 folder>`（要 numpy；畫圖嘅 script 仲要 matplotlib）。`scale_fig.py` 畫第 13 頁嗰張圖。組成 baseline 同 bootstrap 係我加嘅分析，唔係原本 project code 嘅一部分。
+| 只睇長度：模擬 / 實驗 MAE | 0.124 / 0.416 | `comp5222-presentation/analysis/check_story.py` |
+| 組成 + 長度：模擬 MAE、R²；實驗 MAE、R²、r | 0.098、0.980；0.331、0.822、0.908 | 同上 |
+| 每個 seed 嘅 MAE、R²、r | 見第 2 節 | `exp/edge-ablation`：`COMP-5222/experiments/edge_ablation/seed_metrics.tsv`；我用 `runs/edge_ablation/*/predictions_*.tsv` 重新計過，一致 |
+| Bootstrap 差距 | 見 slide 11、12 | `experiments/edge_ablation/bootstrap.tsv` |
+| 長度解釋唔到嘅 variance 捉到幾多 | local-only 68%、組成 31%、full 20% | `experiments/edge_ablation/RESULTS.md` |
+| 排列測試 | 6×107：0.73 / 0.06 / 0.47；7×334：1.39 / 0.08 / 0.17 | `experiments/edge_ablation/permutation_sensitivity.tsv` |
+| 最遠 band 比例 | 96.6%（300 條 test 鏈） | `analysis/check_story.py`；`experiments/edge_ablation/edge_audit.json` |
+| f(a,b) 範圍；p(d) 範圍 | 2.1×；1,338× | `scripts/scale_fig.py` |
+| 舊 checkpoint 重新評估 | 模擬 0.100、實驗 0.295 | `runs/edge_ablation/historical_checkpoint_eval/` |
+| 第 11、12 頁嘅圖 | — | `comp5222-presentation/scripts/ablation_fig.py` |

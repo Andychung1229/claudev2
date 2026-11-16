@@ -1,35 +1,35 @@
 <section id="resexp" class="mist">
-<p class="eyebrow">Results · Experimental Rg</p>
-<h2 class="title">On real experiments, the graph model does beat composition</h2>
+<p class="eyebrow">Results · Experimental Rg · 3 seeds</p>
+<h2 class="title">On experiments, every GAT beats composition</h2>
 <div class="row">
-<img class="fig rise" style="--i:0; width:620px; height:600px;" src="/_blob/e181c5a481b1446c9e0217de4b53edfb" alt="Parity plot of predicted versus experimental Rg for 151 sequences; blue circles are sequences not in the training set, orange diamonds are sequences contained in a training sequence; both follow the diagonal">
+<img class="fig rise" style="--i:0; width:620px; height:585px;" src="/_blob/3f5537e89d31a1a4af99c72164c8539c" alt="Bar chart of experimental MAE with one dot per training seed: length only 0.416, composition plus length 0.331, GAT with contact edges 0.301, GAT with distance edges 0.320, GAT with local edges only 0.303">
 <div class="col">
 <table class="tbl rise" style="--i:1;">
 <tr><th style="width:52%;">151 experimental Rg</th><th style="width:16%; text-align:right;">MAE</th><th style="width:16%; text-align:right;">R²</th><th style="width:16%; text-align:right;">r</th></tr>
 <tr><td>Length only</td><td style="text-align:right;">0.416</td><td style="text-align:right;">0.744</td><td style="text-align:right;">0.865</td></tr>
 <tr><td>Composition + length</td><td style="text-align:right;">0.331</td><td style="text-align:right;">0.822</td><td style="text-align:right;">0.908</td></tr>
-<tr class="hi"><td><b>ContactGAT</b></td><td style="text-align:right;"><b>0.295</b></td><td style="text-align:right;"><b>0.846</b></td><td style="text-align:right;"><b>0.921</b></td></tr>
-<tr><td>ContactGAT, no overlap (129)</td><td style="text-align:right;">0.296</td><td style="text-align:right;">0.841</td><td style="text-align:right;">0.918</td></tr>
+<tr class="hi"><td><b>GAT, contact edges</b></td><td style="text-align:right;"><b>0.301</b></td><td style="text-align:right;"><b>0.838</b></td><td style="text-align:right;"><b>0.919</b></td></tr>
+<tr class="hi"><td><b>GAT, local only</b></td><td style="text-align:right;"><b>0.303</b></td><td style="text-align:right;"><b>0.841</b></td><td style="text-align:right;"><b>0.918</b></td></tr>
 </table>
 <div class="card rise" style="--i:2;">
-<p class="cardh">−0.036 nm vs composition</p>
-<p class="txt">Paired bootstrap 95% CI [−0.054, −0.018]; GAT is closer on 61% of sequences. One training seed.</p>
+<p class="cardh">Both beat composition</p>
+<p class="txt">Contact edges −0.036 nm [−0.054, −0.018]; local only −0.029 nm [−0.048, −0.008].</p>
 </div>
 <div class="card rise" style="--i:3;">
-<p class="cardh">Error is 3× the simulated test</p>
-<p class="txt">Labels come from one simulation model, so we inherit its gap to experiment.</p>
+<p class="cardh">Edges make no difference here</p>
+<p class="txt">Local − full: +0.008 nm [−0.012, +0.028]. Error stays ~0.30 nm for every GAT.</p>
 </div>
 </div>
 </div>
 <div class="foot"><p>Tian &amp; Chung · COMP 5222</p><p class="pnum"></p></div>
-<aside>[~1:00]
-Here are 151 sequences with experimentally measured Rg. The model never saw an experimental label, yet it tracks them with a correlation of 0.92.
+<aside>[~0:50]
+Next, 151 sequences with measured Rg. The models saw only simulation labels.
 
-Here the graph model does beat the composition model: 0.295 versus 0.331 nanometres, and a paired bootstrap puts that difference clearly below zero.
+Every graph model beats composition here: about 0.30 nanometres against 0.33, and the bootstrap intervals exclude zero for both the full and the local-only model.
 
-Twenty-two of these sequences, the orange diamonds, sit inside training sequences; dropping them changes nothing.
+But between the two graph models there is no detectable difference. Removing the contact edges neither helps nor hurts on real data.
 
-The caveat is that the error is three times larger than on simulations. Our labels come from one simulation model, so we inherit its gap to experiment.
+The error is still several times larger than on simulations, because we inherit the gap between the simulation model and experiment.
 
-So why does the graph help so little on simulations? We looked closely at the edges.</aside>
+So why do the contact edges fail? We looked at how they are chosen.</aside>
 </section>
