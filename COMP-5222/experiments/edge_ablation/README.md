@@ -88,6 +88,13 @@ three-epoch histories, source commit, host, torch/CUDA build and E0 result;
 it never labels the old target as reproduced. Without this evidence the
 default gate still stops. Initial launcher/environment records are retained.
 
+An inference-only check of the immutable historical checkpoint also reproduces
+the archived test MAE (0.100082 nm) and experimental MAE (0.295005 nm) under the
+new CPU pipeline. All primary metric differences are below 3.2e-8. This check
+does not retrain or replace the new E0; its separate output directory and logs
+are retained. Input/table/split/weight hashes also match the user's historical
+project archive byte-for-byte (`historical_input_comparison.json`).
+
 Each run saves the exact commands in logs and a `run_record.json` with host,
 GPU UUID, package versions, precision, source commit, input/config/output
 hashes, owned process identities and separate training/evaluation wall times.
@@ -126,6 +133,8 @@ System `venv` initially lacked ensurepip; `bootstrap_env.sh` uses
 `venv --without-pip` and the official PyPA bootstrap in the new experiment
 folder. No system or existing project environment was modified. The authoritative
 remote tests use torch 2.7.1+cu126; the complete package snapshot is saved.
+The bootstrap cache was moved into this experiment's persistent data folder;
+the bootstrap helper now explicitly places pip cache and temporary files there.
 
 The source trajectory archive was not found in local Downloads/Desktop/Documents
 or mounted volumes, Songcpu8 user/shared storage, or Songcpu7 user/shared

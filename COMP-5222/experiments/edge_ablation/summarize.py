@@ -96,17 +96,18 @@ def interpret(bootstrap: dict, variant: str, description: str) -> str:
     v = bootstrap[key]
     if v['n_seeds'] != 3 or v['reference_n_seeds'] != 3:
         return f'**Inconclusive.** {description}: only partial seed coverage is available.'
-    if v['ci_low'] > 0:
-        direction = 'The variant has higher test MAE than E0.'
-    elif v['ci_high'] < 0:
-        direction = 'The variant has lower test MAE than E0.'
-    else:
-        direction = 'The sequence-bootstrap interval includes zero; this does not establish equivalence.'
-    label = 'Supported' if v['ci_low'] > 0 else ('Not supported' if v['ci_high'] < 0 else 'Inconclusive')
     extra = bootstrap.get(f'{variant}:exp151:full')
-    return (f'**{label}.** {description}. Variant − E0 test MAE: {interval(v)} nm. '
-            f'{direction} Exp151: {interval(extra)} nm.' if extra else
-            f'**{label}.** {description}. Variant − E0 test MAE: {interval(v)} nm. {direction}')
+    def verdict(result):
+        if result['ci_low'] > 0:
+            return 'supported'
+        return 'not supported' if result['ci_high'] < 0 else 'inconclusive'
+    test_label = verdict(v)
+    exp_label = verdict(extra) if extra else 'inconclusive'
+    label = test_label if test_label == exp_label else 'inconclusive'
+    return (f'**{label.capitalize()}.** {description}, assessed using seed-averaged predictions. '
+            f'Test: {test_label}, variant − E0 MAE {interval(v)} nm. '
+            + (f'Exp151: {exp_label}, {interval(extra)} nm. ' if extra else 'Exp151 incomplete. ')
+            + 'A zero-crossing interval does not establish equivalence; mixed dataset results remain inconclusive overall.')
 
 
 def summarize(root: Path) -> dict:
@@ -194,6 +195,8 @@ def summarize(root: Path) -> dict:
     audit = json.loads(audit_path.read_text()) if audit_path.is_file() else {}
     reproduction_path = out / 'reproduction_check.json'
     reproduction = json.loads(reproduction_path.read_text()) if reproduction_path.is_file() else None
+    old_checkpoint_path = out / 'historical_checkpoint_check.json'
+    old_checkpoint = json.loads(old_checkpoint_path.read_text()) if old_checkpoint_path.is_file() else None
     sanity = None
     table_path = root / 'data/processed/aa_contact_table_train.npz'
     if table_path.is_file():
@@ -207,10 +210,12 @@ def summarize(root: Path) -> dict:
         sanity = {'frequency_pearson': float(np.corrcoef(f(old).ravel(), f(new).ravel())[0, 1]),
                   'old_band_frequency': old_pd.tolist(), 'new_band_frequency': new_pd.tolist(),
                   'band_relative_change': np.divide(new_pd-old_pd, old_pd, out=np.zeros_like(old_pd), where=old_pd > 0).tolist()}
-    report = {'variants': summary, 'baselines': baseline_metrics, 'bootstrap': bootstrap,
+    report = {'analysis_source_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+              'variants': summary, 'baselines': baseline_metrics, 'bootstrap': bootstrap,
               'permutation_sensitivity': sensitivity, 'run_status': run_status,
               'setup': setup, 'edge_audit': audit, 'train_table_sanity': sanity,
               'reproduction_check': reproduction,
+              'historical_checkpoint_check': old_checkpoint,
               'baseline_coefficients': {'composition': weights.tolist(), 'length': length_fit.tolist()},
               'definitions': {'sd': 'sample standard deviation across training seeds (ddof=1)',
                               'bootstrap': '5000 sequence resamples, RandomState(0), seed-averaged predictions; conditional on fitted seeds',
@@ -244,6 +249,13 @@ def write_markdown(root: Path, report: dict) -> None:
                   'The original RTX 5060 Ti environment was not fully archived, so the exact hardware/runtime component causing the cross-host difference remains unresolved. '
                   'After this investigation, the remaining fixed-config runs use the new E0 as their common-runtime control. E0 seed42 is retained, not replaced or tuned. '
                   'This is an explicit execution decision and a limitation of comparisons to the published single-seed result.', '']
+        check = report.get('historical_checkpoint_check')
+        if check:
+            max_delta = max(abs(x) for values in check['differences'].values() for x in values.values())
+            lines += [f"An additional inference-only diagnostic evaluated the immutable archived checkpoint with the new CPU pipeline: test MAE {check['metrics']['test']['mae']:.6f} nm, exp151 MAE {check['metrics']['exp151']['mae']:.6f} nm. "
+                      f"The largest absolute difference across MAE/RMSE/R²/Pearson metrics was {max_delta:.3g}. No training was performed. "
+                      'This confirms checkpoint/inference compatibility and narrows the historical mismatch to retraining rather than changed inputs or inference. '
+                      'Outputs are retained under `runs/edge_ablation/historical_checkpoint_eval/`.', '']
     lines += [
               '## Main table', '', 'Mean ± sample sd across seeds, in nm where applicable. A one-seed entry is explicitly labelled. '
               'The residual share uses the exact centered log-residual definition from `check_story.py`.', '',
