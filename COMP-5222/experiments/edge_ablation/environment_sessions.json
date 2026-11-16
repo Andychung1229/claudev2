@@ -1,0 +1,38 @@
+[
+  {
+    "host": "songcpu8",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "torch": "2.7.1+cu126",
+    "cuda_build": "12.6",
+    "numpy": "1.26.4",
+    "commit": "7e01db4e491ab15dbc9ade2d9865ab016b4a2d7d",
+    "gpus": [
+      "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+      "GPU-b523c444-6abf-2b4b-1d34-daa77e7a1e8b",
+      "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458"
+    ],
+    "pid": 3213555,
+    "uid": 1046,
+    "start_ticks": "233510785",
+    "scheduler": "none found; bounded idle-GPU waiter with per-user UUID locks, not a cluster reservation"
+  },
+  {
+    "host": "songcpu8",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "torch": "2.7.1+cu126",
+    "cuda_build": "12.6",
+    "numpy": "1.26.4",
+    "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+    "gpus": [
+      "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+      "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+      "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458"
+    ],
+    "pid": 3661446,
+    "uid": 1046,
+    "start_ticks": "233682386",
+    "scheduler": "none found; bounded idle-GPU waiter with per-user UUID locks, not a cluster reservation"
+  }
+]

@@ -1,0 +1,7 @@
+linear composition+logN  test    MAE 0.098  RMSE 0.177  R2 0.980  r 0.990
+  share of length-residual variance captured: 0.305
+linear composition+logN  exp151  MAE 0.331  RMSE 0.448  R2 0.822  r 0.908
+band mean contact freq p_d: [0.0, 0.42246, 0.02483, 0.00847, 0.00302, 0.00032]
+f(a,b) range: 0.00682 0.01451
+chosen partners in the farthest available band: 0.966
+residues whose partner *bands* equal 'just take the farthest': 33406

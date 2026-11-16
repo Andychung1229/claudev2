@@ -1,0 +1,36 @@
+COMMAND ["/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/.venv/bin/python", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/scripts/train.py", "--config", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/configs/edge_ablation/full.yaml", "--seed", "42", "--out-dir", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/runs/edge_ablation/full_s42"]
+idrome_split_train.tsv: skip 755 sequences with N not in [1, 512]
+idrome_split_val.tsv: skip 184 sequences with N not in [1, 512]
+idrome_split_test.tsv: skip 136 sequences with N not in [1, 512]
+device=cuda  train_n=18860  val_n=4020  test_n=4103  loss=mse  log_target=True  log_base=e  graph=sparse  w=2  k=8  batch=64  pair_budget=8388608  amp=True
+model=ContactGAT  layers=2  heads=4  hidden=64  node_dim=21  edge_in=10  edge_mlp=8  readout=meanmax  params=18721
+epoch   1  train_loss=0.04264  val_mae=0.4481 nm  val_rmse=0.6020 nm  val_r2=0.7640  val_log_mse=0.03119
+epoch   2  train_loss=0.01720  val_mae=0.4932 nm  val_rmse=0.6873 nm  val_r2=0.6923  val_log_mse=0.03590
+epoch   3  train_loss=0.01636  val_mae=0.1580 nm  val_rmse=0.2535 nm  val_r2=0.9581  val_log_mse=0.00489
+epoch   4  train_loss=0.01335  val_mae=0.3146 nm  val_rmse=0.4829 nm  val_r2=0.8481  val_log_mse=0.01483
+epoch   5  train_loss=0.01106  val_mae=0.3261 nm  val_rmse=0.4592 nm  val_r2=0.8627  val_log_mse=0.01585
+epoch   6  train_loss=0.01068  val_mae=0.2321 nm  val_rmse=0.3473 nm  val_r2=0.9214  val_log_mse=0.00878
+epoch   7  train_loss=0.01209  val_mae=0.3484 nm  val_rmse=0.4940 nm  val_r2=0.8411  val_log_mse=0.01741
+epoch   8  train_loss=0.00993  val_mae=0.1919 nm  val_rmse=0.2747 nm  val_r2=0.9509  val_log_mse=0.00708
+epoch   9  train_loss=0.00785  val_mae=0.3344 nm  val_rmse=0.3792 nm  val_r2=0.9063  val_log_mse=0.02457
+epoch  10  train_loss=0.00860  val_mae=0.2207 nm  val_rmse=0.2818 nm  val_r2=0.9483  val_log_mse=0.01086
+epoch  11  train_loss=0.00869  val_mae=0.2258 nm  val_rmse=0.3424 nm  val_r2=0.9237  val_log_mse=0.00794
+epoch  12  train_loss=0.00757  val_mae=0.3430 nm  val_rmse=0.4367 nm  val_r2=0.8758  val_log_mse=0.01722
+epoch  13  train_loss=0.00875  val_mae=0.1302 nm  val_rmse=0.2111 nm  val_r2=0.9710  val_log_mse=0.00360
+epoch  14  train_loss=0.00800  val_mae=0.2278 nm  val_rmse=0.3582 nm  val_r2=0.9164  val_log_mse=0.00778
+epoch  15  train_loss=0.00711  val_mae=0.2049 nm  val_rmse=0.3197 nm  val_r2=0.9334  val_log_mse=0.00646
+epoch  16  train_loss=0.00610  val_mae=0.1879 nm  val_rmse=0.3044 nm  val_r2=0.9397  val_log_mse=0.00562
+epoch  17  train_loss=0.00622  val_mae=0.2447 nm  val_rmse=0.3711 nm  val_r2=0.9103  val_log_mse=0.00872
+epoch  18  train_loss=0.00684  val_mae=0.2182 nm  val_rmse=0.3164 nm  val_r2=0.9348  val_log_mse=0.00717
+epoch  19  train_loss=0.00672  val_mae=0.2120 nm  val_rmse=0.3148 nm  val_r2=0.9354  val_log_mse=0.00682
+epoch  20  train_loss=0.00724  val_mae=0.1627 nm  val_rmse=0.2516 nm  val_r2=0.9588  val_log_mse=0.00502
+epoch  21  train_loss=0.00558  val_mae=0.2194 nm  val_rmse=0.3467 nm  val_r2=0.9217  val_log_mse=0.00738
+epoch  22  train_loss=0.00576  val_mae=0.2203 nm  val_rmse=0.3224 nm  val_r2=0.9323  val_log_mse=0.00735
+epoch  23  train_loss=0.00512  val_mae=0.2443 nm  val_rmse=0.3304 nm  val_r2=0.9289  val_log_mse=0.00886
+epoch  24  train_loss=0.00512  val_mae=0.1482 nm  val_rmse=0.2232 nm  val_r2=0.9676  val_log_mse=0.00443
+epoch  25  train_loss=0.00759  val_mae=0.1742 nm  val_rmse=0.2696 nm  val_r2=0.9526  val_log_mse=0.00491
+epoch  26  train_loss=0.00448  val_mae=0.1489 nm  val_rmse=0.2299 nm  val_r2=0.9656  val_log_mse=0.00392
+epoch  27  train_loss=0.00560  val_mae=0.1538 nm  val_rmse=0.2473 nm  val_r2=0.9602  val_log_mse=0.00403
+epoch  28  train_loss=0.00529  val_mae=0.1413 nm  val_rmse=0.2326 nm  val_r2=0.9648  val_log_mse=0.00357
+early stop @ 28  best_val_mae_nm=0.13019
+test  mae=0.1275 nm  rmse=0.1997 nm  r2=0.9746

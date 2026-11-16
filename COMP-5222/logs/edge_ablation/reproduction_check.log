@@ -1,0 +1,26 @@
+{
+  "reference_commit": "26673f7",
+  "comparison_epochs": 3,
+  "max_absolute_metric_differences": {
+    "train_loss": 0.0,
+    "train_log10_mae": 0.0,
+    "val_log_mae": 0.0,
+    "val_log_mse": 0.0,
+    "val_mae_nm": 0.0,
+    "val_rmse_nm": 0.0,
+    "val_r2": 0.0,
+    "val_log10_mae": 0.0
+  },
+  "bit_identical_metrics": true,
+  "all_metrics_within_1e-7": true,
+  "refactor_test_mae": 0.12760453493804894,
+  "original_published_test_mae": 0.1,
+  "environment": {
+    "host": "songcpu8",
+    "torch": "2.7.1+cu126",
+    "cuda_build": "12.6",
+    "gpu_uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807"
+  },
+  "conclusion": "Untouched source and refactor reproduce the same first three training epochs. The failure to match the original host is not introduced by this refactor; cross-host/runtime training is not numerically reproduced.",
+  "test_used_for_tuning": false
+}

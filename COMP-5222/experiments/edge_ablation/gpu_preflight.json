@@ -1,0 +1,18 @@
+{
+  "checked_utc": "2026-11-16T03:04:25.777178+00:00",
+  "hostname": "songcpu8",
+  "uid": 1046,
+  "kernel_driver": "NVRM version: NVIDIA UNIX x86_64 Kernel Module  580.95.05  Tue Sep 23 10:11:16 UTC 2025\nGCC version:  gcc version 12.3.0 (Ubuntu 12.3.0-1ubuntu1~22.04.3) \n",
+  "scheduler_commands": {
+    "squeue": null,
+    "qstat": null,
+    "bjobs": null
+  },
+  "runtime_commands": {
+    "python3": "/usr/bin/python3",
+    "uv": null,
+    "nvcc": null,
+    "rsync": "/usr/bin/rsync"
+  },
+  "gpu_snapshot_is_reservation": false
+}

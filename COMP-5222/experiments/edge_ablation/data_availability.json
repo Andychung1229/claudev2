@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-16",
+  "required_archive": "conformational_ensembles.zip",
+  "found": false,
+  "original_host": "kee1706",
+  "original_host_probe": "DNS name did not resolve from the Mac",
+  "local_search": [
+    "Downloads",
+    "Desktop",
+    "Documents",
+    "mounted Volumes"
+  ],
+  "remote_search": {
+    "songcpu8": "bounded searches of accessible user storage and /data,/home/data (shared scan depth 5); no matching path returned",
+    "songcpu7": "bounded search of accessible /data/kwchungac and /home/data/kwchungac; no matching path returned"
+  },
+  "effect": "E3 train_table and E4 band_resolved cannot be executed without genuine training trajectories; E0/E1/E2 remain runnable",
+  "substitution": "No inferred or synthetic prior used for experimental runs"
+}

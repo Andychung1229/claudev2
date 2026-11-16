@@ -1,0 +1,8 @@
+COMMAND ["/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/.venv/bin/python", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/experiments/edge_ablation/reference_src/scripts/train.py", "--config", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/runs/edge_ablation/reference_diagnostic_s42/diagnostic_config.yaml"]
+idrome_split_train.tsv: skip 755 sequences with N not in [1, 512]
+idrome_split_val.tsv: skip 184 sequences with N not in [1, 512]
+device=cuda  train_n=18860  val_n=4020  test_n=0  loss=mse  log_target=True  log_base=e  graph=sparse  w=2  k=8  batch=64  pair_budget=8388608  amp=True
+model=ContactGAT  layers=2  heads=4  hidden=64  node_dim=21  edge_in=10  edge_mlp=8  readout=meanmax  params=18721
+epoch   1  train_loss=0.04264  val_mae=0.4481 nm  val_rmse=0.6020 nm  val_r2=0.7640  val_log_mse=0.03119
+epoch   2  train_loss=0.01720  val_mae=0.4932 nm  val_rmse=0.6873 nm  val_r2=0.6923  val_log_mse=0.03590
+epoch   3  train_loss=0.01636  val_mae=0.1580 nm  val_rmse=0.2535 nm  val_r2=0.9581  val_log_mse=0.00489

@@ -1,0 +1,13 @@
+full: degree=12.469, farthest=0.9663608333832245, band_counts=[0, 0, 0, 2240, 27142, 237866]
+local_only: degree=0.000, farthest=None, band_counts=[0, 0, 0, 0, 0, 0]
+distance_only: degree=14.753, farthest=0.9663608333832245, band_counts=[0, 0, 0, 2240, 27142, 237866]
+train_table: BLOCKED, missing /data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz
+band_resolved: BLOCKED, missing /data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz
+START full_s42 on GPU-5c1ba65f-10ff-a704-6065-5c5867e72807
+DONE full_s42, training=1027.1s
+Traceback (most recent call last):
+  File "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/experiments/edge_ablation/run_experiments.py", line 239, in <module>
+    main()
+  File "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/experiments/edge_ablation/run_experiments.py", line 207, in main
+    raise RuntimeError(f'E0 reproduction gate failed: test MAE={mae}; investigate before other seeds')
+RuntimeError: E0 reproduction gate failed: test MAE=0.12760453493804894; investigate before other seeds

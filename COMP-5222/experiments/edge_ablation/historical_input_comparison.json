@@ -1,0 +1,48 @@
+{
+  "historical_archive": "/Users/andy/Downloads/COMP-5222.zip",
+  "comparisons": [
+    {
+      "path": "data/processed/aa_contact_table.npz",
+      "historical_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "current_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "identical": true
+    },
+    {
+      "path": "data/processed/idrome_split_train.tsv",
+      "historical_sha256": "fedb3335985cd71fe45ad827908744ef9791050b0933805c515b897d13c3480b",
+      "current_sha256": "fedb3335985cd71fe45ad827908744ef9791050b0933805c515b897d13c3480b",
+      "identical": true
+    },
+    {
+      "path": "data/processed/idrome_split_val.tsv",
+      "historical_sha256": "fcd3bf19a7958b78bbe601981df266c5669489bfa48b00a9b55b3561367f83f8",
+      "current_sha256": "fcd3bf19a7958b78bbe601981df266c5669489bfa48b00a9b55b3561367f83f8",
+      "identical": true
+    },
+    {
+      "path": "data/processed/idrome_split_test.tsv",
+      "historical_sha256": "a6da77fbd6086b690acc1e5501ee7c048ab56c88a59f03b77607dd163363f773",
+      "current_sha256": "a6da77fbd6086b690acc1e5501ee7c048ab56c88a59f03b77607dd163363f773",
+      "identical": true
+    },
+    {
+      "path": "runs/contact_gat_idrome_sparse/best.pt",
+      "historical_sha256": "283f3c951dde6104ff90babedc85ec03f0e80b6fed1af41dc24cbf4041bc93d8",
+      "current_sha256": "283f3c951dde6104ff90babedc85ec03f0e80b6fed1af41dc24cbf4041bc93d8",
+      "identical": true
+    },
+    {
+      "path": "runs/contact_gat_idrome_sparse/config.yaml",
+      "historical_sha256": "0d30635acc22eabe186b8a990632aec12a6ffa60ac814c5b0f44f0a3561b7066",
+      "current_sha256": "0d30635acc22eabe186b8a990632aec12a6ffa60ac814c5b0f44f0a3561b7066",
+      "identical": true
+    },
+    {
+      "path": "contact_mpnn/model.py",
+      "historical_sha256": "413b672731ad1dfa26747e2e50b2b6aeadb7f659184daa4975a302283ee7ebf5",
+      "current_sha256": "413b672731ad1dfa26747e2e50b2b6aeadb7f659184daa4975a302283ee7ebf5",
+      "identical": true
+    }
+  ],
+  "all_identical": true
+}

@@ -1,0 +1,7 @@
+{
+  "status": "refactor_equivalence_verified_historical_target_unreproduced",
+  "historical_target_reproduced": false,
+  "e0_test_mae": 0.12760453493804894,
+  "evidence_path": "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/experiments/edge_ablation/reproduction_check.json",
+  "decision": "Continue fixed-config ablations against E0 in the same new runtime. The archived historical numerical target remains unreproduced; no seed is replaced."
+}
