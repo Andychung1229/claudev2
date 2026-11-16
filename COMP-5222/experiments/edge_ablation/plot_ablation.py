@@ -17,7 +17,7 @@ def main():
     out = args.root / 'experiments/edge_ablation'
     report = json.loads((out / 'summary.json').read_text())
     names = list(report['variants'])
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.3), constrained_layout=True)
     for ax, dataset, title in zip(axes, ['test', 'exp151'], ['Simulated test', 'Experimental (151)']):
         for i, name in enumerate(names):
             v = report['variants'][name]
@@ -34,10 +34,13 @@ def main():
         ax.set_xticks(np.arange(len(names)), [n.replace('_', '\n') for n in names], fontsize=9)
         ax.set_title(title)
         ax.set_ylabel('MAE (nm), mean ± sample sd')
+        ax.set_xlim(-.5, len(names) - .5)
+        ax.margins(y=.15)
         ax.set_ylim(bottom=0)
         ax.grid(axis='y', alpha=.2)
         ax.set_axisbelow(True)
-        ax.legend(fontsize=8)
+    fig.legend(*axes[0].get_legend_handles_labels(), loc='outside lower center',
+               frameon=False, fontsize=9)
     fig.savefig(out / 'ablation_mae.png', dpi=180)
     plt.close(fig)
 
