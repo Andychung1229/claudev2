@@ -1,0 +1,24 @@
+[
+  {
+    "observed_utc": "2026-11-16T05:20:03Z",
+    "runs": [
+      {
+        "run": "distance_only_s43",
+        "gpu_uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+        "own_child_pid": 672776,
+        "external_compute_process_count": 1,
+        "external_used_mib": 25552,
+        "shared_gpu_observed": true
+      },
+      {
+        "run": "distance_only_s44",
+        "gpu_uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+        "own_child_pid": 781287,
+        "external_compute_process_count": 0,
+        "external_used_mib": 0,
+        "shared_gpu_observed": false
+      }
+    ],
+    "timing_note": "Shared-card activity observed; reported wall times are not isolated hardware measurements."
+  }
+]

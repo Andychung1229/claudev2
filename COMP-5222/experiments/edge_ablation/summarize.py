@@ -237,6 +237,14 @@ def write_markdown(root: Path, report: dict) -> None:
     for r in report['setup']:
         lines.append(f"| {r['variant']} | {r['seed']} | {r.get('host','unknown')} | {r.get('gpu_uuid','unknown')} | {r.get('commit','unknown')} | {r.get('train_wall_seconds',0):.1f} | {r.get('eval_wall_seconds',0):.1f} |")
     lines += ['', 'Environment and input/code hashes are in `environment.json`, `environment_sessions.json`, `environment.txt`, `protected_inputs.json` and each run’s `run_record.json`.', '']
+    timing_path = root / 'experiments/edge_ablation/gpu_contention_snapshots.json'
+    if timing_path.is_file():
+        events = json.loads(timing_path.read_text())
+        affected = sorted({v['run'] for event in events for v in event['runs'] if v['shared_gpu_observed']})
+        if affected:
+            lines += ['Additional shared-GPU activity was observed during ' + ', '.join(affected)
+                      + '. Wall times are observed shared-hardware times, not isolated efficiency measurements. '
+                      'See `gpu_contention_snapshots.json`.', '']
     reproduction = report.get('reproduction_check')
     if reproduction:
         lines += ['## Historical reproduction investigation', '',
