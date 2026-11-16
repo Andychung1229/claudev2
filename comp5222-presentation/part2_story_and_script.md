@@ -113,7 +113,7 @@ Partner 嗰半照 notes 計大約 6:25，要再壓 25 秒左右。另外第 4 �
 
 ## 4. 逐頁講稿（同 .pptx speaker notes 一樣）
 
-### 第 8 頁：The graph is sparse, and every edge carries features（0:50）
+### 第 8 頁：A sparse graph with 10 features per edge（0:50）
 - **指住：** 先指 adjacency matrix 嘅藍色對角線，再指橙色點，強調橙色全部離對角線好遠。
 - **數字：** 155 個殘基；10%（1,192 / 11,935）；每條 edge 10 個 feature。
 
@@ -125,7 +125,7 @@ Partner 嗰半照 notes 計大約 6:25，要再壓 25 秒左右。另外第 4 �
 >
 > Keep one thing in mind: all the orange edges sit far from the diagonal. That will matter when we look at the results.
 
-### 第 9 頁：An edge-aware graph attention network reads the graph（0:55）
+### 第 9 頁：Edge-aware graph attention network（0:55）
 - **指住：** 第一條公式入面嘅 `a_edge · MLP(e(i,j))`，然後指右邊 18,721。唔使逐條讀公式。
 
 > Now, how does the model read this graph? It is a graph attention network that also reads edge features.
@@ -171,7 +171,7 @@ Partner 嗰半照 notes 計大約 6:25，要再壓 25 秒左右。另外第 4 �
 >
 > So why do the contact edges fail? We looked at how they are chosen.
 
-### 第 13 頁：Why: distance picks the contact edges, and they blur residue order（1:00）
+### 第 13 頁：Sequence distance dominates the edge score（1:00）
 - **指住：** 左邊張圖：藍色線好長、橙色線好短。然後指右上 96.6%，最後指表入面 0.06 同 0.47。
 - **數字：** 2.1× vs 1,338×；96.6%；0.73 / 0.06 / 0.47。
 
