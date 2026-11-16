@@ -1,0 +1,13 @@
+{
+  "commit": "26673f7",
+  "files": {
+    "contact_mpnn/aa.py": "67b72e1ed55b85932598039c2acf20c6999e6411a429c3647a031345fc027428",
+    "contact_mpnn/__init__.py": "924e7c1113f3a208b6ae6ca22a0006ee4803496f24345a7dd75151756a1f4e6c",
+    "contact_mpnn/contacts.py": "f78db165b96f6bb6d0be9afde4a133ccf5f707f1fa82db13a2415b1035b76372",
+    "contact_mpnn/graph.py": "1afd08ca15f95c1a8e0cc2bae2cff80894f71f2c0c37a0923b065723680c367b",
+    "contact_mpnn/dataset.py": "c4a8e030572ff2dbf6670ec021a7395705a727fe8ac50054ea87400747a780d6",
+    "contact_mpnn/model.py": "413b672731ad1dfa26747e2e50b2b6aeadb7f659184daa4975a302283ee7ebf5",
+    "contact_mpnn/train.py": "2e40e87c9455ae78ba5d0b5d940a8f017f72e64f92c4e57277d7f4e191a49f9c",
+    "scripts/train.py": "c449bff419c71855046b59fdbafa394c7a1781d52dc79ec943f3d68f517bdcc0"
+  }
+}

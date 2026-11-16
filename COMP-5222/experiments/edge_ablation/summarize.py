@@ -192,6 +192,8 @@ def summarize(root: Path) -> dict:
     pd.DataFrame(sensitivity).to_csv(out / 'permutation_sensitivity.tsv', sep='\t', index=False)
     audit_path = out / 'edge_audit.json'
     audit = json.loads(audit_path.read_text()) if audit_path.is_file() else {}
+    reproduction_path = out / 'reproduction_check.json'
+    reproduction = json.loads(reproduction_path.read_text()) if reproduction_path.is_file() else None
     sanity = None
     table_path = root / 'data/processed/aa_contact_table_train.npz'
     if table_path.is_file():
@@ -208,6 +210,7 @@ def summarize(root: Path) -> dict:
     report = {'variants': summary, 'baselines': baseline_metrics, 'bootstrap': bootstrap,
               'permutation_sensitivity': sensitivity, 'run_status': run_status,
               'setup': setup, 'edge_audit': audit, 'train_table_sanity': sanity,
+              'reproduction_check': reproduction,
               'baseline_coefficients': {'composition': weights.tolist(), 'length': length_fit.tolist()},
               'definitions': {'sd': 'sample standard deviation across training seeds (ddof=1)',
                               'bootstrap': '5000 sequence resamples, RandomState(0), seed-averaged predictions; conditional on fitted seeds',
@@ -228,7 +231,20 @@ def write_markdown(root: Path, report: dict) -> None:
              '|---|---:|---|---|---|---:|---:|']
     for r in report['setup']:
         lines.append(f"| {r['variant']} | {r['seed']} | {r.get('host','unknown')} | {r.get('gpu_uuid','unknown')} | {r.get('commit','unknown')} | {r.get('train_wall_seconds',0):.1f} | {r.get('eval_wall_seconds',0):.1f} |")
-    lines += ['', 'Environment and input/code hashes are in `environment.json`, `environment.txt`, `protected_inputs.json` and each run’s `run_record.json`.', '',
+    lines += ['', 'Environment and input/code hashes are in `environment.json`, `environment_sessions.json`, `environment.txt`, `protected_inputs.json` and each run’s `run_record.json`.', '']
+    reproduction = report.get('reproduction_check')
+    if reproduction:
+        lines += ['## Historical reproduction investigation', '',
+                  f"E0 seed42 test MAE is {reproduction['refactor_test_mae']:.6f} nm, versus the historical 0.100 nm target; the ±0.01 nm numerical gate failed. The original launcher stopped before the other runs.", '',
+                  'A separate three-epoch diagnostic ran the untouched 26673f7 training source on the same new host, GPU and environment. '
+                  f"All training/validation metric differences were {max(reproduction['max_absolute_metric_differences'].values()):.1g}. No diagnostic test evaluation was performed. "
+                  'The frozen source, hashes, diagnostic config/history/checkpoint and logs are retained under `reference_src/`, '
+                  '`runs/edge_ablation/reference_diagnostic_s42/` and `logs/edge_ablation/`.', '',
+                  'This verifies refactor equivalence for the observed training trajectory, but does not reproduce the historical numerical target. '
+                  'The original RTX 5060 Ti environment was not fully archived, so the exact hardware/runtime component causing the cross-host difference remains unresolved. '
+                  'After this investigation, the remaining fixed-config runs use the new E0 as their common-runtime control. E0 seed42 is retained, not replaced or tuned. '
+                  'This is an explicit execution decision and a limitation of comparisons to the published single-seed result.', '']
+    lines += [
               '## Main table', '', 'Mean ± sample sd across seeds, in nm where applicable. A one-seed entry is explicitly labelled. '
               'The residual share uses the exact centered log-residual definition from `check_story.py`.', '',
               '| Model | Seeds | Test MAE | Test RMSE | Test R² | Test residual share | Exp MAE | Exp R² | Exp Pearson r |',

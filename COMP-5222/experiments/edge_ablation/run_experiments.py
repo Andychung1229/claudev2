@@ -42,6 +42,32 @@ def verify_protected(root: Path) -> None:
             raise RuntimeError(f'Protected input changed: {name}')
 
 
+def verify_reproduction_evidence(root: Path, path: Path, mae: float) -> dict:
+    """Admit a changed runtime only after an untouched-source training comparison."""
+    evidence = json.loads(path.read_text())
+    if evidence.get('reference_commit') != '26673f7' or evidence.get('comparison_epochs') != 3:
+        raise ValueError('Reference evidence must cover three epochs of untouched 26673f7 source')
+    environment = evidence['environment']
+    if (environment['host'] != socket.gethostname() or environment['torch'] != torch.__version__
+            or environment['cuda_build'] != torch.version.cuda):
+        raise ValueError('Reference evidence belongs to a different runtime')
+    if abs(evidence['refactor_test_mae'] - mae) > 1e-10:
+        raise ValueError('Reference evidence does not match this E0 result')
+    current = json.loads((root / 'runs/edge_ablation/full_s42/history.json').read_text())[:3]
+    reference = json.loads((root / 'runs/edge_ablation/reference_diagnostic_s42/history.json').read_text())
+    if len(current) != 3 or len(reference) != 3:
+        raise ValueError('Missing actual three-epoch reference histories')
+    for a, b in zip(current, reference):
+        for key in a:
+            if not np.isfinite(a[key]) or not np.isfinite(b[key]) or abs(a[key] - b[key]) >= 1e-7:
+                raise ValueError(f'Untouched reference and refactor diverge: epoch {a["epoch"]}, {key}')
+    return {'status': 'refactor_equivalence_verified_historical_target_unreproduced',
+            'historical_target_reproduced': False, 'e0_test_mae': mae,
+            'evidence_path': str(path),
+            'decision': 'Continue fixed-config ablations against E0 in the same new runtime. '
+                        'The archived historical numerical target remains unreproduced; no seed is replaced.'}
+
+
 def gpu_snapshot(uuid: str) -> dict:
     text = subprocess.check_output(['nvidia-smi', f'--id={uuid}',
                                    '--query-gpu=uuid,name,memory.used,utilization.gpu',
@@ -168,6 +194,8 @@ def main() -> None:
     ap.add_argument('root', type=Path)
     ap.add_argument('--gpus', nargs='+', required=True)
     ap.add_argument('--commit', required=True)
+    ap.add_argument('--verified-environment-change', type=Path,
+                    help='three-epoch untouched-source evidence; does not claim the old MAE was reproduced')
     args = ap.parse_args()
     root = args.root.resolve()
     logs = root / 'logs/edge_ablation'
@@ -196,7 +224,14 @@ def main() -> None:
                        'commit': args.commit, 'gpus': args.gpus, 'pid': os.getpid(), 'uid': os.getuid(),
                        'start_ticks': Path('/proc/self/stat').read_text().split()[21],
                        'scheduler': 'none found; bounded idle-GPU waiter with per-user UUID locks, not a cluster reservation'}
-        write_json(root / 'experiments/edge_ablation/environment.json', environment)
+        environment_path = root / 'experiments/edge_ablation/environment.json'
+        sessions_path = root / 'experiments/edge_ablation/environment_sessions.json'
+        sessions = json.loads(sessions_path.read_text()) if sessions_path.exists() else []
+        if environment_path.exists() and not sessions:
+            sessions.append(json.loads(environment_path.read_text()))
+        sessions.append(environment)
+        write_json(sessions_path, sessions)
+        write_json(environment_path, environment)
         # Gate all other GPU runs on E0 seed-42 reproduction, exactly as requested.
         first = single_run(root, 'full', 42, args.gpus[0], args.commit)
         if first['status'] != 'complete':
@@ -204,8 +239,17 @@ def main() -> None:
         metric_path = root / 'runs/edge_ablation/full_s42/plot_metrics.json'
         mae = json.loads(metric_path.read_text())['test']['mae']
         if abs(mae - .100) > .01:
-            raise RuntimeError(f'E0 reproduction gate failed: test MAE={mae}; investigate before other seeds')
-        print(f'E0 REPRODUCTION PASSED: MAE={mae:.6f}', flush=True)
+            if args.verified_environment_change is None:
+                raise RuntimeError(f'E0 reproduction gate failed: test MAE={mae}; investigate before other seeds')
+            decision = verify_reproduction_evidence(root, args.verified_environment_change.resolve(), mae)
+            write_json(root / 'experiments/edge_ablation/reproduction_gate.json', decision)
+            print('HISTORICAL MAE NOT REPRODUCED; untouched-source equivalence verified. '
+                  f'Continue against common-runtime E0 MAE={mae:.6f}', flush=True)
+        else:
+            write_json(root / 'experiments/edge_ablation/reproduction_gate.json',
+                       {'status': 'historical_target_reproduced', 'historical_target_reproduced': True,
+                        'e0_test_mae': mae})
+            print(f'E0 REPRODUCTION PASSED: MAE={mae:.6f}', flush=True)
         jobs = queue.Queue()
         for name in available:
             for seed in (42, 43, 44):

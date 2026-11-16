@@ -74,6 +74,20 @@ selected only by validation MAE. Worker threads run independent subprocesses
 on the supplied GPUs; each training process retains four DataLoader workers
 and one BLAS/OpenMP thread.
 
+In this execution the historical gate failed (E0 seed42 test MAE 0.127605 nm).
+`run_reproduction_check.py` then compared three training epochs with untouched
+26673f7 source on the same new host/GPU/runtime, without test evaluation. All
+training/validation metrics matched exactly. The historical target remains
+unreproduced; the precise component of the old runtime responsible is unknown.
+The remaining ablations use this new E0 as a common-runtime control, retaining
+the seed42 result. This execution decision is recorded in RESULTS.md.
+
+The optional `--verified-environment-change PATH` argument accepts this
+specific evidence after a failed numerical gate. It verifies the actual
+three-epoch histories, source commit, host, torch/CUDA build and E0 result;
+it never labels the old target as reproduced. Without this evidence the
+default gate still stops. Initial launcher/environment records are retained.
+
 Each run saves the exact commands in logs and a `run_record.json` with host,
 GPU UUID, package versions, precision, source commit, input/config/output
 hashes, owned process identities and separate training/evaluation wall times.
