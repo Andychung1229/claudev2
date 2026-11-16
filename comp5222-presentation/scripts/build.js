@@ -102,7 +102,7 @@ const tdh = (t, fill, align = "left") => ({ text: t, options: { color: C.text1, 
 // bar = mean, dots = 3 training seeds, dashed line = composition baseline
 function ablationChart(slide, ds, base, x, y, w, h, max, step) {
   const seeds = data("seed_mae.json");
-  const labels = ["Length only", "Composition + length", "GAT contact edges", "GAT distance edges", "GAT local only"];
+  const labels = ["Length only", "Composition", "Graph: contact edges", "Graph: distance edges", "Graph: chain only"];
   const runs = ["full", "distance_only", "local_only"].map((v) => seeds[`${ds}/${v}`]);
   const mean = (a) => a.reduce((p, q) => p + q, 0) / a.length;
   const bars = [base[0], base[1], ...runs.map(mean)];
@@ -257,157 +257,177 @@ txt(s, [
 });
 s.addNotes(notes("graph"));
 
-// ---------- 8 sparse ----------
+// ---------- speaker notes for slides 8-14 (about 6 minutes in total) ----------
+const NOTE = {
+  sparse: `[~0:45]
+Thanks. So our graph has two kinds of edges. The blue ones are local: each residue links to its neighbours, up to two steps away along the chain, so messages can travel along the sequence.
+
+The orange ones are long-range: each residue also links to eight partners chosen by our contact prior. The idea is to connect residues that might touch in 3D.
+
+Each edge carries a few features, like the contact frequency and the distance along the chain. Only about one in ten pairs becomes an edge, so the graph stays small even for long chains.`,
+  gat: `[~0:50]
+The model is a graph attention network. It runs two rounds of message passing. In each round, every residue collects messages from its neighbours and uses attention to decide how much to listen to each one.
+
+The key detail is here, in orange: the edge features go into the attention score. So the model can learn how much to trust our contact prior, instead of us fixing it by hand.
+
+After two rounds, we pool over the whole chain, add the chain length, and predict Rg. The whole model has under nineteen thousand parameters, which is tiny by deep-learning standards.`,
+  train: `[~0:50]
+To find out whether the graph really helps, we set up a fair test. We train three versions of the same network.
+
+The first has our contact edges. The second is a control: the same number of long-range edges, but picked by distance alone. The third has no long-range edges at all, just the chain.
+
+We compare them with two simple baselines that use no graph. One uses only the chain length, and one adds the amino-acid composition.
+
+So, if the graph helps, the graph models should beat composition. And if our contact edges help, the first model should win.`,
+  restest: `[~1:00]
+Here are the results on four thousand simulated proteins that the models never saw. Lower is better.
+
+The grey bars are the baselines, and composition, this dashed line, is the one to beat.
+
+Now the orange bar: the chain-only graph. Its error is about a third lower than composition, and all three training runs, these dots, agree. So message passing along the chain clearly helps.
+
+But look at the first blue bar. When we add our contact edges, the error goes up, and the model falls behind composition. So the graph helps, but our long-range edges hold it back.`,
+  resexp: `[~0:45]
+Next, 151 proteins whose size was measured in the lab. Remember, the models only ever saw simulations.
+
+Here, every graph model beats both baselines. The chain-only and the contact-edge models are tied, both eight to nine percent better than composition. So on real data, the long-range edges neither help nor hurt.
+
+The errors are larger than on simulations, because we inherit the gap between the simulations and real proteins.
+
+So why do our contact edges fail?`,
+  limits: `[~1:00]
+We looked at how they are chosen. Our edge score divides the contact frequency of a residue pair by the average frequency at that distance. The chemistry part varies only about two-fold. The distance part varies more than a thousand-fold.
+
+So distance wins. Ninety-seven percent of the chosen partners are simply the farthest residues, and the amino-acid type barely matters. That is why the distance-only control behaves the same.
+
+And it costs us residue order. Here are six sequences with the same amino acids in different orders. Their measured sizes differ a lot. The chain-only model picks up much of that difference. With our contact edges, the predictions barely move.`,
+  close: `[~0:35]
+To wrap up. First, the graph helps: a tiny network passing messages along the chain beats composition, on simulations and on real measurements.
+
+Second, our long-range edges are the bottleneck, because sequence distance, rather than chemistry, decides which edges we draw.
+
+Third, the next step is to rebuild the contact table for each distance band, so that chemistry picks the edges.
+
+Thank you. We are happy to take questions.`,
+};
+
+// ---------- 8 two kinds of edges ----------
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Method" });
-head(s, "METHOD", "A sparse graph with 10 features per edge");
-img(s, "adjacency_long.png", 0.6, 1.7, 5.0, 5.0, "Adjacency matrix of a 155-residue chain: blue diagonal band of local edges, scattered orange non-local edges far from the diagonal");
-bigStat(s, "10%", 6.2, 1.75, 4, C.accent1, 54);
-txt(s, "of residue pairs become edges in this 155-residue chain (1,192 of 11,935). The edge count grows linearly with N, as O(N·(w + k)).", { x: 6.2, y: 2.75, w: 6.5, h: 1.05 });
-rule(s, 6.2, 4.05, 6.5);
-txt(s, [
-  { text: "10 numbers per edge", options: { bold: true, fontSize: 20, color: C.text1, breakLine: true, paraSpaceAfter: 8 } },
-  { text: "Contact frequency f(a,b) from the prior", options: { bullet: true, breakLine: true } },
-  { text: "Sequence distance |i − j| / (N − 1)", options: { bullet: true, breakLine: true } },
-  { text: "Distance band, one-hot: 1, 2–4, 5–8, 9–16, 17–32, >32", options: { bullet: true, breakLine: true } },
-  { text: "Local-edge flag and self-loop flag", options: { bullet: true } },
-], { x: 6.2, y: 4.3, w: 6.5, h: 2.4, paraSpaceAfter: 6 });
-s.addNotes(notes("sparse"));
+head(s, "METHOD", "Two kinds of edges in one sparse graph");
+img(s, "adjacency_long.png", 0.6, 1.7, 5.0, 5.0, "Adjacency matrix of a 155-residue chain: blue diagonal band of local edges, scattered orange long-range edges far from the diagonal");
+block(s, 6.2, 1.8, 6.5, 1.35, "Local edges", "Neighbours up to 2 steps along the chain, so messages travel along the sequence", { headColor: C.accent1 });
+block(s, 6.2, 3.3, 6.5, 1.35, "Long-range edges", "Each residue’s top 8 partners by the contact prior, meant to link residues that touch in 3D", { headColor: C.accent3 });
+rule(s, 6.2, 4.9, 6.5);
+txt(s, "Every edge carries features such as contact frequency and distance along the chain. About 1 in 10 residue pairs becomes an edge, so the graph stays small for long chains.", { x: 6.2, y: 5.1, w: 6.5, h: 1.4 });
+s.addNotes(NOTE.sparse);
 
 // ---------- 9 GAT ----------
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Method" });
 head(s, "METHOD", "Edge-aware graph attention network");
-[["Attention score per head", "u(i,j) = LeakyReLU(a_src·Wh(i) + a_dst·Wh(j) + a_edge·MLP(e(i,j)))"],
- ["Normalise over neighbours only", "α(i,j) = softmax of u(i,j) over the neighbours j of i"],
- ["Update with residual and LayerNorm", "h'(i) = ELU(LayerNorm(h(i) + Σ_j α(i,j)·Wh(j)))"],
- ["Readout", "ln Rg = MLP(mean h ‖ max h ‖ log N)"],
-].forEach(([label, eq], i) => {
-  const y = 1.75 + i * 1.25;
-  s.addShape(S.RECTANGLE, { x: 0.6, y, w: 0.06, h: 1.0, fill: { color: C.accent1 }, line: { color: C.accent1, width: 0 }, objectName: name("equation-rule") });
-  txt(s, [
-    { text: label, options: { bold: true, fontSize: 16, color: C.accent1, breakLine: true, paraSpaceAfter: 4 } },
-    { text: eq, options: { fontSize: 18, color: C.text1 } },
-  ], { x: 0.85, y: y + 0.05, w: 7.25, h: 0.95 });
-});
-[["The prior steers attention", "Contact frequency enters the score as an edge feature, so the model learns how much to trust it."],
- ["Small on purpose", [{ text: "2 layers × 4 heads × 16 channels: " }, { text: "18,721 parameters", options: { bold: true } }]],
- ["Length stays visible", "log N enters the readout next to mean and max pooling."],
+[["Residue graph", "Nodes are residues"],
+ ["2 rounds of message passing", "Attention over each residue’s neighbours"],
+ ["Pool the chain", "Mean and max over residues, plus chain length"],
+ ["Predicted Rg", "One number per sequence"],
 ].forEach(([h, b], i) => {
-  const y = 1.75 + i * 1.65;
-  if (i) rule(s, 8.45, y - 0.2, 4.28);
-  block(s, 8.45, y, 4.28, 1.4, h, b);
+  const x = 0.6 + i * 3.12;
+  rule(s, x, 2.1, 2.6, i === 1 ? C.accent2 : C.accent1, 2.5);
+  block(s, x, 2.25, 2.6, 1.6, h, b, { headColor: C.text1 });
+  if (i < 3) s.addShape(S.RIGHT_ARROW, { x: x + 2.68, y: 2.32, w: 0.36, h: 0.3, fill: { color: C.accent4 }, line: { color: C.accent4, width: 0 }, objectName: name("arrow") });
 });
-s.addNotes(notes("gat"));
+rule(s, 0.6, 4.3, 12.13);
+txt(s, "Attention score of each edge", { x: 0.6, y: 4.6, w: 8, h: 0.4, fontSize: 17, bold: true, color: C.accent1 });
+txt(s, [
+  { text: "u(i,j) = LeakyReLU(a_src·Wh(i) + a_dst·Wh(j) + " },
+  { text: "a_edge·MLP(e(i,j))", options: { bold: true, color: C.accent3 } }, { text: ")" },
+], { x: 0.6, y: 5.05, w: 12.1, h: 0.5, fontSize: 22, color: C.text1 });
+txt(s, [
+  { text: "The edge-feature term lets the model learn how much to trust the contact prior. " },
+  { text: "18,721 parameters", options: { bold: true, color: C.text1 } }, { text: " in total." },
+], { x: 0.6, y: 5.8, w: 12.1, h: 0.9 });
+s.addNotes(NOTE.gat);
 
-// ---------- 10 training ----------
+// ---------- 10 experiment design ----------
 s = pres.addSlide({ masterName: "Content Tint", sectionTitle: "Method" });
-head(s, "METHOD", "Training on unseen-protein splits");
-s.addTable([
-  [th("Split (70 / 15 / 15)"), th("Chains, N ≤ 512", "right")],
-  [td("Train"), td("18,860", "right")],
-  [td("Validation"), td("4,020", "right")],
-  [td("Test"), td("4,103", "right")],
-], tblOpts({ x: 0.6, y: 1.75, w: 5.9, colW: [3.2, 2.7], rowH: 0.45, objectName: name("split-table") }));
-txt(s, [
-  { text: "Regions from the " }, { text: "same UniProt protein", options: { bold: true } },
-  { text: ", and identical sequences, stay in one split (15,331 groups)." },
-], { x: 0.6, y: 3.8, w: 5.9, h: 0.9 });
-txt(s, [
-  { text: "Loss: MSE on ln Rg, AdamW, lr 10⁻³", options: { bullet: true, breakLine: true } },
-  { text: "Batches grouped by length to fill the GPU", options: { bullet: true, breakLine: true } },
-  { text: "Early stop on validation MAE (patience 15)", options: { bullet: true, breakLine: true } },
-  { text: "3 training seeds per model (42, 43, 44)", options: { bullet: true } },
-], { x: 0.6, y: 4.85, w: 5.9, h: 1.9, paraSpaceAfter: 8 });
-const hist = data("val_hist.json");
-const ep = hist.map((r) => String(r[0]));
-s.addChart([
-  { type: pres.charts.LINE, data: [{ name: "Validation MAE", labels: ep, values: hist.map((r) => r[1]) }],
-    options: { chartColors: [THEME.colors.accent1], lineSize: 2.25, lineDataSymbol: "none" } },
-  { type: pres.charts.LINE, data: [{ name: "Validation RMSE", labels: ep, values: hist.map((r) => r[2]) }],
-    options: { chartColors: [THEME.colors.accent2], lineSize: 1.75, lineDash: "dash", lineDataSymbol: "none" } },
-], {
-  x: 6.85, y: 1.7, w: 5.88, h: 4.35, objectName: name("val-chart"),
-  showLegend: true, legendPos: "t", legendFontFace: "Calibri", catAxisLabelFontFace: "Calibri", valAxisLabelFontFace: "Calibri", catAxisTitleFontFace: "Calibri", valAxisTitleFontFace: "Calibri", legendFontSize: 14, legendColor: HEX.body,
-  catAxisLabelFrequency: 5, catAxisLabelFontSize: 13, catAxisLabelColor: HEX.body, catAxisLineColor: HEX.body,
-  showCatAxisTitle: true, catAxisTitle: "Epoch", catAxisTitleFontSize: 14, catAxisTitleColor: HEX.body,
-  valAxisMinVal: 0, valAxisMaxVal: 0.7, valAxisMajorUnit: 0.1, valAxisLabelFormatCode: "0.0", valAxisLabelFontSize: 13,
-  valAxisLabelColor: HEX.body, valAxisLineShow: false, valGridLine: { color: HEX.grid, size: 0.75 },
-  showValAxisTitle: true, valAxisTitle: "Rg error (nm)", valAxisTitleFontSize: 14, valAxisTitleColor: HEX.body,
+head(s, "EXPERIMENT", "The test: three graphs and two baselines");
+[["variant_contact.png", "Contact edges", "Our model", C.accent3],
+ ["variant_distance.png", "Distance edges", "Control: as many far edges, picked by distance", C.accent6],
+ ["variant_local.png", "Chain only", "No long-range edges", C.accent1],
+].forEach(([f, h, b, col], i) => {
+  const y = 1.7 + i * 1.3;
+  img(s, f, 0.6, y, 3.7, 1.1, `Schematic of the ${h.toLowerCase()} graph`);
+  block(s, 4.55, y + 0.05, 3.3, 1.2, h, b, { headColor: col });
 });
-caption(s, "Original seed-42 run. Best validation MAE at epoch 31, stopped at 46. Validation error jumps between epochs.", 6.85, 6.15, 5.88, 0.55);
-s.addNotes(notes("train"));
+txt(s, "Two baselines with no graph", { x: 8.45, y: 1.75, w: 4.28, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
+txt(s, [
+  { text: "Length only: ", options: { bold: true, color: C.text1 } }, { text: "size grows as a power of chain length", options: { breakLine: true } },
+  { text: "Composition: ", options: { bold: true, color: C.text1 } }, { text: "adds the fraction of each of the 20 amino acids" },
+], { x: 8.45, y: 2.25, w: 4.28, h: 1.8, paraSpaceAfter: 10 });
+rule(s, 8.45, 4.15, 4.28);
+txt(s, "Every model trains on 18,860 simulated chains. Each graph trains 3 times.", { x: 8.45, y: 4.3, w: 4.28, h: 0.95 });
+txt(s, [
+  { text: "If the graph helps, the graph models beat composition. If our contact edges help, " },
+  { text: "contact edges", options: { bold: true, color: C.accent3 } }, { text: " win." },
+], { x: 0.6, y: 5.75, w: 12.1, h: 0.8, fontSize: 22, color: C.text1 });
+s.addNotes(NOTE.train);
 
-// ---------- 11 results: test ----------
+// ---------- 11 results: simulations ----------
 pres.addSection({ title: "Results" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Results" });
-head(s, "RESULTS", "Simulations: the GAT is best without contact edges");
-ablationChart(s, "test", [0.1240, 0.0984], 0.45, 1.65, 5.95, 4.7, 0.15, 0.03);
-caption(s, "Bars: mean of 3 training seeds (dots). Dashed line: composition.", 0.6, 6.4, 5.8, 0.5);
-s.addTable([
-  [th("4,103 test chains"), th("MAE (nm)", "right"), th("R²", "right")],
-  [td("Length only"), td("0.124", "right"), td("0.972", "right")],
-  [td("Composition + length"), td("0.098", "right"), td("0.980", "right")],
-  [td("GAT, contact edges"), td("0.111 ± 0.015", "right"), td("0.981", "right")],
-  [tdh("GAT, local only", HEX.orangeRow), tdh("0.066 ± 0.007", HEX.orangeRow, "right"), tdh("0.990", HEX.orangeRow, "right")],
-], tblOpts({ x: 6.65, y: 1.75, w: 6.08, colW: [2.9, 1.98, 1.2], rowH: 0.46, objectName: name("test-table") }));
-[["−0.036 nm", "vs composition, 95% CI [−0.038, −0.033]"],
- ["68%", "of what length alone cannot explain (composition: 31%)"],
-].forEach(([v, b], i) => {
-  const x = 6.65 + i * 3.14;
-  bigStat(s, v, x, 4.4, 2.95, C.accent3, 40);
-  txt(s, b, { x, y: 5.15, w: 2.85, h: 0.95 });
-});
-caption(s, "Mean ± sd over 3 seeds. Our earlier single run (0.100) did not reproduce.", 6.65, 6.4, 6.08, 0.5);
-s.addNotes(notes("restest"));
+head(s, "RESULTS", "Simulations: the chain-only graph cuts error by a third");
+ablationChart(s, "test", [0.1240, 0.0984], 0.45, 1.6, 7.1, 4.85, 0.15, 0.03);
+caption(s, "Error on 4,103 unseen simulated chains. Dots: 3 training runs. Dashed line: composition.", 0.6, 6.45, 7.0, 0.5);
+bigStat(s, "33% lower", 7.95, 1.8, 4.8, C.accent3, 48);
+txt(s, "error than composition with the chain-only graph, in all 3 training runs", { x: 7.95, y: 2.7, w: 4.78, h: 0.95 });
+rule(s, 7.95, 3.9, 4.78);
+block(s, 7.95, 4.1, 4.78, 1.6, "Contact edges make it worse", "Adding our long-range edges raises the error above composition.", { headColor: C.text1 });
+s.addNotes(NOTE.restest);
 
-// ---------- 12 results: experiment ----------
+// ---------- 12 results: lab measurements ----------
 s = pres.addSlide({ masterName: "Content Tint", sectionTitle: "Results" });
-head(s, "RESULTS", "On experiments, every GAT beats composition");
-ablationChart(s, "exp151", [0.4159, 0.3310], 0.45, 1.65, 5.95, 4.7, 0.45, 0.1);
-caption(s, "Bars: mean of 3 training seeds (dots). Dashed line: composition.", 0.6, 6.4, 5.8, 0.5);
-s.addTable([
-  [th("151 experimental Rg"), th("MAE", "right"), th("R²", "right"), th("r", "right")],
-  [td("Length only"), td("0.416", "right"), td("0.744", "right"), td("0.865", "right")],
-  [td("Composition + length"), td("0.331", "right"), td("0.822", "right"), td("0.908", "right")],
-  [tdh("GAT, contact edges", HEX.blueRow), tdh("0.301", HEX.blueRow, "right"), tdh("0.838", HEX.blueRow, "right"), tdh("0.919", HEX.blueRow, "right")],
-  [tdh("GAT, local only", HEX.orangeRow), tdh("0.303", HEX.orangeRow, "right"), tdh("0.841", HEX.orangeRow, "right"), tdh("0.918", HEX.orangeRow, "right")],
-], tblOpts({ x: 6.65, y: 1.75, w: 6.08, colW: [3.08, 1.0, 1.0, 1.0], rowH: 0.46, objectName: name("exp-table") }));
-block(s, 6.65, 4.35, 6.08, 1.1, "Both GATs beat composition", "Contact edges −0.036 nm [−0.054, −0.018]. Local only −0.029 nm [−0.048, −0.008].");
-block(s, 6.65, 5.6, 6.08, 1.1, "Contact edges make no difference here", "Local minus full: +0.008 nm [−0.012, +0.028]. Error stays near 0.30 nm for every GAT.");
-s.addNotes(notes("resexp"));
+head(s, "RESULTS", "Lab measurements: every graph model beats the baselines");
+ablationChart(s, "exp151", [0.4159, 0.3310], 0.45, 1.6, 7.1, 4.85, 0.45, 0.1);
+caption(s, "Error on 151 lab-measured proteins. Dots: 3 training runs. Dashed line: composition.", 0.6, 6.45, 7.0, 0.5);
+bigStat(s, "8–9% lower", 7.95, 1.8, 4.8, C.accent3, 48);
+txt(s, "error than composition for the chain-only and contact-edge graphs", { x: 7.95, y: 2.7, w: 4.78, h: 0.95 });
+rule(s, 7.95, 3.9, 4.78);
+block(s, 7.95, 4.1, 4.78, 1.0, "Long-range edges make no difference", "The two graphs tie.", { headColor: C.text1 });
+block(s, 7.95, 5.25, 4.78, 1.2, "Trained on simulations only", "All models inherit the gap between simulation and experiment.", { headColor: C.text1 });
+s.addNotes(NOTE.resexp);
 
 // ---------- 13 diagnosis ----------
 pres.addSection({ title: "Wrap-up" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Wrap-up" });
-head(s, "DIAGNOSIS", "Sequence distance dominates the edge score");
-img(s, "edge_scales.png", 0.5, 1.7, 6.5, 4.04, "Log-scale comparison: average contact frequency across the five distance bands spans about 1,300-fold; across amino-acid pairs it spans only 2.1-fold");
-caption(s, "Edge score = f(a,b) / p(d). The pair term varies 2.1-fold and the distance term 1,338-fold.", 0.6, 5.9, 6.3, 0.6);
-bigStat(s, "96.6%", 7.35, 1.7, 5.3, C.accent3, 48);
-txt(s, "of chosen partners sit in the farthest band (>32). Distance-only edges perform the same.", { x: 7.35, y: 2.6, w: 5.38, h: 0.95 });
-rule(s, 7.35, 3.75, 5.38);
-txt(s, "Contact edges blur residue order", { x: 7.35, y: 3.9, w: 5.38, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
-s.addTable([
-  [th("Reordered"), th("Measured", "right"), th("Contact", "right"), th("Local", "right")],
-  [td("6 seqs, 107 aa"), td("0.73", "right"), td("0.06", "right"), tdh("0.47", HEX.orangeRow, "right")],
-  [td("7 seqs, 334 aa"), td("1.39", "right"), td("0.08", "right"), td("0.17", "right")],
-], tblOpts({ x: 7.35, y: 4.4, w: 5.38, colW: [1.88, 1.2, 1.15, 1.15], rowH: 0.45, objectName: name("perm-table") }));
-caption(s, "Spread of Rg (nm) across sequences with the same composition in a different order. Predictions averaged over 3 seeds.", 7.35, 5.9, 5.38, 0.75);
-s.addNotes(notes("limits"));
+head(s, "DIAGNOSIS", "Why our long-range edges fail");
+txt(s, "1. Distance decides which edges we draw", { x: 0.6, y: 1.7, w: 6.0, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
+img(s, "edge_scales.png", 0.45, 2.2, 5.9, 3.67, "Log-scale comparison: the distance term spans about 1,300-fold, the amino-acid pair term only 2.1-fold");
+txt(s, "The distance term varies over 1,000 times more than chemistry, so 97% of chosen partners are simply the farthest residues.", { x: 0.6, y: 5.95, w: 6.0, h: 0.95 });
+txt(s, "2. So the model loses residue order", { x: 7.0, y: 1.7, w: 5.73, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
+txt(s, "Six sequences with the same amino acids in different orders. How much do their sizes differ?", { x: 7.0, y: 2.2, w: 5.73, h: 0.95 });
+s.addChart(pres.charts.BAR, [{ name: "Spread of Rg (nm)", labels: ["Measured", "Chain only", "Contact edges"], values: [0.73, 0.47, 0.06] }], {
+  x: 6.85, y: 3.2, w: 5.88, h: 2.7, barDir: "bar", objectName: name("order-chart"), showLegend: false,
+  chartColors: [HEX.ink, HEX.orangeBar, HEX.blueBar], barGapWidthPct: 45, catAxisOrientation: "maxMin",
+  showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "0.00 \"nm\"", dataLabelFontSize: 15, dataLabelFontFace: "Calibri", dataLabelColor: HEX.ink,
+  catAxisLabelFontSize: 16, catAxisLabelFontFace: "Calibri", catAxisLabelColor: HEX.ink, catAxisLineColor: HEX.body,
+  valAxisHidden: true, valAxisMinVal: 0, valAxisMaxVal: 0.9, valGridLine: { style: "none" },
+});
+caption(s, "Spread of Rg across the six sequences (107 residues), mean of 3 runs. For a 334-residue group, no model sees order yet.", 7.0, 5.95, 5.73, 0.75);
+s.addNotes(NOTE.limits);
 
 // ---------- 14 close ----------
 s = pres.addSlide({ masterName: "Statement", sectionTitle: "Wrap-up" });
 head(s, "TAKEAWAYS", "What we can say, and what comes next");
-[["1", "Chain message passing works", "An 18.7k-parameter GAT on local edges beats composition on simulations (0.066 vs 0.098 nm) and experiments (0.30 vs 0.33)."],
- ["2", "Our contact edges don't help yet", "Sequence distance picks them, so they hurt on simulations, change nothing on experiments and blur order."],
- ["3", "Next: chemistry-chosen edges", "A band-resolved contact table from training chains only. Long chains still miss residue order."],
+[["1", "The graph helps", "Message passing along the chain beats composition: a third lower error on simulations, and better on lab data."],
+ ["2", "Our long-range edges are the bottleneck", "Sequence distance picks them, so they add far-away links and hide residue order."],
+ ["3", "Next: edges chosen by chemistry", "Rebuild the contact table for each distance band, from training chains only."],
 ].forEach(([n, h, b], i) => {
   const x = 0.6 + i * 4.125;
   const col = i === 0 ? C.accent2 : C.accent4;
   rule(s, x, 1.95, 3.75, col, 2);
   txt(s, n, { x, y: 2.1, w: 1, h: 0.7, fontSize: 40, bold: true, color: col, paraSpaceAfter: 0 });
-  block(s, x, 2.9, 3.75, 2.4, h, b, { headSize: 22, headColor: C.background1, bodyColor: C.background2 });
+  block(s, x, 2.9, 3.75, 2.5, h, b, { headSize: 22, headColor: C.background1, bodyColor: C.background2 });
 });
 txt(s, "Thank you. Questions?", { x: 0.6, y: 5.7, w: 12.1, h: 0.75, fontSize: 36, bold: true, color: C.background1 });
-s.addNotes(notes("close"));
+s.addNotes(NOTE.close);
 
 (async () => {
   await pres.writeFile({ fileName: OUT });
