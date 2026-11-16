@@ -1,0 +1,43 @@
+contact:
+  cutoff_A: 8.0
+  min_seq_sep: 2
+  skip_equil_frames: 10
+  log_delta: 1.0e-06
+graph:
+  mode: sparse
+  local_window: 2
+  topk: 8
+  edge_rule: band_resolved
+  band_pseudocount: 100000.0
+paths:
+  idrome_db: data/raw/idrome/IDRome_DB.csv
+  train_tsv: data/processed/idrome_split_train.tsv
+  val_tsv: data/processed/idrome_split_val.tsv
+  test_tsv: data/processed/idrome_split_test.tsv
+  contact_table: data/processed/aa_contact_table_train.npz
+  out_dir: runs/edge_ablation/band_resolved_s42
+model:
+  node_dim: 21
+  hidden: 64
+  n_layers: 2
+  n_heads: 4
+  edge_in: 10
+  edge_hidden: 8
+  dropout: 0.2
+  max_len: 512
+  readout: meanmax
+  activate: true
+train:
+  epochs: 100
+  batch_size: 64
+  pair_budget: 8388608
+  amp: true
+  lr: 0.001
+  weight_decay: 0.0
+  patience: 15
+  seed: 42
+  log_target: true
+  log_base: e
+  loss: mse
+  early_stop_metric: val_mae_nm
+  num_workers: 4
