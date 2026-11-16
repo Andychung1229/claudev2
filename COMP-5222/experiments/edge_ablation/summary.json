@@ -1,0 +1,1431 @@
+{
+  "analysis_source_sha256": "7dfaa0ea6ce4870242f9a0bcd7bc10a35c3791b0482cf7a3bdc064b9f2f6fadc",
+  "variants": {
+    "full": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "test": {
+          "mean": {
+            "mae": 0.11112191623116134,
+            "rmse": 0.17357275239291647,
+            "r2": 0.9805530226094744,
+            "pearson": 0.9913398972878609,
+            "length_residual_share": 0.1974709478423833
+          },
+          "sd": {
+            "mae": 0.015021544472042236,
+            "rmse": 0.023449054774945532,
+            "r2": 0.005343274264529982,
+            "pearson": 0.0019519614564998873,
+            "length_residual_share": 0.2037413331215852
+          }
+        },
+        "exp151": {
+          "mean": {
+            "mae": 0.30111179141703553,
+            "rmse": 0.4269747463383598,
+            "r2": 0.8384407128724365,
+            "pearson": 0.9187546524250436,
+            "length_residual_share": 0.38019598672154414
+          },
+          "sd": {
+            "mae": 0.009164253096295288,
+            "rmse": 0.009838682600646577,
+            "r2": 0.007393440997700272,
+            "pearson": 0.0028028128758877113,
+            "length_residual_share": 0.0354605833426228
+          }
+        }
+      }
+    },
+    "local_only": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "test": {
+          "mean": {
+            "mae": 0.06602189119754143,
+            "rmse": 0.12209415084890256,
+            "r2": 0.9904496892541487,
+            "pearson": 0.9953157233012604,
+            "length_residual_share": 0.6830379464509786
+          },
+          "sd": {
+            "mae": 0.007031603015360734,
+            "rmse": 0.010136623296894891,
+            "r2": 0.001601153786776848,
+            "pearson": 0.0007657381836922672,
+            "length_residual_share": 0.060816881233351605
+          }
+        },
+        "exp151": {
+          "mean": {
+            "mae": 0.3030444090718991,
+            "rmse": 0.4238193966307378,
+            "r2": 0.8408591339493968,
+            "pearson": 0.918078524080515,
+            "length_residual_share": 0.39755152042437786
+          },
+          "sd": {
+            "mae": 0.00729983611899176,
+            "rmse": 0.005354659149244457,
+            "r2": 0.004030699467335694,
+            "pearson": 0.0014871004255248533,
+            "length_residual_share": 0.009600169344476283
+          }
+        }
+      }
+    },
+    "distance_only": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "test": {
+          "mean": {
+            "mae": 0.09429305275419546,
+            "rmse": 0.15734266496600322,
+            "r2": 0.9823764482212969,
+            "pearson": 0.9917513651117703,
+            "length_residual_share": 0.3982618210394266
+          },
+          "sd": {
+            "mae": 0.03983362295814026,
+            "rmse": 0.0657051741389299,
+            "r2": 0.014751372564203667,
+            "pearson": 0.006855378537470541,
+            "length_residual_share": 0.47576557770666905
+          }
+        },
+        "exp151": {
+          "mean": {
+            "mae": 0.32033300156414374,
+            "rmse": 0.4536603176556544,
+            "r2": 0.8175969743522863,
+            "pearson": 0.9069007369200857,
+            "length_residual_share": 0.22135470210464445
+          },
+          "sd": {
+            "mae": 0.01949421180159768,
+            "rmse": 0.011823151093547691,
+            "r2": 0.009560824061084026,
+            "pearson": 0.002319753074357833,
+            "length_residual_share": 0.09056828777695194
+          }
+        }
+      }
+    },
+    "train_table": {
+      "n_seeds": 0,
+      "seeds": [],
+      "metrics": {}
+    },
+    "band_resolved": {
+      "n_seeds": 0,
+      "seeds": [],
+      "metrics": {}
+    }
+  },
+  "baselines": {
+    "length_only": {
+      "test": {
+        "mae": 0.12397790202464815,
+        "rmse": 0.20985979416651215,
+        "r2": 0.9719136588882542,
+        "pearson": 0.9858714408048155,
+        "length_residual_share": -2.921534573818718e-06
+      },
+      "exp151": {
+        "mae": 0.41592756040404616,
+        "rmse": 0.5377056623224573,
+        "r2": 0.7438684572883858,
+        "pearson": 0.8649361091507128,
+        "length_residual_share": -0.003227417318938164
+      }
+    },
+    "composition": {
+      "test": {
+        "mae": 0.09838442728700264,
+        "rmse": 0.17712076014938377,
+        "r2": 0.9799932928218565,
+        "pearson": 0.9899562475527218,
+        "length_residual_share": 0.30495159041938913
+      },
+      "exp151": {
+        "mae": 0.33097959128900983,
+        "rmse": 0.447750255213957,
+        "r2": 0.822398949715981,
+        "pearson": 0.9081401365094182,
+        "length_residual_share": 0.3131959407812789
+      }
+    }
+  },
+  "bootstrap": {
+    "full:test:composition": {
+      "variant": "full",
+      "dataset": "test",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": 0.007562946219625582,
+      "ci_low": 0.004891815718169085,
+      "ci_high": 0.010263948849529877,
+      "resamples": 5000
+    },
+    "full:test:full": {
+      "variant": "full",
+      "dataset": "test",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "resamples": 5000
+    },
+    "full:exp151:composition": {
+      "variant": "full",
+      "dataset": "exp151",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": -0.03605469662770654,
+      "ci_low": -0.05345985986518968,
+      "ci_high": -0.018362368398081797,
+      "resamples": 5000
+    },
+    "full:exp151:full": {
+      "variant": "full",
+      "dataset": "exp151",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "resamples": 5000
+    },
+    "local_only:test:composition": {
+      "variant": "local_only",
+      "dataset": "test",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": -0.03591876072348382,
+      "ci_low": -0.038323971293390435,
+      "ci_high": -0.033434263427774925,
+      "resamples": 5000
+    },
+    "local_only:test:full": {
+      "variant": "local_only",
+      "dataset": "test",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": -0.043481706943109405,
+      "ci_low": -0.0459753781239084,
+      "ci_high": -0.041122495356050635,
+      "resamples": 5000
+    },
+    "local_only:exp151:composition": {
+      "variant": "local_only",
+      "dataset": "exp151",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": -0.02850018300800783,
+      "ci_low": -0.047716855264010816,
+      "ci_high": -0.008207287993540976,
+      "resamples": 5000
+    },
+    "local_only:exp151:full": {
+      "variant": "local_only",
+      "dataset": "exp151",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": 0.00755451361969871,
+      "ci_low": -0.012075566762225263,
+      "ci_high": 0.0280965652051088,
+      "resamples": 5000
+    },
+    "distance_only:test:composition": {
+      "variant": "distance_only",
+      "dataset": "test",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": -0.019141962172574245,
+      "ci_low": -0.02228754057073565,
+      "ci_high": -0.015840773200389017,
+      "resamples": 5000
+    },
+    "distance_only:test:full": {
+      "variant": "distance_only",
+      "dataset": "test",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": -0.026704908392199828,
+      "ci_low": -0.02955149722963091,
+      "ci_high": -0.023946044835698326,
+      "resamples": 5000
+    },
+    "distance_only:exp151:composition": {
+      "variant": "distance_only",
+      "dataset": "exp151",
+      "reference": "composition",
+      "n_seeds": 3,
+      "reference_n_seeds": null,
+      "difference_nm": -0.029616703508611966,
+      "ci_low": -0.05217359882590778,
+      "ci_high": -0.004443300263333508,
+      "resamples": 5000
+    },
+    "distance_only:exp151:full": {
+      "variant": "distance_only",
+      "dataset": "exp151",
+      "reference": "full",
+      "n_seeds": 3,
+      "reference_n_seeds": 3,
+      "difference_nm": 0.006437993119094568,
+      "ci_low": -0.014105530657094531,
+      "ci_high": 0.028814107256114628,
+      "resamples": 5000
+    }
+  },
+  "permutation_sensitivity": [
+    {
+      "variant": "full",
+      "n_seeds": 3,
+      "n_sequences": 6,
+      "length": 107,
+      "ids": [
+        "exp3_0054",
+        "exp3_0055",
+        "exp3_0056",
+        "exp3_0057",
+        "exp3_0058",
+        "exp3_0059"
+      ],
+      "measured_range_nm": 0.73,
+      "predicted_range_nm": 0.06123852729797363,
+      "spearman": 0.7714285714285715
+    },
+    {
+      "variant": "local_only",
+      "n_seeds": 3,
+      "n_sequences": 6,
+      "length": 107,
+      "ids": [
+        "exp3_0054",
+        "exp3_0055",
+        "exp3_0056",
+        "exp3_0057",
+        "exp3_0058",
+        "exp3_0059"
+      ],
+      "measured_range_nm": 0.73,
+      "predicted_range_nm": 0.4739546775817871,
+      "spearman": 0.942857142857143
+    },
+    {
+      "variant": "distance_only",
+      "n_seeds": 3,
+      "n_sequences": 6,
+      "length": 107,
+      "ids": [
+        "exp3_0054",
+        "exp3_0055",
+        "exp3_0056",
+        "exp3_0057",
+        "exp3_0058",
+        "exp3_0059"
+      ],
+      "measured_range_nm": 0.73,
+      "predicted_range_nm": 0.25841426849365234,
+      "spearman": 0.7714285714285715
+    },
+    {
+      "variant": "full",
+      "n_seeds": 3,
+      "n_sequences": 7,
+      "length": 334,
+      "ids": [
+        "exp3_0148",
+        "exp3_0150",
+        "exp3_0151",
+        "exp3_0152",
+        "exp3_0153",
+        "exp3_0154",
+        "exp3_0155"
+      ],
+      "measured_range_nm": 1.3870000839233398,
+      "predicted_range_nm": 0.07649930318196585,
+      "spearman": 0.21428571428571433
+    },
+    {
+      "variant": "local_only",
+      "n_seeds": 3,
+      "n_sequences": 7,
+      "length": 334,
+      "ids": [
+        "exp3_0148",
+        "exp3_0150",
+        "exp3_0151",
+        "exp3_0152",
+        "exp3_0153",
+        "exp3_0154",
+        "exp3_0155"
+      ],
+      "measured_range_nm": 1.3870000839233398,
+      "predicted_range_nm": 0.1682612101236982,
+      "spearman": -0.03571428571428572
+    },
+    {
+      "variant": "distance_only",
+      "n_seeds": 3,
+      "n_sequences": 7,
+      "length": 334,
+      "ids": [
+        "exp3_0148",
+        "exp3_0150",
+        "exp3_0151",
+        "exp3_0152",
+        "exp3_0153",
+        "exp3_0154",
+        "exp3_0155"
+      ],
+      "measured_range_nm": 1.3870000839233398,
+      "predicted_range_nm": 0.2922506332397461,
+      "spearman": 0.21428571428571433
+    }
+  ],
+  "run_status": [
+    {
+      "variant": "full",
+      "seed": 42,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "full",
+      "seed": 43,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "full",
+      "seed": 44,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "local_only",
+      "seed": 42,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "local_only",
+      "seed": 43,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "local_only",
+      "seed": 44,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "distance_only",
+      "seed": 42,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "distance_only",
+      "seed": 43,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "distance_only",
+      "seed": 44,
+      "status": "complete",
+      "reason": ""
+    },
+    {
+      "variant": "train_table",
+      "seed": 42,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    },
+    {
+      "variant": "train_table",
+      "seed": 43,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    },
+    {
+      "variant": "train_table",
+      "seed": 44,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    },
+    {
+      "variant": "band_resolved",
+      "seed": 42,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    },
+    {
+      "variant": "band_resolved",
+      "seed": 43,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    },
+    {
+      "variant": "band_resolved",
+      "seed": 44,
+      "status": "blocked_missing_trajectory_table",
+      "reason": "Source conformational_ensembles.zip not found; genuine train-only band counts unavailable"
+    }
+  ],
+  "setup": [
+    {
+      "variant": "full",
+      "seed": 42,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+      "commit": "7e01db4e491ab15dbc9ade2d9865ab016b4a2d7d",
+      "started_utc": "2026-11-16T03:25:41Z",
+      "pid": 3213555,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "a177626dbbc58eaa11a7d0e7d63bdc5a3f4eac762d3a07c11d3ce5226d47da58",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 3499086,
+      "child_pgid": 3499086,
+      "child_start_ticks": "233614037",
+      "train_wall_seconds": 1027.0679614720866,
+      "eval_wall_seconds": 108.11769709503278,
+      "output_sha256": {
+        "config.yaml": "ea1fe8595de4c86a9e0196c0c5b7ac3c17ad9095973a3a652cd3d8975dfec20c",
+        "history.json": "03ac795b744da8d69bd614a4e5da225e24be9483cb4f80b84727ba3a2183364d",
+        "test_metrics.json": "8e1d8fb6ac4457fd70a644a328ed327add4e6d2f18b664bf39065883ab5a9949",
+        "plot_metrics.json": "74165fffee6013282ce2f4ca38c21d4a449a31c47c9e9864f722b82dc5c57129",
+        "predictions_test.tsv": "c0c78b4494e5d6764d36964764ef4884f4ced6b72a87d7907b7e56f55a9dc0e8",
+        "predictions_exp151.tsv": "59f9914e15a406dc73adf4ca4fa7963eca45efe45099d4bf202e719be60e1768",
+        "best.pt": "177241b8efc8d5b09c4d9148a8dc40d8e0a828ffcdd30bea727492d25a196e26"
+      },
+      "finished_utc": "2026-11-16T03:44:37Z"
+    },
+    {
+      "variant": "full",
+      "seed": 43,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T03:54:17Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "a177626dbbc58eaa11a7d0e7d63bdc5a3f4eac762d3a07c11d3ce5226d47da58",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 4155459,
+      "child_pgid": 4155459,
+      "child_start_ticks": "233874347",
+      "train_wall_seconds": 1913.9835234330967,
+      "eval_wall_seconds": 112.12048986321315,
+      "output_sha256": {
+        "config.yaml": "cb537e4c0e9f21f312ddd2dad614025eca77b73711835e4e238c6d4b39c73146",
+        "history.json": "2de0b6fc758d560d2febe90a6abfd3f42339be3f9eafcbaac5dfadbd71a3f807",
+        "test_metrics.json": "95dfcaed82ab9b69a2539f7781b7bed42c24b0434ca98d9dbfb5f263c1736394",
+        "plot_metrics.json": "5088f14a4d0a505c92b2a43392da12bdcf82c47f272335bce47c637443a7d1ea",
+        "predictions_test.tsv": "101c5cb063a2dd55ae9e9a6fb729b09746eac69baaab9f7f6eb322e694bc14a4",
+        "predictions_exp151.tsv": "66fd9f73d1bb6efb561fe1cac89674d802ffad816f3883b7aaf396bfd29e2faa",
+        "best.pt": "937feec383b960f1dedf88448890b3ceeecb82d48234a63debbd9a56175a7f50"
+      },
+      "finished_utc": "2026-11-16T04:28:04Z"
+    },
+    {
+      "variant": "full",
+      "seed": 44,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T03:54:17Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "a177626dbbc58eaa11a7d0e7d63bdc5a3f4eac762d3a07c11d3ce5226d47da58",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 67390,
+      "child_pgid": 67390,
+      "child_start_ticks": "233908582",
+      "train_wall_seconds": 2256.31843129918,
+      "eval_wall_seconds": 112.11302434792742,
+      "output_sha256": {
+        "config.yaml": "73f4c0d500c3904c94953ac04eb3f3bc92db6972771da6723538a253d5212930",
+        "history.json": "b61a1340c3c4ecb4cf675759db44ab7f49fa2247eea2599f559ccc370cc48049",
+        "test_metrics.json": "892e383a6fa0e9c0e61548cac1fd47a61af543636ce3954f836b2a96e781328a",
+        "plot_metrics.json": "4ae91e1256bfaaa209f399b745505a405ded9069f3c6224c7884b68339f6c6bf",
+        "predictions_test.tsv": "e888e3293d54943b4b234483403684a65a77cfb69e04955396d216267e991ff2",
+        "predictions_exp151.tsv": "9b278783706d0c7cb7ba6e4dc1cb9f55f3a61cb76e166bad5a487ff30f6c6ead",
+        "best.pt": "fb794776055e87b22e52d2a4ed956882b38cb7e473fa16482a492f748e30e2e9"
+      },
+      "finished_utc": "2026-11-16T04:33:46Z"
+    },
+    {
+      "variant": "local_only",
+      "seed": 42,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T03:54:17Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "ce8b8858405d302bcf62fb85ea5882d1d3f109e080e380b3a796f4eb5c0e3789",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 394540,
+      "child_pgid": 394540,
+      "child_start_ticks": "234037915",
+      "train_wall_seconds": 3549.6601323690265,
+      "eval_wall_seconds": 106.10956377303228,
+      "output_sha256": {
+        "config.yaml": "a795fa2078dcbd705fd9d840f399865cfad4d3deec9d6fbf4a7c1b3a81dacef3",
+        "history.json": "4f6ea32fe0325845f09ff2a29293946a5538585110e84191de40b46f9feb11b5",
+        "test_metrics.json": "f857fdd91ff146bc94b3567889f453998feb2aa30cc8f7a223540384511ab22d",
+        "plot_metrics.json": "208a33d6e66cd91f0043f705098edb112682c5fe86b6c771b751b4ea000c267d",
+        "predictions_test.tsv": "ca499fe89ed08601763650699ee39b33ba3c50bae55883f6682b2d376b0f564f",
+        "predictions_exp151.tsv": "a1584d809451574b1a7681634cac78d76e803f88229e3e34d49431cc416a522c",
+        "best.pt": "c43a35e6413365efdcd3e15843e8846b91b459a15b9b36e42a4ca87c6064bee9"
+      },
+      "finished_utc": "2026-11-16T04:55:13Z"
+    },
+    {
+      "variant": "local_only",
+      "seed": 43,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T04:28:04Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "ce8b8858405d302bcf62fb85ea5882d1d3f109e080e380b3a796f4eb5c0e3789",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 700552,
+      "child_pgid": 700552,
+      "child_start_ticks": "234151248",
+      "train_wall_seconds": 2656.71893156413,
+      "eval_wall_seconds": 108.11120993224904,
+      "output_sha256": {
+        "config.yaml": "0023bbe1440cea68135331371b3f27a03473ca405846f2cf8604428c156050ac",
+        "history.json": "d1da90a548f5d41090a231e158a6e92487c6488012b2bfba696c56b4e0112d26",
+        "test_metrics.json": "a9c2922f4d5c148725a30b539cd1e12e15e794d1b2dfe049d37f3d5704f61e82",
+        "plot_metrics.json": "62775fd91cacb571dd03c3c783cafa3251e0b6211b6b68248cfbd3bf7eeffeb4",
+        "predictions_test.tsv": "baec192cbbc136a4c8c828f4e6fc6a23c8acd7af1430bc22ac6a47f6426903d9",
+        "predictions_exp151.tsv": "1773efb87efbfce2d747243a35bd08112804df9dc73f5766c58361282fef5a52",
+        "best.pt": "74fbf171a6adf7d9e923ff7a9f6fac931fa961de7ccffde4ffa1570c978feeec"
+      },
+      "finished_utc": "2026-11-16T05:14:09Z"
+    },
+    {
+      "variant": "local_only",
+      "seed": 44,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T04:33:46Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "ce8b8858405d302bcf62fb85ea5882d1d3f109e080e380b3a796f4eb5c0e3789",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 722470,
+      "child_pgid": 722470,
+      "child_start_ticks": "234159255",
+      "train_wall_seconds": 2394.4268775386736,
+      "eval_wall_seconds": 118.12428330816329,
+      "output_sha256": {
+        "config.yaml": "23f723717562a89ac46c246802374be6402585e7d6f343ee82df572df8d961a0",
+        "history.json": "860d0a2d1d936f9a7db4bc4f1414b5e7e409743c7d7e16042d9ab2b5b36a7225",
+        "test_metrics.json": "d056dbf8afa527e03ec5fd7a1de5561b4c726cec44645a5883921f8db90b0bf4",
+        "plot_metrics.json": "a5ee52ddfe410da8b05d2fe10501cd1868489caf2f2066f370b557b71c2f0f3b",
+        "predictions_test.tsv": "b3fb0878ef7b43e5153b90e207bdf00cdc3b405e29b6af4c4e77d80801c3c3cd",
+        "predictions_exp151.tsv": "d87f50a7218da696d4d60da68f4a921609d204b50cbbafc2181dac68c986d897",
+        "best.pt": "34323221253431587e93139aed700337b1b3790a9db64a43940b55e6f09c26ee"
+      },
+      "finished_utc": "2026-11-16T05:15:39Z"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 42,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T04:55:13Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "eff36963706e9b1a916eb56561b4bf0a6a708f4c1e6a30a2fe2a6030dfd956cf",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 643975,
+      "child_pgid": 643975,
+      "child_start_ticks": "234129224",
+      "train_wall_seconds": 806.8180634616874,
+      "eval_wall_seconds": 112.11379094514996,
+      "output_sha256": {
+        "config.yaml": "05148ebb647fe3e4b60318a904f720184be08d36e1c4d1be3d3e5efa841c1c6c",
+        "history.json": "8a20c4ee09291555c1ece40c69eb4ab92808fbd96e64daf182f7e70727a75c3f",
+        "test_metrics.json": "8d30cb02690bd39b0181ef95761c2fe3a6135826c661b7e5e5e7eb3863e83b6b",
+        "plot_metrics.json": "189f1c6aa0a4dc4e5192b29e92b187c885a2c12661485c89ae6a13052189f3d4",
+        "predictions_test.tsv": "3ee6ea696a70dca318edc4fb236115baa617f876279899163c5cb07482248a38",
+        "predictions_exp151.tsv": "360f052fa0da2615fe377abe538d8032a75352d35e5dfbae3cfec5a71cb9ba8e",
+        "best.pt": "63c67f2af1ee591fb7016304b54aadce341dd9dd529d1203dcd685cb1d6393b8"
+      },
+      "finished_utc": "2026-11-16T05:10:32Z"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 43,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T05:10:32Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "eff36963706e9b1a916eb56561b4bf0a6a708f4c1e6a30a2fe2a6030dfd956cf",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-0243affa-d1e6-5bc1-ae25-82e0b3cfe458",
+        "name": "NVIDIA L20",
+        "used_mib": 17,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 1777128,
+      "child_pgid": 1777128,
+      "child_start_ticks": "234550881",
+      "train_wall_seconds": 4104.288867981639,
+      "eval_wall_seconds": 112.12048954097554,
+      "output_sha256": {
+        "config.yaml": "bcd4ba2ec2c5d80ab2a674828f8565a52ca91761305f8a6c8095e5710bf15c58",
+        "history.json": "d771e4e0a486e11ec13113c6dd5a8b309f4679e70e72d38e9c5fff3ee3e1ab52",
+        "test_metrics.json": "47d80574e4efbdbad06a67062ebb218890695da21f3ca0531176d69e9a269fb8",
+        "plot_metrics.json": "288bf0a10367222b998c7546af6f564c0a4b0bde64faa29fde6a6e959e55e7e1",
+        "predictions_test.tsv": "9b7e17314f2b3209e5f0ebec87b1d9486b83cb08abe00fd8999207e93f496e26",
+        "predictions_exp151.tsv": "7386d990ace13c62685a565d68b6482cdf36b0e9d2b8e6a955b4f6b78dfcf546",
+        "best.pt": "9ddd133af504d4112172a827beac60c9b5c963cf60a862747aed89b9fb52b343"
+      },
+      "finished_utc": "2026-11-16T06:20:49Z"
+    },
+    {
+      "variant": "distance_only",
+      "seed": 44,
+      "status": "complete",
+      "host": "songcpu8",
+      "gpu_uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+      "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+      "started_utc": "2026-11-16T05:14:09Z",
+      "pid": 3661446,
+      "uid": 1046,
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "numpy": "1.26.4",
+      "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+      "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+      "config_sha256": "eff36963706e9b1a916eb56561b4bf0a6a708f4c1e6a30a2fe2a6030dfd956cf",
+      "gpu_snapshot_before": {
+        "uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+        "name": "NVIDIA L20",
+        "used_mib": 14,
+        "utilization": 0,
+        "processes": ""
+      },
+      "phase": "complete",
+      "child_pid": 1606663,
+      "child_pgid": 1606663,
+      "child_start_ticks": "234484960",
+      "train_wall_seconds": 3039.130204301793,
+      "eval_wall_seconds": 116.12367349117994,
+      "output_sha256": {
+        "config.yaml": "9deb813a3e2128542630712072fa78a7e564eeaf5878077f5b1381107643cbbd",
+        "history.json": "2a679b6af3188e3712d00c040a0c45aab4b0b73541632cfd6159cdf5e46e66a3",
+        "test_metrics.json": "d0376e21b91b11441183641a08cab7ae3fedc011b745628906a8fda421330d41",
+        "plot_metrics.json": "ab060b19302a8238412d47494663335ac19adab128482bb638af7864bf2a7f07",
+        "predictions_test.tsv": "7ca9e6b180b1fc2ea3722a583543041b993ce2fd5d220a26f7a7845a3f8ba580",
+        "predictions_exp151.tsv": "28c7a35fa77fd06fe13a33ec43accbbc998a08552e057bc79139e156173ba9ca",
+        "best.pt": "09efd59c717b19f295323fdefe8a38bc0d82b6fe8c573e2bc7081ef61e6cc2f3"
+      },
+      "finished_utc": "2026-11-16T06:09:54Z"
+    }
+  ],
+  "edge_audit": {
+    "sampling": "RandomState(0), choice 300 without replacement, test N <= 512",
+    "sample_ids": [
+      "Q14289_1_46",
+      "P43250_540_576",
+      "Q9NRY4_947_1248",
+      "Q8NHU6_835_907",
+      "P40426_107_147",
+      "Q8IXH6_1_159",
+      "Q96RK0_1521_1608",
+      "Q9P0U3_1_422",
+      "Q9UEU0_91_125",
+      "Q16875_445_520",
+      "P58304_216_361",
+      "Q8IUM7_327_802",
+      "Q5SXM8_1_63",
+      "Q9H1V8_642_727",
+      "Q9BXA9_1024_1116",
+      "Q17RB8_1_51",
+      "Q16549_687_785",
+      "A6NH21_1_113",
+      "Q66K89_1_199",
+      "Q13472_739_817",
+      "Q9ULI1_772_816",
+      "Q8NFD2_736_765",
+      "O94993_412_753",
+      "Q12972_133_351",
+      "P29353_1_148",
+      "P52179_1440_1474",
+      "O60469_837_933",
+      "Q3YEC7_1_31",
+      "Q9H8M5_185_246",
+      "Q96NL6_1_64",
+      "Q8TD19_1_57",
+      "O75970_1235_1334",
+      "P30040_1_36",
+      "Q86VR2_1_466",
+      "O95235_1_72",
+      "Q0P6H9_1_39",
+      "Q14602_1_36",
+      "Q03112_415_913",
+      "Q96RD3_263_313",
+      "Q9BWC9_1_50",
+      "O94953_1032_1096",
+      "Q96GE6_1_50",
+      "O94880_695_731",
+      "Q8IYX8_396_460",
+      "Q6P9G4_1_66",
+      "A1L443_301_756",
+      "Q5VT52_145_180",
+      "Q96ST8_328_368",
+      "O95352_513_555",
+      "Q9Y242_116_300",
+      "Q5HYK7_468_502",
+      "Q99996_2643_2701",
+      "P22223_659_829",
+      "Q9NZI8_355_411",
+      "O00327_213_321",
+      "O96028_1_222",
+      "Q9H857_1_52",
+      "Q92614_978_1092",
+      "P18084_762_799",
+      "Q13361_1_81",
+      "P49590_1_51",
+      "P41743_186_252",
+      "P09874_85_115",
+      "Q9BZ98_1_90",
+      "Q15149_91_179",
+      "Q96C12_77_126",
+      "Q8NA66_204_270",
+      "Q6DHY5_1_51",
+      "A0JLT2_162_244",
+      "Q03167_353_600",
+      "Q02643_389_423",
+      "P35711_654_763",
+      "Q96SD1_365_692",
+      "Q9ULC3_180_237",
+      "O14529_107_181",
+      "Q58FF6_188_255",
+      "Q9ULI1_1_30",
+      "Q12809_126_400",
+      "Q9UPM8_1_41",
+      "Q9H461_338_388",
+      "Q96PV7_573_849",
+      "Q86YF9_439_530",
+      "O43306_1_133",
+      "Q9P2D1_1825_1955",
+      "Q9Y5P8_504_575",
+      "Q13574_249_284",
+      "Q96MH7_149_236",
+      "Q99996_780_825",
+      "P0DPE3_1_115",
+      "O95696_1_132",
+      "Q9UKJ8_176_211",
+      "Q52LC2_186_224",
+      "Q15185_120_160",
+      "Q9ULL8_1146_1302",
+      "O76036_212_255",
+      "Q86SQ7_267_302",
+      "Q8NB49_430_471",
+      "Q5H8C1_1187_1232",
+      "Q9Y5N1_241_338",
+      "Q9UMX0_1_37",
+      "Q9H330_504_611",
+      "Q96JC9_114_268",
+      "P43080_1_201",
+      "Q8NHU6_392_457",
+      "P11055_1671_1940",
+      "Q9ULE0_174_228",
+      "Q5FYB1_1_43",
+      "A2RU37_1_121",
+      "Q8TEQ0_548_586",
+      "Q6ZU80_830_870",
+      "O14529_1223_1486",
+      "O14578_1_50",
+      "Q9NRR8_1_79",
+      "A0PG75_1_66",
+      "P00167_92_134",
+      "Q96SQ5_1_248",
+      "Q5MJ70_1_65",
+      "Q9H4G0_420_881",
+      "Q9UID3_632_688",
+      "P54257_272_314",
+      "Q9ULJ6_109_566",
+      "P0DPQ3_1_210",
+      "Q9UHI8_1_126",
+      "Q9BVT8_1_103",
+      "Q12816_1_446",
+      "Q8IWV7_985_1085",
+      "P09848_838_878",
+      "Q7Z2W7_1019_1058",
+      "Q9H7X2_1_81",
+      "Q9BYD6_1_76",
+      "Q8WXF1_1_71",
+      "Q96J65_1_41",
+      "Q6IE81_540_842",
+      "Q9H799_366_400",
+      "Q9NRM6_395_502",
+      "Q8IZP1_1_53",
+      "B4DS77_132_424",
+      "Q9H172_1_61",
+      "Q6KB66_389_452",
+      "Q49AM1_1_45",
+      "P33992_646_676",
+      "Q6NXR4_1_91",
+      "P26651_1_99",
+      "O94880_587_617",
+      "P34995_356_402",
+      "Q9BU61_1_48",
+      "O43187_89_201",
+      "Q9NS93_1_36",
+      "Q9Y266_92_156",
+      "Q3BBV2_118_311",
+      "P17643_504_537",
+      "Q9NW07_1_151",
+      "Q9Y592_608_701",
+      "P52179_826_941",
+      "Q9Y4C1_749_943",
+      "O95696_388_455",
+      "Q7Z4W3_1_81",
+      "Q9H4I2_1_88",
+      "Q99523_765_831",
+      "Q32P28_1_33",
+      "Q96E11_1_69",
+      "Q9Y6S9_1_48",
+      "Q8N412_1_459",
+      "Q9Y625_345_380",
+      "Q5JTZ9_1_39",
+      "Q8ND04_1_140",
+      "Q14995_1_101",
+      "A6NH21_486_518",
+      "P04198_1_372",
+      "P30533_119_153",
+      "Q9UQD0_1_69",
+      "Q8IUZ0_553_615",
+      "Q13009_929_1038",
+      "Q96MF2_142_252",
+      "Q9Y6R4_1124_1346",
+      "Q9UKA9_1_64",
+      "P42345_455_634",
+      "B9A6J9_1_50",
+      "O95170_1_36",
+      "Q13342_657_694",
+      "P11161_1_339",
+      "Q9H792_1403_1459",
+      "Q6EMB2_810_1281",
+      "Q8WXG6_97_172",
+      "O95222_277_327",
+      "Q8IYR2_187_224",
+      "Q9UKA9_133_184",
+      "P51513_1_52",
+      "Q9NR82_1_105",
+      "Q9H1B5_1_160",
+      "Q8WZ42_33743_33781",
+      "Q07065_371_539",
+      "A0A087WV53_1_46",
+      "Q9UKV5_1_70",
+      "Q8N387_1_334",
+      "O95755_1_80",
+      "Q5JWR5_2255_2465",
+      "O60359_216_315",
+      "Q7Z388_1_47",
+      "Q9Y2H5_1_54",
+      "Q9NRC6_2690_2807",
+      "Q7RTU5_219_278",
+      "Q9BSF0_1_49",
+      "Q13309_1_94",
+      "P52737_1_177",
+      "P0C6S8_499_592",
+      "Q5SYE7_1_92",
+      "A6NCM1_450_485",
+      "Q9Y3Q7_138_185",
+      "A6NGC4_227_264",
+      "Q9H0M4_1_257",
+      "Q9UKK3_745_784",
+      "Q8NEE6_125_159",
+      "Q9Y2L5_375_417",
+      "Q9H330_148_360",
+      "Q6IN84_311_353",
+      "A8MT33_185_242",
+      "Q96MK2_312_617",
+      "P60827_1_88",
+      "O00358_1_49",
+      "P55895_341_527",
+      "Q05DH4_936_1040",
+      "O76087_1_117",
+      "Q709C8_2456_2491",
+      "Q96C57_112_262",
+      "Q9C0A0_1_34",
+      "Q6NUQ1_1_70",
+      "O76031_1_167",
+      "P35916_1171_1363",
+      "Q9HBQ8_57_144",
+      "P0CG36_1_89",
+      "Q16625_1_138",
+      "Q8N1G4_253_316",
+      "Q99797_1_51",
+      "Q9NY74_624_926",
+      "Q9H0H5_115_289",
+      "Q8NH67_1_42",
+      "P55211_92_152",
+      "P43115_345_390",
+      "Q14147_714_775",
+      "Q5VV11_1_94",
+      "Q8NCV1_175_210",
+      "Q8N4V2_512_548",
+      "O00418_1_88",
+      "Q9H4Z3_667_704",
+      "Q9C099_202_428",
+      "Q7LG56_310_351",
+      "P49796_1_141",
+      "Q7Z6J8_164_209",
+      "Q6ZT62_482_581",
+      "Q8NA66_1_136",
+      "P15918_1007_1043",
+      "Q96I76_226_311",
+      "Q9UL03_475_810",
+      "Q9H4Q4_199_258",
+      "Q92922_953_1105",
+      "P0CL82_1_117",
+      "O94875_996_1046",
+      "Q9HC84_5505_5762",
+      "Q5SZD1_1_244",
+      "Q6IE81_1_50",
+      "Q7Z5R6_85_145",
+      "Q8NGX6_287_335",
+      "P10075_1_186",
+      "O94813_1101_1136",
+      "Q15149_4600_4684",
+      "Q9NRM6_271_339",
+      "Q8N7E2_141_425",
+      "P11912_182_226",
+      "Q8WY64_331_374",
+      "O43187_499_625",
+      "Q96PU8_201_341",
+      "O75096_1_371",
+      "P0DPK2_1_31",
+      "Q9P0J6_1_56",
+      "Q6DHV5_625_921",
+      "Q8N1K5_532_641",
+      "O75781_238_387",
+      "Q8N4L8_208_307",
+      "P0CI01_1_189",
+      "Q9ULW2_1_38",
+      "P16066_1_34",
+      "O95528_319_408",
+      "Q9NQG6_1_133",
+      "P57058_396_714",
+      "Q9HCE0_528_569",
+      "Q8IWY4_1_39",
+      "Q9NR83_1_192",
+      "O75970_628_704",
+      "P58417_1_120",
+      "P28336_1_39",
+      "P43357_1_103",
+      "Q9BWC9_103_173",
+      "O14936_447_495",
+      "O00141_1_97",
+      "O95373_1008_1038",
+      "O95866_168_241",
+      "Q9NW81_1_46",
+      "Q8N143_1_334",
+      "Q9H478_1_68"
+    ],
+    "bands": [
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        9,
+        16
+      ],
+      [
+        17,
+        32
+      ],
+      [
+        33,
+        null
+      ]
+    ],
+    "definitions": {
+      "degree": "undirected non-local degree, weighted by residue count",
+      "band_histogram": "directed selections before undirected union",
+      "E4_gate": "farthest-band fraction < 0.90; otherwise investigate before training"
+    },
+    "variants": {
+      "full": {
+        "status": "complete",
+        "edge_rule": "flat",
+        "topk": 8,
+        "chains": 300,
+        "residues": 33406,
+        "directed_topk_selections": 267248,
+        "mean_nonlocal_edges_per_residue": 12.468658324851823,
+        "mean_of_chain_mean_nonlocal_degree": 12.118828401643952,
+        "farthest_available_band_fraction": 0.9663608333832245,
+        "chosen_partner_band_counts": [
+          0,
+          0,
+          0,
+          2240,
+          27142,
+          237866
+        ],
+        "chosen_partner_band_fractions": [
+          0.0,
+          0.0,
+          0.0,
+          0.008381727833323355,
+          0.10156109680895647,
+          0.8900571753577202
+        ],
+        "band_resolved_gate": null,
+        "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac"
+      },
+      "local_only": {
+        "status": "complete",
+        "edge_rule": "flat",
+        "topk": 0,
+        "chains": 300,
+        "residues": 33406,
+        "directed_topk_selections": 0,
+        "mean_nonlocal_edges_per_residue": 0.0,
+        "mean_of_chain_mean_nonlocal_degree": 0.0,
+        "farthest_available_band_fraction": null,
+        "chosen_partner_band_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "chosen_partner_band_fractions": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "band_resolved_gate": null,
+        "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac"
+      },
+      "distance_only": {
+        "status": "complete",
+        "edge_rule": "distance_only",
+        "topk": 8,
+        "chains": 300,
+        "residues": 33406,
+        "directed_topk_selections": 267248,
+        "mean_nonlocal_edges_per_residue": 14.753397593246723,
+        "mean_of_chain_mean_nonlocal_degree": 13.726384351722267,
+        "farthest_available_band_fraction": 0.9663608333832245,
+        "chosen_partner_band_counts": [
+          0,
+          0,
+          0,
+          2240,
+          27142,
+          237866
+        ],
+        "chosen_partner_band_fractions": [
+          0.0,
+          0.0,
+          0.0,
+          0.008381727833323355,
+          0.10156109680895647,
+          0.8900571753577202
+        ],
+        "band_resolved_gate": null,
+        "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac"
+      },
+      "train_table": {
+        "status": "blocked_missing_contact_table",
+        "path": "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz"
+      },
+      "band_resolved": {
+        "status": "blocked_missing_contact_table",
+        "path": "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/data/processed/aa_contact_table_train.npz"
+      }
+    }
+  },
+  "train_table_sanity": null,
+  "reproduction_check": {
+    "reference_commit": "26673f7",
+    "comparison_epochs": 3,
+    "max_absolute_metric_differences": {
+      "train_loss": 0.0,
+      "train_log10_mae": 0.0,
+      "val_log_mae": 0.0,
+      "val_log_mse": 0.0,
+      "val_mae_nm": 0.0,
+      "val_rmse_nm": 0.0,
+      "val_r2": 0.0,
+      "val_log10_mae": 0.0
+    },
+    "bit_identical_metrics": true,
+    "all_metrics_within_1e-7": true,
+    "refactor_test_mae": 0.12760453493804894,
+    "original_published_test_mae": 0.1,
+    "environment": {
+      "host": "songcpu8",
+      "torch": "2.7.1+cu126",
+      "cuda_build": "12.6",
+      "gpu_uuid": "GPU-5c1ba65f-10ff-a704-6065-5c5867e72807"
+    },
+    "conclusion": "Untouched source and refactor reproduce the same first three training epochs. The failure to match the original host is not introduced by this refactor; cross-host/runtime training is not numerically reproduced.",
+    "test_used_for_tuning": false
+  },
+  "historical_checkpoint_check": {
+    "status": "complete",
+    "diagnostic_only": true,
+    "training_performed": false,
+    "host": "songcpu8",
+    "torch": "2.7.1+cu126",
+    "source_checkpoint_sha256": "283f3c951dde6104ff90babedc85ec03f0e80b6fed1af41dc24cbf4041bc93d8",
+    "phase": "CPU_inference",
+    "child_pid": 3911415,
+    "child_pgid": 3911415,
+    "child_start_ticks": "233779748",
+    "eval_wall_seconds": 112.11737890308723,
+    "metrics": {
+      "test": {
+        "n": 4103,
+        "mae": 0.10008222008518496,
+        "rmse": 0.17261335010349751,
+        "r2": 0.9809986066602029,
+        "pearson": 0.991651568637411,
+        "mape": 3.159877476760515
+      },
+      "exp151": {
+        "n": 151,
+        "mae": 0.2950048300604157,
+        "rmse": 0.416681739574102,
+        "r2": 0.8461906389129243,
+        "pearson": 0.9212836184708401,
+        "mape": 9.301765341212985
+      },
+      "best_epoch": 31
+    },
+    "historical_metrics": {
+      "test": {
+        "n": 4103,
+        "mae": 0.10008218809653573,
+        "rmse": 0.1726133233845956,
+        "r2": 0.9809986125426717,
+        "pearson": 0.9916515686169458,
+        "mape": 3.1598763403571373
+      },
+      "exp151": {
+        "n": 151,
+        "mae": 0.29500483953400164,
+        "rmse": 0.41668171178199837,
+        "r2": 0.8461906594306727,
+        "pearson": 0.9212836190734028,
+        "mape": 9.301766435978784
+      },
+      "best_epoch": 31
+    },
+    "differences": {
+      "test": {
+        "mae": 3.19886492294863e-08,
+        "rmse": 2.6718901924294158e-08,
+        "r2": -5.8824688453640306e-09,
+        "pearson": 2.046518510212536e-11
+      },
+      "exp151": {
+        "mae": -9.473585915742433e-09,
+        "rmse": 2.7792103618473618e-08,
+        "r2": -2.0517748389181634e-08,
+        "pearson": -6.025627774519648e-10
+      }
+    },
+    "all_metrics_within_1e_minus_5": true
+  },
+  "baseline_coefficients": {
+    "composition": [
+      -1.8610329791950684,
+      0.5328943572872235,
+      0.5048359083531161,
+      0.37825284766304546,
+      0.5975727441099252,
+      0.715134204980226,
+      0.170771589055679,
+      0.25774042357156707,
+      0.4801021021136971,
+      0.4056599163628046,
+      0.5282886110605061,
+      0.3539397580334841,
+      0.4471318685459247,
+      0.4825769121064869,
+      0.49504374450381644,
+      0.5188761161145435,
+      0.22837397847470034,
+      0.43173118549911244,
+      0.5095079371027016,
+      0.5986947921331566,
+      0.04454242831002508
+    ],
+    "length": [
+      0.534743989185783,
+      -1.4247927507117208
+    ]
+  },
+  "definitions": {
+    "sd": "sample standard deviation across training seeds (ddof=1)",
+    "bootstrap": "5000 sequence resamples, RandomState(0), seed-averaged predictions; conditional on fitted seeds",
+    "residual_share": "1 - SSE(log prediction) / sum(centered log-length residual squared)",
+    "spearman": "Pearson correlation of average tied ranks; undefined for a constant vector"
+  }
+}

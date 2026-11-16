@@ -1,0 +1,87 @@
+{
+  "checked_utc": "2026-11-16T06:22:15.738814+00:00",
+  "status": "all_available_runs_finished",
+  "completed_primary_runs": 9,
+  "blocked_primary_runs": 6,
+  "protected_files_unchanged": 72,
+  "active_owned_processes": 0,
+  "launcher_identities": [
+    {
+      "pid": 3213555,
+      "recorded_start_ticks": "233510785",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "pid": 3661446,
+      "recorded_start_ticks": "233682386",
+      "pid_exists": false,
+      "same_process": false
+    }
+  ],
+  "last_child_identities": [
+    {
+      "run": "full_s42",
+      "pid": 3499086,
+      "recorded_start_ticks": "233614037",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "full_s43",
+      "pid": 4155459,
+      "recorded_start_ticks": "233874347",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "full_s44",
+      "pid": 67390,
+      "recorded_start_ticks": "233908582",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "local_only_s42",
+      "pid": 394540,
+      "recorded_start_ticks": "234037915",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "local_only_s43",
+      "pid": 700552,
+      "recorded_start_ticks": "234151248",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "local_only_s44",
+      "pid": 722470,
+      "recorded_start_ticks": "234159255",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "distance_only_s42",
+      "pid": 643975,
+      "recorded_start_ticks": "234129224",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "distance_only_s43",
+      "pid": 1777128,
+      "recorded_start_ticks": "234550881",
+      "pid_exists": false,
+      "same_process": false
+    },
+    {
+      "run": "distance_only_s44",
+      "pid": 1606663,
+      "recorded_start_ticks": "234484960",
+      "pid_exists": false,
+      "same_process": false
+    }
+  ]
+}

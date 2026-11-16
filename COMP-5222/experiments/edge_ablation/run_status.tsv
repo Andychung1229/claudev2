@@ -1,0 +1,16 @@
+variant	seed	status	reason
+full	42	complete	
+full	43	complete	
+full	44	complete	
+local_only	42	complete	
+local_only	43	complete	
+local_only	44	complete	
+distance_only	42	complete	
+distance_only	43	complete	
+distance_only	44	complete	
+train_table	42	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable
+train_table	43	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable
+train_table	44	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable
+band_resolved	42	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable
+band_resolved	43	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable
+band_resolved	44	blocked_missing_trajectory_table	Source conformational_ensembles.zip not found; genuine train-only band counts unavailable

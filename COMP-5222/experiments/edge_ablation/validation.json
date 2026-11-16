@@ -1,0 +1,91 @@
+{
+  "phase": "complete_available_runs",
+  "protected_files_unchanged": 72,
+  "analysis_source_files_verified": 37,
+  "completed_runs_checked": [
+    {
+      "run": "full_s42",
+      "epochs": 28,
+      "best_epoch": 13,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "full_s43",
+      "epochs": 51,
+      "best_epoch": 36,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "full_s44",
+      "epochs": 60,
+      "best_epoch": 45,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "local_only_s42",
+      "epochs": 100,
+      "best_epoch": 94,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "local_only_s43",
+      "epochs": 76,
+      "best_epoch": 61,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "local_only_s44",
+      "epochs": 68,
+      "best_epoch": 53,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "distance_only_s42",
+      "epochs": 18,
+      "best_epoch": 3,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "distance_only_s43",
+      "epochs": 92,
+      "best_epoch": 77,
+      "test_count": 4103,
+      "exp_count": 151
+    },
+    {
+      "run": "distance_only_s44",
+      "epochs": 69,
+      "best_epoch": 54,
+      "test_count": 4103,
+      "exp_count": 151
+    }
+  ],
+  "blocked_runs": [
+    "train_table_s42",
+    "train_table_s43",
+    "train_table_s44",
+    "band_resolved_s42",
+    "band_resolved_s43",
+    "band_resolved_s44"
+  ],
+  "prediction_rows_checked": 38286,
+  "tests_passed": 22,
+  "analysis_source_sha256": "7dfaa0ea6ce4870242f9a0bcd7bc10a35c3791b0482cf7a3bdc064b9f2f6fadc",
+  "checks": [
+    "all recorded output SHA256",
+    "fixed hyperparameters, seed, edge rule, top-k and prior",
+    "18721 parameters",
+    "validation-only best checkpoint",
+    "4103/151 unique aligned IDs",
+    "finite positive predictions",
+    "all exported main metrics recomputed",
+    "no result artifact over 5MB or trajectory/partial checkpoint"
+  ]
+}
