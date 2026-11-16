@@ -110,11 +110,14 @@ Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬
 | **11** | **你** | **模擬：chain-only 平均 error 低三分一；加 contact edges 反而差** | **0:50** |
 | **12** | **你** | **實驗：graph models 平均贏 baseline；long-range edge 未見清楚益處** | **0:40** |
 | **13** | **你** | **Audit：距離主導揀邊；短鏈嗰組對次序較唔敏感** | **1:00** |
-| **14** | **你** | **結論，加兩個 graph 研究方向** | **0:45** |
+| **14** | **你** | **Graph 有用，但點連 edges 好重要；下一步改善連邊同 message passing** | **0:45** |
 
-**時間：** Speaker notes 共 566 個英文詞，已包括最後兩句後續方向。每分鐘 110–120 詞，加約 40 秒轉頁同指圖，約 5:23–5:49。逐頁標示預留咗較多停頓，合共約 5:50。第 8、13 頁要練指圖；第 9 頁唔讀公式。
+**時間：** Speaker notes 共 602 個英文詞。每分鐘 115–125 詞，加約 30 秒轉頁同指圖，約 5.3–5.7 分鐘。逐頁時間係排練參考；第 8、13 頁要預留指圖停頓，第 9 頁唔讀公式。
 
 ### 你嗰半嘅弧線
+
+**主線：Graph 有用 → 更多 edges 未必更好 → 下一步揀更好嘅 edges。** 呢度「Graph 有用」指 chain-based GNN 喺今次 task 贏 histogram baseline。
+
 1. **重新起步（8）：** Partner 講完 biology，你用 graph 嘅語言重講一次：node 係乜、edge 係乜、預測乜。**對識 graph 嘅 audience 嚟講，呢頁係入門口**，講慢啲。
 2. **模型（9）：** GAT 點讀個 graph。
 3. **定規矩（10）：** 點樣先算「graph 有用」：graph model 要贏 histogram；contact edges 要贏另外兩個 graph。
@@ -130,79 +133,81 @@ Baseline：只睇長度，模擬 0.124、實驗 0.416；組成 + 長度，模擬
 ### 第 8 頁：The task in graph terms: one graph per protein（1:00）
 - **指住：** 先指 table，再指藍色 local edges 同橙色 long-range edges；講清楚一個 graph 預測一個數。
 
-> Thanks. Here is our task in graph terms.
+> Thanks. Let me explain our task in graph terms.
 >
-> Each protein becomes one graph. Each amino acid is a node, with one of twenty types and its position along the chain.
+> Each protein is a chain. We turn it into a graph, with one node for each amino acid. Each node has a type and a position.
 >
-> We connect nearby nodes with local edges, shown in blue. Each node also selects up to eight long-range partners from our contact prior, shown in orange. We then make these edges undirected.
+> Blue edges connect nearby nodes along the chain. Orange edges connect selected pairs farther apart. Each node selects up to eight long-range partners, and we make the edges undirected.
 >
-> At prediction time, we use the sequence without a 3D structure. Our target is Rg, one number describing how spread out the chain is in space.
+> From this graph, we predict Rg: one number describing how spread out the protein is in space. We use the sequence, without a 3D structure at prediction time.
 >
-> So this is graph-level regression, using sequence-based graphs.
+> The question is: does this graph help us make better predictions?
 
 ### 第 9 頁：Edge-aware graph attention network（0:45）
 - **指住：** 由左至右指四步；公式只指橙色 edge-feature term，唔使讀公式。
 
-> We use an edge-aware graph attention network with two layers. Each node collects messages from its neighbours, and attention learns how much weight to give each message.
+> We use a graph attention network with two layers.
 >
-> The orange term shows where edge features enter the attention score.
+> Each node receives messages from its neighbours. Attention gives different weights to these messages. The orange part of the formula shows how edge information affects those weights.
 >
-> Then we pool all nodes with mean and max, add the log graph size, and predict Rg. The whole model has fewer than nineteen thousand parameters.
+> We then combine information from all nodes using mean and max pooling, add the log graph size, and predict Rg.
 >
-> Now we can ask which graph connections actually help.
+> The model has fewer than nineteen thousand parameters. Now, let's test whether it helps, and which edges we need.
 
 ### 第 10 頁：The test: three graphs and two baselines（0:50）
 - **指住：** 指三個 graph，再指兩個 baselines；模型配色：contact 藍、distance 灰、chain-only 橙。
 
-> We compare three versions of the same network.
+> We compare three graphs using the same network: contact edges, distance-only edges, and chain-only edges.
 >
-> First, our contact-edge graph. Second, a distance-only control, with the same top-eight selection budget but no node-type term in the ranking. Third, a chain-only graph with no long-range edges.
+> The distance-only control uses the same top-eight selection budget, but ranks partners by distance. The chain-only graph removes all long-range edges.
 >
-> There are also two baselines that ignore edges. One uses graph size alone. The other uses node-type proportions plus size. Biologists call this composition.
+> We also test two simple baselines. One uses graph size. The other uses node-type proportions plus size, but no edges. We call this the histogram baseline.
 >
-> We train each graph model with three random seeds. A useful contact-edge rule should improve on the chain-only graph.
+> Each graph model is trained three times. We ask: can it beat the histogram? And does adding contact edges improve on the chain-only graph?
 
 ### 第 11 頁：Simulations: the chain-only graph cuts error by a third（0:50）
 - **指住：** 先指 histogram 虛線，再指橙色 chain-only 同三粒 seed 點；33% 係平均改善。
 
-> Here are the results on about four thousand unseen simulated proteins. Lower error is better. The grey bars are the baselines, and the dashed line is the histogram baseline.
+> First, we test on about four thousand unseen simulated proteins. Lower error is better.
 >
-> The orange bar is the chain-only graph. Its average error is thirty-three percent lower than the histogram, and all three runs beat that baseline.
+> Look at the orange bar: the chain-only graph. Its average error is thirty-three percent lower than the histogram baseline, shown by the dashed line. All three training runs beat that baseline.
 >
-> This shows that a small chain-based GNN is useful for this task.
+> So yes, a simple chain-based graph model is useful for this task.
 >
-> But adding our contact edges raises the error. More connections do not automatically give a better graph.
+> But look at the blue bar. Adding our contact edges makes the error higher. This is our main surprise: more edges do not always mean better predictions.
 
 ### 第 12 頁：Lab measurements: every graph model beats the baselines（0:40）
 - **指住：** 指 0.301 同 0.303：平均接近，未確認有清楚差異。
 
-> Next are 151 proteins measured in the lab. The models were trained only on simulations.
+> Does this result carry over to real measurements?
+>
+> Here we test on 151 proteins measured in the lab. The models were trained only on simulations.
 >
 > All three graph models have lower average error than the baselines. The contact-edge and chain-only models improve on the histogram by about eight to nine percent.
 >
-> Their average errors are close, and we found no clear difference between them on this dataset.
+> Their errors are close, so we see no clear extra benefit from contact edges here.
 >
-> So we looked more closely at the edge rule.
+> This led us to ask: what kinds of edges are we actually adding?
 
 ### 第 13 頁：Why edge choice matters（1:00）
 - **指住：** 先指兩個 variation scales，再指 0.73 / 0.47 / 0.06；次序敏感度嘅結論只限呢組。
 
-> The rule divides the contact frequency of two node types by the average frequency in their sequence-distance band.
+> We found two clues.
 >
-> The node-type term varies about two-fold, while the distance term varies over a thousand-fold. As a result, ninety-seven percent of selected partners lie in the farthest available distance band.
+> First, our edge score uses both node types and distance along the chain. But the distance term varies much more: over a thousand-fold, compared with about two-fold for node types. So distance dominates. Ninety-seven percent of selected partners are in the farthest available distance band.
 >
-> On the right are six sequences with the same node-type counts but different orders. Their measured sizes vary by 0.73 nanometres. The chain-only model captures a spread of 0.47, while the contact-edge model gives only 0.06.
+> Second, look at these six sequences. They have the same node-type counts, but different orders. Their measured sizes span 0.73 nanometres. The chain-only predictions span 0.47, but the contact-edge predictions span just 0.06.
 >
-> This suggests weaker order sensitivity in this group. The mechanism still needs testing.
+> In this group, the contact-edge model is less sensitive to order. This is a clue, not yet proof of why it performs worse.
 
 ### 第 14 頁：What we can say, and what comes next（0:45）
-- **指住：** 收結用 graph design 問題：有用嘅 long-range edges 同較大 receptive field。最後兩句係後續研究方向。
+- **指住：** 重講主線：graph 有用，但更多 edges 未必更好；再講下一步。
 
-> To finish, a small chain-based GNN beats the histogram baseline, while our current long-range edge rule adds no clear benefit.
+> Our results show that a simple chain-based graph model is useful for this task. But more edges do not always mean better predictions.
 >
-> The next question is which long-range links are useful, and how they should interact with local messages.
+> The next step is to choose better long-range links and study how to combine them with local messages. We also want to test whether a wider message-passing range helps with longer chains.
 >
-> We plan to test distance-calibrated edges with separate local and long-range message passing. We also want to study larger receptive fields for longer chains, where sequence order remains difficult to capture.
+> The main takeaway is: graphs help, but how we connect the nodes matters.
 >
 > Thank you.
 
