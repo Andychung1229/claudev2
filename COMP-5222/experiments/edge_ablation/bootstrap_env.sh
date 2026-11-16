@@ -2,6 +2,9 @@
 set -euo pipefail
 experiment_root="${1:?experiment root required}"
 mkdir -p "$experiment_root/logs"
+export PIP_CACHE_DIR="$experiment_root/pip-cache"
+export TMPDIR="$experiment_root/tmp"
+mkdir -p "$PIP_CACHE_DIR" "$TMPDIR"
 trap 'printf "failed\n" > "$experiment_root/logs/environment.status"' ERR
 printf 'installing\n' > "$experiment_root/logs/environment.status"
 python3 -m venv --without-pip "$experiment_root/.venv"
