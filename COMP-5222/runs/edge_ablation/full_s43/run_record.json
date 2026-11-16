@@ -1,0 +1,40 @@
+{
+  "variant": "full",
+  "seed": 43,
+  "status": "complete",
+  "host": "songcpu8",
+  "gpu_uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+  "commit": "58667d09d288da7c00efe530a5ef85b62aeb216d",
+  "started_utc": "2026-11-16T03:54:17Z",
+  "pid": 3661446,
+  "uid": 1046,
+  "torch": "2.7.1+cu126",
+  "cuda_build": "12.6",
+  "numpy": "1.26.4",
+  "precision": "CUDA autocast float16; GradScaler; TF32 enabled as original",
+  "table_sha256": "642a92b8344bf3a716acadb9482f002728a90119cfaaa11de6b490d3e3351eac",
+  "config_sha256": "a177626dbbc58eaa11a7d0e7d63bdc5a3f4eac762d3a07c11d3ce5226d47da58",
+  "gpu_snapshot_before": {
+    "uuid": "GPU-35939f05-9cb5-2a8e-ea8a-348a93c5c35b",
+    "name": "NVIDIA L20",
+    "used_mib": 14,
+    "utilization": 0,
+    "processes": ""
+  },
+  "phase": "complete",
+  "child_pid": 4155459,
+  "child_pgid": 4155459,
+  "child_start_ticks": "233874347",
+  "train_wall_seconds": 1913.9835234330967,
+  "eval_wall_seconds": 112.12048986321315,
+  "output_sha256": {
+    "config.yaml": "cb537e4c0e9f21f312ddd2dad614025eca77b73711835e4e238c6d4b39c73146",
+    "history.json": "2de0b6fc758d560d2febe90a6abfd3f42339be3f9eafcbaac5dfadbd71a3f807",
+    "test_metrics.json": "95dfcaed82ab9b69a2539f7781b7bed42c24b0434ca98d9dbfb5f263c1736394",
+    "plot_metrics.json": "5088f14a4d0a505c92b2a43392da12bdcf82c47f272335bce47c637443a7d1ea",
+    "predictions_test.tsv": "101c5cb063a2dd55ae9e9a6fb729b09746eac69baaab9f7f6eb322e694bc14a4",
+    "predictions_exp151.tsv": "66fd9f73d1bb6efb561fe1cac89674d802ffad816f3883b7aaf396bfd29e2faa",
+    "best.pt": "937feec383b960f1dedf88448890b3ceeecb82d48234a63debbd9a56175a7f50"
+  },
+  "finished_utc": "2026-11-16T04:28:04Z"
+}

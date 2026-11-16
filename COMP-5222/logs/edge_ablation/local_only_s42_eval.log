@@ -1,0 +1,8 @@
+COMMAND ["/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/.venv/bin/python", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/scripts/plot_sparse_errors.py", "--run", "/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/repo/COMP-5222/runs/edge_ablation/local_only_s42", "--no-figs"]
+idrome_split_test.tsv: skip 136 sequences with N not in [1, 512]
+/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+test {"n": 4103, "mae": 0.060548355165063655, "rmse": 0.11340332398478359, "r2": 0.9917985950865583, "pearson": 0.9959007977001485, "mape": 1.8953617403731038}
+/data/kwchungac/comp5222-edge-ablation-20261116-26673f7/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+exp151 {"n": 151, "mae": 0.2988546656457004, "rmse": 0.42231721843431974, "r2": 0.842002066023749, "pearson": 0.9185152995296264, "mape": 9.479927030131531}
