@@ -17,8 +17,8 @@ const THEME = {
     accent5: "1F3452", accent6: "5E6875", hlink: "2F6FB0", folHlink: "5E6875",
   },
 };
-// chart and table colours: grey = baselines, blue = graph with contact edges, orange = local-only graph
-const HEX = { ink: "13233A", body: "3C4757", grey: "B9C2CC", blueBar: "A9C8E8", orangeBar: "E8925A", rule: "D5DCE4", grid: "E1E5EA", blueRow: "E3ECF6", orangeRow: "FBE7DA" };
+// Model colours: blue = contact, dark grey = distance-only, orange = chain-only; baselines = light grey.
+const HEX = { ink: "13233A", body: "3C4757", grey: "B9C2CC", blueBar: "A9C8E8", distanceBar: "8B939F", orangeBar: "E8925A", rule: "D5DCE4", grid: "E1E5EA", blueRow: "E3ECF6", orangeRow: "FBE7DA" };
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
@@ -109,7 +109,7 @@ function ablationChart(slide, ds, base, x, y, w, h, max, step) {
   const dot = (k) => ({ name: `Seed ${42 + k}`, labels, values: [null, null, ...runs.map((r) => r[k])] });
   slide.addChart([
     { type: pres.charts.BAR, data: [{ name: "Mean MAE", labels, values: bars }],
-      options: { chartColors: [HEX.grey, HEX.grey, HEX.blueBar, HEX.blueBar, HEX.orangeBar], barGapWidthPct: 45,
+      options: { chartColors: [HEX.grey, HEX.grey, HEX.blueBar, HEX.distanceBar, HEX.orangeBar], barGapWidthPct: 45,
         showValue: true, dataLabelPosition: "inBase", dataLabelFormatCode: "0.000", dataLabelFontSize: 13, dataLabelFontFace: "Calibri", dataLabelColor: HEX.ink } },
     { type: pres.charts.LINE, data: [{ name: "Composition", labels, values: labels.map(() => base[1]) }],
       options: { chartColors: [HEX.body], lineSize: 1.25, lineDash: "dash", lineDataSymbol: "none" } },
@@ -260,51 +260,63 @@ s.addNotes(notes("graph"));
 // ---------- speaker notes for slides 8-14 (about 6 minutes in total), written for a graph audience ----------
 const NOTE = {
   sparse: `[~1:00]
-Thanks. Before the results, here is our task in graph terms.
+Thanks. Here is our task in graph terms.
 
-Each protein is a chain of amino acids, so we turn it into one graph. Each amino acid is a node, with its type, one of twenty, and its position. Neighbours along the chain get local edges, in blue. Then each node gets eight long-range edges, in orange, to partners that our simulation statistics say are likely to touch in 3D.
+Each protein becomes one graph. Each amino acid is a node, with one of twenty types and its position along the chain.
 
-These proteins have no fixed 3D shape, so there is no structure graph to use. The sequence is all we have.
+We connect nearby nodes with local edges, shown in blue. Each node also selects up to eight long-range partners from our contact prior, shown in orange. We then make these edges undirected.
 
-The target is one number per graph: Rg, how spread out the chain is in space. So this is graph-level regression. About one in ten node pairs becomes an edge, so the graphs stay sparse.`,
+At prediction time, we use the sequence without a 3D structure. Our target is Rg, one number describing how spread out the chain is in space.
+
+So this is graph-level regression, using sequence-based graphs.`,
   gat: `[~0:45]
-The model is a graph attention network with two layers. In each layer, every node collects messages from its neighbours and uses attention to weight them.
+We use an edge-aware graph attention network with two layers. Each node collects messages from its neighbours, and attention learns how much weight to give each message.
 
-The edge features, in orange, go into the attention score, so the model can learn how much to trust each long-range edge.
+The orange term shows where edge features enter the attention score.
 
-Then we pool all nodes with mean and max, add the graph size, and predict Rg. The whole model has under nineteen thousand parameters.
+Then we pool all nodes with mean and max, add the log graph size, and predict Rg. The whole model has fewer than nineteen thousand parameters.
 
-Our question is simple: does this graph structure, and especially our long-range edges, help?`,
+Now we can ask which graph connections actually help.`,
   train: `[~0:50]
-To test that, we train three versions of the same network. The first has our contact edges. The second is a control: the same number of long-range edges, picked by distance along the chain alone. The third has no long-range edges, just the chain.
+We compare three versions of the same network.
 
-We compare them with two baselines that ignore edges. One uses only the graph size. The other uses a histogram of the twenty node types, plus size. Biologists call this composition.
+First, our contact-edge graph. Second, a distance-only control, with the same top-eight selection budget but no node-type term in the ranking. Third, a chain-only graph with no long-range edges.
 
-If structure matters, the graph models should beat the histogram. If our contact edges help, the first model should win.`,
-  restest: `[~0:55]
-Here are four thousand test proteins the models never saw. Lower is better. The grey bars are the baselines, and the histogram, this dashed line, is the one to beat.
+There are also two baselines that ignore edges. One uses graph size alone. The other uses node-type proportions plus size. Biologists call this composition.
 
-The orange bar is the chain-only graph. Its error is about a third lower than the histogram, and all three training runs agree. So the order of the nodes, which a histogram throws away, really matters, and message passing captures it.
+We train each graph model with three random seeds. A useful contact-edge rule should improve on the chain-only graph.`,
+  restest: `[~0:50]
+Here are the results on about four thousand unseen simulated proteins. Lower error is better. The grey bars are the baselines, and the dashed line is the histogram baseline.
 
-But the first blue bar, with our contact edges, is worse, even behind the histogram. The graph helps, but our long-range edges hold it back.`,
+The orange bar is the chain-only graph. Its average error is thirty-three percent lower than the histogram, and all three runs beat that baseline.
+
+This shows that a small chain-based GNN is useful for this task.
+
+But adding our contact edges raises the error. More connections do not automatically give a better graph.`,
   resexp: `[~0:40]
-Now a harder test: 151 real proteins measured in the lab, while the models only ever saw simulations.
+Next are 151 proteins measured in the lab. The models were trained only on simulations.
 
-Every graph model beats both baselines, the two main ones by eight to nine percent, and those two are tied. So on real data, the long-range edges neither help nor hurt. Errors are larger here because simulations are not perfect copies of real proteins.
+All three graph models have lower average error than the baselines. The contact-edge and chain-only models improve on the histogram by about eight to nine percent.
 
-So why do our contact edges fail?`,
-  limits: `[~0:55]
-Our edge score is: how often these two amino-acid types touch, divided by how often any pair this far apart touches. The first part varies only two-fold across types. The second varies over a thousand-fold with distance. So distance decides, and ninety-seven percent of chosen partners are simply the farthest nodes. That is why the distance-only control behaves the same.
+Their average errors are close, and we found no clear difference between them on this dataset.
 
-It also hurts. Here are six graphs with the same node labels, shuffled along the chain. Their real sizes differ a lot. The chain-only model sees much of that difference. With our contact edges, the predictions barely move. The far edges seem to wash out the order.`,
-  close: `[~0:35]
-To wrap up. First, the graph helps: message passing along the chain beats a node-type histogram, on simulations and on real proteins.
+So we looked more closely at the edge rule.`,
+  limits: `[~1:00]
+The rule divides the contact frequency of two node types by the average frequency in their sequence-distance band.
 
-Second, our long-range edges are the bottleneck, because distance, rather than chemistry, picks them.
+The node-type term varies about two-fold, while the distance term varies over a thousand-fold. As a result, ninety-seven percent of selected partners lie in the farthest available distance band.
 
-Third, next we rebuild the edge score so that chemistry picks the edges.
+On the right are six sequences with the same node-type counts but different orders. Their measured sizes vary by 0.73 nanometres. The chain-only model captures a spread of 0.47, while the contact-edge model gives only 0.06.
 
-Thank you. We are happy to take questions.`,
+This suggests weaker order sensitivity in this group. The mechanism still needs testing.`,
+  close: `[~0:45]
+To finish, a small chain-based GNN beats the histogram baseline, while our current long-range edge rule adds no clear benefit.
+
+The next question is which long-range links are useful, and how they should interact with local messages.
+
+We plan to test distance-calibrated edges with separate local and long-range message passing. We also want to study larger receptive fields for longer chains, where sequence order remains difficult to capture.
+
+Thank you.`,
 };
 
 // ---------- 8 the task in graph terms ----------
@@ -316,12 +328,12 @@ s.addTable([
   mapRow("A chain of amino acids", "One graph, up to 512 nodes"),
   mapRow("Each amino acid", "Node: one of 20 types, plus position"),
   mapRow("Neighbours along the chain", "Local edges", THEME.colors.accent1),
-  mapRow("Pairs likely to touch in 3D", "Long-range edges, top 8 per node", THEME.colors.accent3),
+  mapRow("Candidate long-range pairs", "Select up to 8 partners per node", THEME.colors.accent3),
   mapRow("Size of the chain in space (Rg)", "Target: one number per graph"),
 ], tblOpts({ x: 0.6, y: 1.75, w: 7.25, colW: [3.1, 4.15], rowH: 0.52, objectName: name("mapping-table") }));
 txt(s, [
   { text: "Graph-level regression. ", options: { bold: true, color: C.text1 } },
-  { text: "These proteins have no fixed 3D shape, so the input is the sequence alone." },
+  { text: "At prediction time, we use the sequence without a fixed 3D structure." },
 ], { x: 0.6, y: 5.15, w: 7.0, h: 0.95 });
 caption(s, "Long-range partners come from contact statistics counted in 28 million simulation frames.", 0.6, 6.15, 7.0, 0.5);
 img(s, "adjacency_long.png", 8.1, 1.75, 4.6, 4.6, "Adjacency matrix of a 155-node graph: blue diagonal band of local edges, scattered orange long-range edges far from the diagonal");
@@ -333,7 +345,7 @@ s = pres.addSlide({ masterName: "Content", sectionTitle: "Method" });
 head(s, "METHOD", "Edge-aware graph attention network");
 [["Protein graph", "Nodes are amino acids"],
  ["2 attention layers", "Each node weights messages from its neighbours"],
- ["Pool all nodes", "Mean and max, plus graph size"],
+ ["Pool all nodes", "Mean and max, plus log graph size"],
  ["Predicted Rg", "One number per graph"],
 ].forEach(([h, b], i) => {
   const x = 0.6 + i * 3.12;
@@ -356,9 +368,9 @@ s.addNotes(NOTE.gat);
 // ---------- 10 experiment design ----------
 s = pres.addSlide({ masterName: "Content Tint", sectionTitle: "Method" });
 head(s, "EXPERIMENT", "The test: three graphs and two baselines");
-[["variant_contact.png", "Contact edges", "Our model", C.accent3],
- ["variant_distance.png", "Distance edges", "Control: as many far edges, picked by distance", C.accent6],
- ["variant_local.png", "Chain only", "No long-range edges", C.accent1],
+[["variant_contact.png", "Contact edges", "Our model", C.accent1],
+ ["variant_distance.png", "Distance edges", "Same top-8 budget, distance-only ranking", C.accent6],
+ ["variant_local.png", "Chain only", "No long-range edges", C.accent3],
 ].forEach(([f, h, b, col], i) => {
   const y = 1.7 + i * 1.3;
   img(s, f, 0.6, y, 3.7, 1.1, `Schematic of the ${h.toLowerCase()} graph`);
@@ -367,13 +379,13 @@ head(s, "EXPERIMENT", "The test: three graphs and two baselines");
 txt(s, "Two baselines that ignore edges", { x: 8.45, y: 1.75, w: 4.28, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
 txt(s, [
   { text: "Graph size: ", options: { bold: true, color: C.text1 } }, { text: "Rg as a power of node count", options: { breakLine: true } },
-  { text: "Node-type histogram: ", options: { bold: true, color: C.text1 } }, { text: "counts of the 20 node types, plus size" },
+  { text: "Node-type histogram: ", options: { bold: true, color: C.text1 } }, { text: "node-type proportions, plus size" },
 ], { x: 8.45, y: 2.25, w: 4.28, h: 1.8, paraSpaceAfter: 10 });
 rule(s, 8.45, 4.15, 4.28);
 txt(s, "Train on 18,860 simulated proteins. Each graph model trains 3 times.", { x: 8.45, y: 4.3, w: 4.28, h: 0.95 });
 txt(s, [
-  { text: "If structure matters, the graph models beat the histogram. If our contact edges help, " },
-  { text: "contact edges", options: { bold: true, color: C.accent3 } }, { text: " win." },
+  { text: "Compare the chain-based GNN with a histogram, then test the added " },
+  { text: "contact edges", options: { bold: true, color: C.accent1 } }, { text: "." },
 ], { x: 0.6, y: 5.75, w: 12.1, h: 0.8, fontSize: 22, color: C.text1 });
 s.addNotes(NOTE.train);
 
@@ -384,10 +396,10 @@ head(s, "RESULTS", "Simulations: the chain-only graph cuts error by a third");
 ablationChart(s, "test", [0.1240, 0.0984], 0.45, 1.6, 7.1, 4.85, 0.15, 0.03);
 caption(s, "Error on 4,103 unseen simulated proteins. Dots: 3 training runs. Dashed line: histogram.", 0.6, 6.45, 7.0, 0.5);
 bigStat(s, "33% lower", 7.95, 1.8, 4.8, C.accent3, 48);
-txt(s, "error than the node-type histogram with the chain-only graph, in all 3 runs", { x: 7.95, y: 2.7, w: 4.78, h: 0.95 });
+txt(s, "average error than the histogram. All 3 runs beat the baseline.", { x: 7.95, y: 2.7, w: 4.78, h: 0.95 });
 rule(s, 7.95, 3.9, 4.78);
-block(s, 7.95, 4.1, 4.78, 1.0, "Node order matters", "A histogram throws order away. Message passing keeps it.", { headColor: C.text1 });
-block(s, 7.95, 5.3, 4.78, 1.0, "Contact edges make it worse", "Adding them puts the error above the histogram.", { headColor: C.text1 });
+block(s, 7.95, 4.1, 4.78, 1.0, "Learning along the chain", "The chain-only GNN beats the linear histogram baseline.", { headColor: C.text1 });
+block(s, 7.95, 5.3, 4.78, 1.0, "Contact edges make it worse", "Adding them raises the average test error.", { headColor: C.text1 });
 s.addNotes(NOTE.restest);
 
 // ---------- 12 results: lab measurements ----------
@@ -398,20 +410,20 @@ caption(s, "Error on 151 lab-measured proteins. Dots: 3 training runs. Dashed li
 bigStat(s, "8–9% lower", 7.95, 1.8, 4.8, C.accent3, 48);
 txt(s, "error than the histogram for the chain-only and contact-edge graphs", { x: 7.95, y: 2.7, w: 4.78, h: 0.95 });
 rule(s, 7.95, 3.9, 4.78);
-block(s, 7.95, 4.1, 4.78, 1.0, "Long-range edges make no difference", "The two graphs tie.", { headColor: C.text1 });
-block(s, 7.95, 5.25, 4.78, 1.2, "Trained on simulations only", "Real proteins differ from simulated ones, so every error is larger.", { headColor: C.text1 });
+block(s, 7.95, 4.1, 4.78, 1.0, "No clear long-range benefit", "Contact-edge and chain-only errors are close.", { headColor: C.text1 });
+block(s, 7.95, 5.25, 4.78, 1.2, "Trained on simulations only", "Errors are higher on lab measurements than on simulations.", { headColor: C.text1 });
 s.addNotes(NOTE.resexp);
 
 // ---------- 13 diagnosis ----------
 pres.addSection({ title: "Wrap-up" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Wrap-up" });
-head(s, "DIAGNOSIS", "Why our long-range edges fail");
-txt(s, "1. Distance decides which edges we draw", { x: 0.6, y: 1.7, w: 6.0, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
+head(s, "DIAGNOSIS", "Why edge choice matters");
+txt(s, "1. Distance dominates edge selection", { x: 0.6, y: 1.7, w: 6.0, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
 txt(s, "Edge score = how often these two node types touch, divided by how often any pair this far apart touches", { x: 0.6, y: 2.15, w: 6.0, h: 0.9, fontSize: 17, color: C.text2 });
 img(s, "edge_scales.png", 0.6, 3.05, 5.2, 3.23, "Log-scale comparison: the distance term spans about 1,300-fold, the node-type pair term only 2.1-fold");
-txt(s, "97% of chosen partners are simply the farthest nodes.", { x: 0.6, y: 6.35, w: 6.0, h: 0.5, bold: true, color: C.text1 });
-txt(s, "2. So the model loses node order", { x: 7.0, y: 1.7, w: 5.73, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
-txt(s, "Six graphs with the same node labels, shuffled along the chain. How much do their sizes differ?", { x: 7.0, y: 2.15, w: 5.73, h: 0.95 });
+txt(s, "97% of partners lie in the farthest available distance band.", { x: 0.6, y: 6.35, w: 6.0, h: 0.5, bold: true, color: C.text1 });
+txt(s, "2. Reduced sensitivity to node order", { x: 7.0, y: 1.7, w: 5.73, h: 0.4, fontSize: 20, bold: true, color: C.text1 });
+txt(s, "Same node-type counts, different orders along the chain. How much do measured and predicted sizes vary?", { x: 7.0, y: 2.15, w: 5.73, h: 0.95 });
 s.addChart(pres.charts.BAR, [{ name: "Spread of Rg (nm)", labels: ["Measured", "Chain only", "Contact edges"], values: [0.73, 0.47, 0.06] }], {
   x: 6.85, y: 3.2, w: 5.88, h: 2.7, barDir: "bar", objectName: name("order-chart"), showLegend: false,
   chartColors: [HEX.ink, HEX.orangeBar, HEX.blueBar], barGapWidthPct: 45, catAxisOrientation: "maxMin",
@@ -419,15 +431,15 @@ s.addChart(pres.charts.BAR, [{ name: "Spread of Rg (nm)", labels: ["Measured", "
   catAxisLabelFontSize: 16, catAxisLabelFontFace: "Calibri", catAxisLabelColor: HEX.ink, catAxisLineColor: HEX.body,
   valAxisHidden: true, valAxisMinVal: 0, valAxisMaxVal: 0.9, valGridLine: { style: "none" },
 });
-caption(s, "Spread of Rg across the six graphs (107 nodes), mean of 3 runs. For a 334-node group, no model sees order yet.", 7.0, 5.95, 5.73, 0.75);
+caption(s, "Rg ranges for 6 sequences (107 nodes), using seed-averaged predictions. For the 334-node group, rankings remain weak.", 7.0, 5.95, 5.73, 0.75);
 s.addNotes(NOTE.limits);
 
 // ---------- 14 close ----------
 s = pres.addSlide({ masterName: "Statement", sectionTitle: "Wrap-up" });
 head(s, "TAKEAWAYS", "What we can say, and what comes next");
-[["1", "The graph helps", "Message passing along the chain beats a node-type histogram: a third lower error on simulations, and better on real proteins."],
- ["2", "Our long-range edges are the bottleneck", "Distance picks them, so they add far-away links and wash out node order."],
- ["3", "Next: edges chosen by chemistry", "Rebuild the edge score for each distance band, from training proteins only."],
+[["1", "Chain-based GNN works", "A chain-only GNN beats the histogram baseline: 33% lower average error on simulations and better on lab measurements."],
+ ["2", "Edge choice needs improvement", "The current score mostly selects the farthest band. It gives no clear gain on lab data."],
+ ["3", "Next: graph design", "Test distance-calibrated edges with separate local and long-range messages, and larger receptive fields for longer chains."],
 ].forEach(([n, h, b], i) => {
   const x = 0.6 + i * 4.125;
   const col = i === 0 ? C.accent2 : C.accent4;
